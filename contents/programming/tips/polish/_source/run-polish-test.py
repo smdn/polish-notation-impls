@@ -229,6 +229,7 @@ def exec_tests(show_output):
     ["C", ["gcc", "polish.c", "-o", "polish"], ["./polish"], ["rm", "-f", "./polish"]],
     ["Python", None, ["python3", "polish.py"], None],
     ["JavaScript", None, ["nodejs", "polish.js"], None],
+    ["Java", ["javac", "Polish.java"], ["java", "Polish"], ["rm", "-f", "Polish.class", "Node.class", "ExpressionParserException.class"]],
   ]
 
   for compiler_and_tester_command in compiler_and_tester_commands:
