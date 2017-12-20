@@ -249,8 +249,6 @@ class Node {
   }
 }
 
-process.stdout.write("input expression: ");
-
 var rl = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -259,19 +257,20 @@ var rl = require('readline').createInterface({
 
 if (rl) {
   // 標準入力から二分木に分解したい式を入力する
-  rl.on('line', function(line) {
-    polish_main(line);
+  rl.question("input expression: ", function(expression) {
+    polish_main(expression);
+    rl.close();
   })
 }
 
-function polish_main(stdin) {
+function polish_main(_expression) {
   // 入力された式から空白を除去する(空白を空の文字列に置き換える)
-  let expression = stdin.replace(/\s+/g, "");
+  let expression = _expression.replace(/\s+/g, "");
 
   // 二分木の根(root)ノードを作成し、式全体を格納する
   var root = new Node(expression);
 
-  console.log("expression: ", root.expression);
+  console.log("expression: " + root.expression);
 
   try {
     // 根ノードに格納した式を二分木へと分解する
