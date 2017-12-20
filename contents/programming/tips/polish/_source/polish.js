@@ -9,14 +9,6 @@ class Node {
     this.expression = expression; // このノードが表す式(二分木への分解後は演算子または項となる)
     this.left = null;  // 左の子ノード
     this.right = null; // 右の子ノード
-
-    // 演算結果の値を文字列化するためのNumberFormat
-    this.nf = new Intl.NumberFormat("en", {
-      style: "decimal",
-      minimumSignificantDigits: 1,
-      maximumSignificantDigits: 15,
-      useGrouping: false,
-    });
   }
 
   // 式expressionを二分木へと分解するメソッド
@@ -226,10 +218,10 @@ class Node {
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
     switch (this.expression[0]) {
-      case "+": this.expression = this.nf.format(leftOperand + rightOperand); break;
-      case "-": this.expression = this.nf.format(leftOperand - rightOperand); break;
-      case "*": this.expression = this.nf.format(leftOperand * rightOperand); break;
-      case "/": this.expression = this.nf.format(leftOperand / rightOperand); break;
+      case "+": this.expression = this.formatNumber(leftOperand + rightOperand); break;
+      case "-": this.expression = this.formatNumber(leftOperand - rightOperand); break;
+      case "*": this.expression = this.formatNumber(leftOperand * rightOperand); break;
+      case "/": this.expression = this.formatNumber(leftOperand / rightOperand); break;
       // 上記以外の演算子の場合は計算できないものとして、falseを返す
       default: return false;
     }
@@ -241,6 +233,19 @@ class Node {
 
     // 計算できたため、trueを返す
     return true;
+  }
+
+  // 演算結果の数値を文字列化するためのメソッド
+  formatNumber(number)
+  {
+    let nf = new Intl.NumberFormat("en", {
+      style: "decimal",
+      minimumSignificantDigits: 1,
+      maximumSignificantDigits: 15,
+      useGrouping: false,
+    });
+
+    return nf.format(number);
   }
 }
 
