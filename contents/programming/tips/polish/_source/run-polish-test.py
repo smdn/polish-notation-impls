@@ -228,6 +228,7 @@ def exec_tests(show_output):
     ["VB", ["vbnc2", "polish.vb"], ["mono", "polish.exe"], ["rm", "-f", "polish.exe"]],
     ["C", ["gcc", "polish.c", "-o", "polish"], ["./polish"], ["rm", "-f", "./polish"]],
     ["Python", None, ["python3", "polish.py"], None],
+    ["JavaScript", None, ["nodejs", "polish.js"], None],
   ]
 
   for compiler_and_tester_command in compiler_and_tester_commands:
