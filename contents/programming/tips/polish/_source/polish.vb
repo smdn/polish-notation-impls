@@ -47,12 +47,12 @@ Class Node
     End If
   End Sub
 
-  ' 文字列から最も外側にある丸括弧を取り除いて返すメソッド
-  Private Shared Function RemoveOuterMostBracket(ByVal str As String) As String
+  ' 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
+  Private Shared Function RemoveOuterMostBracket(ByVal expression As String) As String
     Dim hasOuterMostBracket As Boolean = False ' 最も外側に括弧を持つかどうか
     Dim nest As Integer = 0 ' 丸括弧の深度(括弧が正しく閉じられているかを調べるために用いる)
 
-    If str(0) = "("c Then
+    If expression(0) = "("c Then
       ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       nest = 1
       hasOuterMostBracket = True
@@ -60,41 +60,41 @@ Class Node
 
 
     ' 1文字目以降を1文字ずつ検証
-    For i As Integer = 1 To str.Length - 1
-      If str(i) = "(" Then
+    For i As Integer = 1 To expression.Length - 1
+      If expression(i) = "(" Then
         ' 開き丸括弧なので深度を1増やす
         nest += 1
-      Else If str(i) = ")" Then
+      Else If expression(i) = ")" Then
         ' 閉じ丸括弧なので深度を1減らす
         nest -= 1
 
         ' 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-        If i < str.Length - 1 AndAlso nest = 0 Then hasOuterMostBracket = False
+        If i < expression.Length - 1 AndAlso nest = 0 Then hasOuterMostBracket = False
       End If
     Next
 
     ' 括弧の深度が0以外の場合
     If nest <> 0 Then
       ' 開かれていない/閉じられていない括弧があるので、エラーとする
-      Throw New Exception("unbalanced bracket: " + str)
+      Throw New Exception("unbalanced bracket: " + expression)
     ' 最も外側に丸括弧がある場合
     Else If hasOuterMostBracket Then
-      If str.Length <= 2 Then
+      If expression.Length <= 2 Then
         ' 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        Throw New Exception("empty bracket: " + str)
+        Throw New Exception("empty bracket: " + expression)
       Else
         ' 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
         ' "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
-        Return RemoveOuterMostBracket(str.Substring(1, str.Length - 2))
+        Return RemoveOuterMostBracket(expression.Substring(1, expression.Length - 2))
       End If
     ' 最も外側に丸括弧がない場合
     Else
       ' 与えられた文字列をそのまま返す
-      Return str
+      Return expression
     End If
   End Function
 
-  ' 文字列から最も優先順位が低い演算子を探して位置を返すメソッド
+  ' 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
   ' (演算子がない場合は-1を返す)
   Private Shared Function GetOperatorPosition(ByVal expression As String) As Integer
     If String.IsNullOrEmpty(expression) Then Return -1

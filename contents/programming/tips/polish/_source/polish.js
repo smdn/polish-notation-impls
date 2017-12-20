@@ -54,30 +54,30 @@ class Node {
     }
   }
 
-  // 文字列から最も外側にある丸括弧を取り除いて返すメソッド
-  static removeOuterMostBracket(str)
+  // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
+  static removeOuterMostBracket(expression)
   {
     let hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
     let nest = 0; // 丸括弧の深度(括弧が正しく閉じられているかを調べるために用いる)
 
-    if (str[0] == "(") {
+    if (expression[0] == "(") {
       // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       nest = 1;
       hasOuterMostBracket = true;
     }
 
     // 1文字目以降を1文字ずつ検証
-    for (let i = 1; i < str.length; i++) {
-      if (str[i] == "(") {
+    for (let i = 1; i < expression.length; i++) {
+      if (expression[i] == "(") {
         // 開き丸括弧なので深度を1増やす
         nest++;
       }
-      else if (str[i] == ")") {
+      else if (expression[i] == ")") {
         // 閉じ丸括弧なので深度を1減らす
         nest--;
 
         // 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-        if (i < str.length - 1 && nest == 0)
+        if (i < expression.length - 1 && nest == 0)
           hasOuterMostBracket = false;
       }
     }
@@ -85,26 +85,26 @@ class Node {
     // 括弧の深度が0以外の場合
     if (nest != 0) {
       // 開かれていない/閉じられていない括弧があるので、エラーとする
-      throw "unbalanced bracket: " + str;
+      throw "unbalanced bracket: " + expression;
     }
     // 最も外側に丸括弧がある場合
     else if (hasOuterMostBracket) {
-      if (str.length <= 2)
+      if (expression.length <= 2)
         // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        throw "empty bracket: " + str;
+        throw "empty bracket: " + expression;
       else
         // 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
         // "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
-        return Node.removeOuterMostBracket(str.substr(1, str.length - 2));
+        return Node.removeOuterMostBracket(expression.substr(1, expression.length - 2));
     }
     // 最も外側に丸括弧がない場合
     else {
       // 与えられた文字列をそのまま返す
-      return str;
+      return expression;
     }
   }
 
-  // 文字列から最も優先順位が低い演算子を探して位置を返すメソッド
+  // 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
   // (演算子がない場合は-1を返す)
   static getOperatorPosition(expression)
   {

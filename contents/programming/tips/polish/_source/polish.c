@@ -44,7 +44,7 @@ void remove_space(char *exp)
     *dst = '\0';
 }
 
-// 文字列から最も外側にある丸括弧を取り除く関数
+// 式expから最も外側にある丸括弧を取り除く関数
 // (成功した場合は0、エラーの場合は-1を返す)
 int remove_outer_most_bracket(char *exp)
 {
@@ -107,7 +107,7 @@ int remove_outer_most_bracket(char *exp)
     }
 }
 
-// 文字列から最も優先順位が低い演算子を探して位置を返す関数
+// 式expから最も優先順位が低い演算子を探して位置を返す関数
 // (演算子がない場合は-1を返す)
 size_t get_pos_operator(char *exp)
 {

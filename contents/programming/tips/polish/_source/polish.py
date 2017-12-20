@@ -42,52 +42,52 @@ class Node:
       # 残った演算子部分をこのノードに設定する
       self.expression = self.expression[pos_operator]
 
-  # 文字列から最も外側にある丸括弧を取り除いて返すメソッド
+  # 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
   @staticmethod
-  def __remove_outer_most_bracket(str):
+  def __remove_outer_most_bracket(expression):
     has_outer_most_bracket = False # 最も外側に括弧を持つかどうか
     nest = 0 # 丸括弧の深度(括弧が正しく閉じられているかを調べるために用いる)
 
-    if str[0] == "(":
+    if expression[0] == "(":
       # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       nest = 1
       has_outer_most_bracket = True
 
     # 1文字目以降を1文字ずつ検証
-    for i in range(1, len(str)):
-      if str[i] == "(":
+    for i in range(1, len(expression)):
+      if expression[i] == "(":
         # 開き丸括弧なので深度を1増やす
         nest += 1
 
-      elif str[i] == ")":
+      elif expression[i] == ")":
         # 閉じ丸括弧なので深度を1減らす
         nest -= 1
 
         # 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-        if i < len(str) - 1 and nest == 0:
+        if i < len(expression) - 1 and nest == 0:
           has_outer_most_bracket = False
 
     # 括弧の深度が0以外の場合
     if nest != 0:
       # 開かれていない/閉じられていない括弧があるので、エラーとする
-      raise Exception("unbalanced bracket: {}".format(str))
+      raise Exception("unbalanced bracket: {}".format(expression))
 
     # 最も外側に丸括弧がある場合
     elif has_outer_most_bracket:
-      if len(str) <= 2:
+      if len(expression) <= 2:
         # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        raise Exception("empty bracket: {}".format(str))
+        raise Exception("empty bracket: {}".format(expression))
       else:
         # 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
         # "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
-        return Node.__remove_outer_most_bracket(str[1:len(str) - 1])
+        return Node.__remove_outer_most_bracket(expression[1:len(expression) - 1])
 
     # 最も外側に丸括弧がない場合
     else:
       # 与えられた文字列をそのまま返す
-      return str
+      return expression
 
-  # 文字列から最も優先順位が低い演算子を探して位置を返すメソッド
+  # 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
   # (演算子がない場合は-1を返す)
   @staticmethod
   def __get_operator_position(expression):
