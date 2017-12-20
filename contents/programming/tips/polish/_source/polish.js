@@ -252,15 +252,17 @@ class Node {
 var rl = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout,
-  terminal: false
+  terminal: false,
 });
 
 if (rl) {
+  process.stdout.write("input expression: ");
+
   // 標準入力から二分木に分解したい式を入力する
-  rl.question("input expression: ", function(expression) {
+  rl.on("line", function(expression) {
     polish_main(expression);
     rl.close();
-  })
+  });
 }
 
 function polish_main(_expression) {
