@@ -106,7 +106,7 @@ class Node {
     if (string.IsNullOrEmpty(expression))
       return -1;
 
-    var posOperator = -1;　// 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
+    var posOperator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     var currentPriority = 4; // 現在見つかっている演算子の優先順位(初期値として4=最高(3)+1を設定)
     var nest = 0;　// 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
