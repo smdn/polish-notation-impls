@@ -25,7 +25,7 @@ Class Node
 
     If posOperator = 0 OrElse posOperator = Expression.Length - 1 Then
       ' 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      Throw New Exception(String.Format("invalid expression: {0}", Expression))
+      Throw New Exception("invalid expression: " + Expression)
     Else If posOperator < 0 Then
       ' 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
       ' (左右に子ノードを持たないノードとする)
@@ -76,12 +76,12 @@ Class Node
     ' 括弧の深度が0以外の場合
     If nest <> 0 Then
       ' 開かれていない/閉じられていない括弧があるので、エラーとする
-      Throw New Exception(String.Format("unbalanced bracket: {0}", str))
+      Throw New Exception("unbalanced bracket: " + str)
     ' 最も外側に丸括弧がある場合
     Else If hasOuterMostBracket Then
       If str.Length <= 2 Then
         ' 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        Throw New Exception(string.Format("empty bracket: {0}", str))
+        Throw New Exception("empty bracket: " + str)
       Else
         ' 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
         ' "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す

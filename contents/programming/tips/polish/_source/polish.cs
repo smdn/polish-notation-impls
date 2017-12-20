@@ -25,7 +25,7 @@ class Node {
 
     if (posOperator == 0 || posOperator == Expression.Length - 1) {
       // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      throw new Exception(string.Format("invalid expression: {0}", Expression));
+      throw new Exception("invalid expression: " + Expression);
     }
     else if (posOperator < 0) {
       // 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
@@ -80,13 +80,13 @@ class Node {
     // 括弧の深度が0以外の場合
     if (nest != 0) {
       // 開かれていない/閉じられていない括弧があるので、エラーとする
-      throw new Exception(string.Format("unbalanced bracket: {0}", str));
+      throw new Exception("unbalanced bracket: " + str);
     }
     // 最も外側に丸括弧がある場合
     else if (hasOuterMostBracket) {
       if (str.Length <= 2)
         // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        throw new Exception(string.Format("empty bracket: {0}", str));
+        throw new Exception("empty bracket: " + str);
       else
         // 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
         // "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
