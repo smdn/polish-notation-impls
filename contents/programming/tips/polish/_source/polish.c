@@ -1,4 +1,4 @@
-// gcc polish.c -o polish
+// gcc polish.c -o polish && ./polish
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,22 +26,6 @@ Node* create_node()
         return NULL;
     else
         return &nodes[nb_node_used++];
-}
-
-// 文字列から空白を取り除く関数
-void remove_space(char *exp)
-{
-    char *dst = exp;
-    char *src = exp;
-
-    while (*src) {
-        if (*src == ' ')
-            src++;
-        else
-            *(dst++) = *(src++);
-    }
-
-    *dst = '\0';
 }
 
 // 式expから最も外側にある丸括弧を取り除く関数
@@ -310,6 +294,22 @@ int calculate(Node* node)
 
     // 計算できたため、0(成功)を返す
     return 0;
+}
+
+// 文字列から空白を取り除く関数
+void remove_space(char *exp)
+{
+    char *dst = exp;
+    char *src = exp;
+
+    while (*src) {
+        if (*src == ' ')
+            src++;
+        else
+            *(dst++) = *(src++);
+    }
+
+    *dst = '\0';
 }
 
 int main()
