@@ -140,54 +140,54 @@ class Node {
 
   // 後行順序訪問(帰りがけ順)で二分木を巡回して
   // すべてのノードの演算子または項を表示するメソッド
-  traversePostorder()
+  traversePostorder(stdout)
   {
     // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
     if (this.left)
-      this.left.traversePostorder();
+      this.left.traversePostorder(stdout);
     if (this.right)
-      this.right.traversePostorder();
+      this.right.traversePostorder(stdout);
 
     // 巡回を終えた後でノードの演算子または項を表示する
-    process.stdout.write(this.expression);
+    stdout.write(this.expression);
   }
 
   // 中間順序訪問(通りがけ順)で二分木を巡回して
   // すべてのノードの演算子または項を表示するメソッド
-  traverseInorder()
+  traverseInorder(stdout)
   {
     // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
     if (this.left && this.right)
-      process.stdout.write("(");
+      stdout.write("(");
 
     // 表示する前に左の子ノードを再帰的に巡回する
     if (this.left)
-      this.left.traverseInorder();
+      this.left.traverseInorder(stdout);
 
     // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-    process.stdout.write(this.expression);
+    stdout.write(this.expression);
 
     // 表示した後に右の子ノードを再帰的に巡回する
     if (this.right)
-      this.right.traverseInorder();
+      this.right.traverseInorder(stdout);
 
     // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
     if (this.left && this.right)
-      process.stdout.write(")");
+      stdout.write(")");
   }
 
   // 先行順序訪問(行きがけ順)で二分木を巡回して
   // すべてのノードの演算子または項を表示するメソッド
-  traversePreorder()
+  traversePreorder(stdout)
   {
     // 巡回を始める前にノードの演算子または項を表示する
-    process.stdout.write(this.expression);
+    stdout.write(this.expression);
 
     // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if (this.left)
-      this.left.traversePreorder();
+      this.left.traversePreorder(stdout);
     if (this.right)
-      this.right.traversePreorder();
+      this.right.traversePreorder(stdout);
   }
 
   // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
@@ -249,20 +249,22 @@ class Node {
   }
 }
 
-var rl = require('readline').createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false,
-});
-
-if (rl) {
-  process.stdout.write("input expression: ");
-
-  // 標準入力から二分木に分解したい式を入力する
-  rl.on("line", function(expression) {
-    polish_main(expression);
-    rl.close();
+if (typeof require == "function") {
+  var rl = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
   });
+
+  if (rl) {
+    process.stdout.write("input expression: ");
+
+    // 標準入力から二分木に分解したい式を入力する
+    rl.on("line", function(expression) {
+      polish_main(expression);
+      rl.close();
+    });
+  }
 }
 
 function polish_main(_expression) {
@@ -285,17 +287,17 @@ function polish_main(_expression) {
 
   // 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
   process.stdout.write("reverse polish notation: ");
-  root.traversePostorder();
+  root.traversePostorder(process.stdout);
   process.stdout.write("\n");
 
   // 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
   process.stdout.write("infix notation: ");
-  root.traverseInorder();
+  root.traverseInorder(process.stdout);
   process.stdout.write("\n");
 
   // 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
   process.stdout.write("polish notation: ");
-  root.traversePreorder();
+  root.traversePreorder(process.stdout);
   process.stdout.write("\n");
 
   // 分解した二分木から式全体の値を計算する
