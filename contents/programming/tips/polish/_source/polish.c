@@ -218,13 +218,13 @@ int parse_expression(Node* node)
 
 // 後行順序訪問(帰りがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_tree_postorder(Node* node)
+void traverse_postorder(Node* node)
 {
     // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
     if (node->left)
-        traverse_tree_postorder(node->left);
+        traverse_postorder(node->left);
     if (node->right)
-        traverse_tree_postorder(node->right);
+        traverse_postorder(node->right);
 
     // 巡回を終えた後でノードの演算子または項を表示する
     printf("%s", node->exp);
@@ -232,7 +232,7 @@ void traverse_tree_postorder(Node* node)
 
 // 中間順序訪問(通りがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_tree_inorder(Node* node)
+void traverse_inorder(Node* node)
 {
     // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
     if (node->left && node->right)
@@ -240,14 +240,14 @@ void traverse_tree_inorder(Node* node)
 
     // 表示する前に左の子ノードを再帰的に巡回する
     if (node->left)
-        traverse_tree_inorder(node->left);
+        traverse_inorder(node->left);
 
     // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
     printf("%s", node->exp);
 
     // 表示した後に右の子ノードを再帰的に巡回する
     if (node->right)
-        traverse_tree_inorder(node->right);
+        traverse_inorder(node->right);
 
     // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
     if (node->left && node->right)
@@ -256,16 +256,16 @@ void traverse_tree_inorder(Node* node)
 
   // 先行順序訪問(行きがけ順)で二分木を巡回して
   // すべてのノードの演算子または項を表示する関数
-void traverse_tree_preorder(Node* node)
+void traverse_preorder(Node* node)
 {
     // 巡回を始める前にノードの演算子または項を表示する
     printf("%s", node->exp);
 
     // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if (node->left)
-        traverse_tree_preorder(node->left);
+        traverse_preorder(node->left);
     if (node->right)
-        traverse_tree_preorder(node->right);
+        traverse_preorder(node->right);
 }
 
 // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
@@ -332,24 +332,24 @@ int main()
 
     // 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
     printf("reverse polish notation: ");
-    traverse_tree_postorder(root);
+    traverse_postorder(root);
     printf("\n");
 
     // 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
     printf("infix notation: ");
-    traverse_tree_inorder(root);
+    traverse_inorder(root);
     printf("\n");
 
     // 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
     printf("polish notation: ");
-    traverse_tree_preorder(root);
+    traverse_preorder(root);
     printf("\n");
 
     // 分解した二分木から式全体の値を計算する
     if (calculate(root) < 0) {
         // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
         printf("calculated expression: ");
-        traverse_tree_inorder(root);
+        traverse_inorder(root);
         printf("\n");
     }
     else {
