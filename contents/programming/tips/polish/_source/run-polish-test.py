@@ -61,6 +61,9 @@ def exec_tests_with(processor, show_output):
     ["1 + 2",             "3"],
     [" 1 + 2 ",           "3"],
     [" ( 1 + 2) ",        "3"],
+
+    # implicit multiplication
+    ["2(1+2)",            "2(1+2)"],
   ]
 
   unbalanced_bracket_expressions = [
@@ -115,12 +118,17 @@ def exec_tests_with(processor, show_output):
     ["x = 1 + a", "(x=(1+a))"],
     ["x = 1 = 2", "(x=(1=2))"],
     ["(x = 1) = 2", "((x=1)=2)"],
+
+    # implicit multiplication
+    ["6/2(1+2)", "(6/2(1+2))"],
+    ["(2*3)/2(1+2)", "(6/2(1+2))"],
   ]
 
   invalid_expressions = [
     "+",
     "+1",
     "1+",
+    "-(1+1)",
     "1++2",
     "1+(2+)",
     "1+(+2)",
