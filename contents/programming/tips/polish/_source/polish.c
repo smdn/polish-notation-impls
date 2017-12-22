@@ -126,8 +126,8 @@ size_t get_pos_operator(char *exp)
         }
 
         // 括弧の深度が0(丸括弧でくくられていない部分)かつ、
-        // 現在見つかっている演算子よりも優先順位が低い場合
-        if (0 == nest && priority < priority_current) {
+        // 現在見つかっている演算子よりも優先順位が同じか低い場合
+        if (0 == nest && priority <= priority_current) {
           // 最も優先順位が低い演算子とみなし、その位置を保存する
           priority_current = priority;
           pos_operator = i;

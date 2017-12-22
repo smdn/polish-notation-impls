@@ -125,8 +125,8 @@ Class Node
       End Select
 
       ' 括弧の深度が0(丸括弧でくくられていない部分)かつ、
-      ' 現在見つかっている演算子よりも優先順位が低い場合
-      If nest = 0 AndAlso priority < currentPriority Then
+      ' 現在見つかっている演算子よりも優先順位が同じか低い場合
+      If nest = 0 AndAlso priority <= currentPriority Then
         ' 最も優先順位が低い演算子とみなし、その位置を保存する
         currentPriority = priority
         posOperator = i
