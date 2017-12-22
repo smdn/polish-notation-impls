@@ -236,7 +236,6 @@ class Node {
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
     switch (expression.charAt(0)) {
-      //case '+': expression = String.format("%1$s", leftOperand + rightOperand); break;
       case '+': expression = formatNumber(leftOperand + rightOperand); break;
       case '-': expression = formatNumber(leftOperand - rightOperand); break;
       case '*': expression = formatNumber(leftOperand * rightOperand); break;

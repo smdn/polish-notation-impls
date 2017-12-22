@@ -254,7 +254,7 @@ class Node {
 }
 
 if (typeof require == "function") {
-  var rl = require('readline').createInterface({
+  let rl = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout,
     terminal: false,
@@ -276,13 +276,13 @@ function polish_main(_expression) {
   let expression = _expression.replace(/\s+/g, "");
 
   // 二分木の根(root)ノードを作成し、式全体を格納する
-  var root = new Node(expression);
+  let root = new Node(expression);
 
   console.log("expression: " + root.expression);
 
   try {
     // 根ノードに格納した式を二分木へと分割する
-    root.parse()
+    root.parse();
   }
   catch (e) {
     console.error(e);

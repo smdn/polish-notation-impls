@@ -64,10 +64,10 @@ Class Node
 
     ' 1文字目以降を1文字ずつ検証
     For i As Integer = 1 To expression.Length - 1
-      If expression(i) = "(" Then
+      If expression(i) = "("c Then
         ' 開き丸括弧なので深度を1増やす
         nest += 1
-      Else If expression(i) = ")" Then
+      Else If expression(i) = ")"c Then
         ' 閉じ丸括弧なので深度を1減らす
         nest -= 1
 

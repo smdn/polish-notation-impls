@@ -56,7 +56,6 @@ class Node:
       # 0文字目が閉じ丸括弧の場合、エラーとする
       raise Exception("unbalanced bracket: {}".format(expression))
 
-
     # 1文字目以降を1文字ずつ検証
     for i in range(1, len(expression)):
       if expression[i] == "(":
@@ -100,11 +99,11 @@ class Node:
 
     pos_operator = -1 # 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     current_priority = 4 # 現在見つかっている演算子の優先順位(初期値として4=最高(3)+1を設定)
-    nest = 0; # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
+    nest = 0 # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     # 与えられた文字列を先頭から1文字ずつ検証する
     for i in range(len(expression)):
-      priority = 0; # 演算子の優先順位(値が低いほど優先順位が低いものとする)
+      priority = 0 # 演算子の優先順位(値が低いほど優先順位が低いものとする)
 
       # 文字が演算子かどうか検証し、演算子の場合は演算子の優先順位を設定する
       if expression[i] == "=":
@@ -231,13 +230,12 @@ class Node:
     # 計算できたため、Trueを返す
     return True
 
-
 def main():
   # 標準入力から二分木に分割したい式を入力する
-  expression = input("input expression: ");
+  expression = input("input expression: ")
 
   # 入力された式から空白を除去する(空白を空の文字列に置き換える)
-  expression = expression.replace(" ", "");
+  expression = expression.replace(" ", "")
 
   # 二分木の根(root)ノードを作成し、式全体を格納する
   root = Node(expression)
@@ -276,6 +274,6 @@ def main():
     root.traverse_inorder()
     print()
 
-
-main()
+if __name__ == "__main__":
+  main()
 
