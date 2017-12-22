@@ -52,6 +52,10 @@ class Node:
       # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       nest = 1
       has_outer_most_bracket = True
+    elif expression[0] == ")":
+      # 0文字目が閉じ丸括弧の場合、エラーとする
+      raise Exception("unbalanced bracket: {}".format(expression))
+
 
     # 1文字目以降を1文字ずつ検証
     for i in range(1, len(expression)):

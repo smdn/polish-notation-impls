@@ -56,6 +56,9 @@ Class Node
       ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       nest = 1
       hasOuterMostBracket = True
+    Else If expression(0) = ")"c Then
+      ' 0文字目が閉じ丸括弧の場合、エラーとする
+      Throw New Exception("unbalanced bracket: " + expression)
     End If
 
 

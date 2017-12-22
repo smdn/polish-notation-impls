@@ -57,6 +57,10 @@ class Node {
       nest = 1;
       hasOuterMostBracket = true;
     }
+    else if (expression[0] == ")") {
+      // 0文字目が閉じ丸括弧の場合、エラーとする
+      throw "unbalanced bracket: " + expression;
+    }
 
     // 1文字目以降を1文字ずつ検証
     for (let i = 1; i < expression.length; i++) {

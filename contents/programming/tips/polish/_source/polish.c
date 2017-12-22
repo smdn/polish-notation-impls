@@ -42,6 +42,11 @@ int remove_outer_most_bracket(char *exp)
         nest = 1;
         has_outer_most_bracket = 1;
     }
+    else if (')' == exp[0]) {
+        // 0文字目が閉じ丸括弧の場合、エラーとする
+        fprintf(stderr, "unbalanced bracket: %s\n", exp);
+        return -1;
+    }
 
     // 1文字目以降を1文字ずつ検証
     for (i = 1; i < len; i++) {

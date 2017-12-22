@@ -65,8 +65,14 @@ def exec_tests_with(processor, show_output):
 
   unbalanced_bracket_expressions = [
     # unbalanced brackets
+    "(",
+    ")",
+    ")(",
+    ")1(",
     "(1",
+    ")1",
     "1)",
+    "1(",
     "(1+2",
     "1+2)",
     "((1+2)",
@@ -75,6 +81,9 @@ def exec_tests_with(processor, show_output):
     "1+((2+3)",
     "((1)+(2)",
     "(1)+(2))",
+    ")1+2",
+    "1+2(",
+    ")1+2(",
 
     # empty brackets
     "()",
