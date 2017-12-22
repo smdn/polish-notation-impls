@@ -4,7 +4,7 @@ using System;
 
 // ノードを構成するデータ構造
 class Node {
-  public string Expression; // このノードが表す式(二分木への分解後は演算子または項となる)
+  public string Expression; // このノードが表す式(二分木への分割後は演算子または項となる)
   public Node Left = null;  // 左の子ノード
   public Node Right = null; // 右の子ノード
 
@@ -14,7 +14,7 @@ class Node {
     Expression = expression;
   }
 
-  // 式Expressionを二分木へと分解するメソッド
+  // 式Expressionを二分木へと分割するメソッド
   public void Parse()
   {
     // 式Expressionから最も外側にある丸括弧を取り除く
@@ -36,12 +36,12 @@ class Node {
     else {
       // 演算子の左側を左の部分式としてノードを作成
       Left = new Node(Expression.Substring(0, posOperator));
-      // 左側のノード(部分式)について、再帰的に二分木へと分解する
+      // 左側のノード(部分式)について、再帰的に二分木へと分割する
       Left.Parse();
 
       // 演算子の右側を右の部分式としてノードを作成
       Right = new Node(Expression.Substring(posOperator + 1));
-      // 右側のノード(部分式)について、再帰的に二分木へと分解する
+      // 右側のノード(部分式)について、再帰的に二分木へと分割する
       Right.Parse();
 
       // 残った演算子部分をこのノードに設定する
@@ -252,7 +252,7 @@ class Polish {
   {
     Console.Write("input expression: ");
 
-    // 標準入力から二分木に分解したい式を入力する
+    // 標準入力から二分木に分割したい式を入力する
     var expression = Console.ReadLine();
 
     // 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -264,7 +264,7 @@ class Polish {
     Console.WriteLine("expression: {0}", root.Expression);
 
     try {
-      // 根ノードに格納した式を二分木へと分解する
+      // 根ノードに格納した式を二分木へと分割する
       root.Parse();
     }
     catch (Exception ex) {
@@ -272,22 +272,22 @@ class Polish {
       return;
     }
 
-    // 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+    // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
     Console.Write("reverse polish notation: ");
     root.TraversePostorder();
     Console.WriteLine();
 
-    // 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+    // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
     Console.Write("infix notation: ");
     root.TraverseInorder();
     Console.WriteLine();
 
-    // 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+    // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
     Console.Write("polish notation: ");
     root.TraversePreorder();
     Console.WriteLine();
 
-    // 分解した二分木から式全体の値を計算する
+    // 分割した二分木から式全体の値を計算する
     if (root.Calculate()) {
       // 計算できた場合はその値を表示する
       Console.WriteLine("calculated result: {0}", root.Expression);

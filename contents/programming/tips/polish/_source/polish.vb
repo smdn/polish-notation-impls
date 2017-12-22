@@ -6,7 +6,7 @@ Imports System
 
 ' ノードを構成するデータ構造
 Class Node
-  Public Expression As String ' このノードが表す式(二分木への分解後は演算子または項となる)
+  Public Expression As String ' このノードが表す式(二分木への分割後は演算子または項となる)
   Public Left As Node = Nothing  ' 左の子ノード
   Public Right As Node = Nothing ' 右の子ノード
 
@@ -15,7 +15,7 @@ Class Node
     Me.Expression = expression
   End Sub
 
-  ' 式Expressionを二分木へと分解するメソッド
+  ' 式Expressionを二分木へと分割するメソッド
   Public Sub Parse()
     ' 式Expressionから最も外側にある丸括弧を取り除く
     Expression = RemoveOuterMostBracket(Expression)
@@ -34,12 +34,12 @@ Class Node
     Else
       ' 演算子の左側を左の部分式としてノードを作成
       Left = New Node(Expression.Substring(0, posOperator))
-      ' 左側のノード(部分式)について、再帰的に二分木へと分解する
+      ' 左側のノード(部分式)について、再帰的に二分木へと分割する
       Left.Parse()
 
       ' 演算子の右側を右の部分式としてノードを作成
       Right = New Node(Expression.Substring(posOperator + 1))
-      ' 右側のノード(部分式)について、再帰的に二分木へと分解する
+      ' 右側のノード(部分式)について、再帰的に二分木へと分割する
       Right.Parse()
 
       ' 残った演算子部分をこのノードに設定する
@@ -228,7 +228,7 @@ Class Polish
   Public Shared Sub Main()
     Console.Write("input expression: ")
 
-    ' 標準入力から二分木に分解したい式を入力する
+    ' 標準入力から二分木に分割したい式を入力する
     Dim expression As String = Console.ReadLine()
 
     ' 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -240,29 +240,29 @@ Class Polish
     Console.WriteLine("expression: {0}", root.Expression)
 
     Try
-      ' 根ノードに格納した式を二分木へと分解する
+      ' 根ノードに格納した式を二分木へと分割する
       root.Parse()
     Catch ex As Exception
       Console.Error.WriteLine(ex.Message)
       Return
     End Try
 
-    ' 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+    ' 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
     Console.Write("reverse polish notation: ")
     root.TraversePostorder()
     Console.WriteLine()
 
-    ' 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+    ' 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
     Console.Write("infix notation: ")
     root.TraverseInorder()
     Console.WriteLine()
 
-    ' 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+    ' 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
     Console.Write("polish notation: ")
     root.TraversePreorder()
     Console.WriteLine()
 
-    ' 分解した二分木から式全体の値を計算する
+    ' 分割した二分木から式全体の値を計算する
     If root.Calculate() Then
       ' 計算できた場合はその値を表示する
       Console.WriteLine("calculated result: {0}", root.Expression)

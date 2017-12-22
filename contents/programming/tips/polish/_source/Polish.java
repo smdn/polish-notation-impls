@@ -11,7 +11,7 @@ class ExpressionParserException extends Exception {
 
 // ノードを構成するデータ構造
 class Node {
-  public String expression; // このノードが表す式(二分木への分解後は演算子または項となる)
+  public String expression; // このノードが表す式(二分木への分割後は演算子または項となる)
   public Node left = null;  // 左の子ノード
   public Node right = null; // 右の子ノード
 
@@ -21,7 +21,7 @@ class Node {
     this.expression = expression;
   }
 
-  // 式expressionを二分木へと分解するメソッド
+  // 式expressionを二分木へと分割するメソッド
   public void parse() throws ExpressionParserException
   {
     // 式expressionから最も外側にある丸括弧を取り除く
@@ -43,12 +43,12 @@ class Node {
     else {
       // 演算子の左側を左の部分式としてノードを作成
       left = new Node(expression.substring(0, posOperator));
-      // 左側のノード(部分式)について、再帰的に二分木へと分解する
+      // 左側のノード(部分式)について、再帰的に二分木へと分割する
       left.parse();
 
       // 演算子の右側を右の部分式としてノードを作成
       right = new Node(expression.substring(posOperator + 1));
-      // 右側のノード(部分式)について、再帰的に二分木へと分解する
+      // 右側のノード(部分式)について、再帰的に二分木へと分割する
       right.parse();
 
       // 残った演算子部分をこのノードに設定する
@@ -267,7 +267,7 @@ public class Polish {
 
     System.out.print("input expression: ");
 
-    // 標準入力から二分木に分解したい式を入力する
+    // 標準入力から二分木に分割したい式を入力する
     String expression = r.readLine();
 
     // 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -279,7 +279,7 @@ public class Polish {
     System.out.println("expression: " + root.expression);
 
     try {
-      // 根ノードに格納した式を二分木へと分解する
+      // 根ノードに格納した式を二分木へと分割する
       root.parse();
     }
     catch (ExpressionParserException ex) {
@@ -287,22 +287,22 @@ public class Polish {
       return;
     }
 
-    // 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+    // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
     System.out.print("reverse polish notation: ");
     root.traversePostorder();
     System.out.println();
 
-    // 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+    // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
     System.out.print("infix notation: ");
     root.traverseInorder();
     System.out.println();
 
-    // 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+    // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
     System.out.print("polish notation: ");
     root.traversePreorder();
     System.out.println();
 
-    // 分解した二分木から式全体の値を計算する
+    // 分割した二分木から式全体の値を計算する
     if (root.calculate()) {
       // 計算できた場合はその値を表示する
       System.out.println("calculated result: " + root.expression);

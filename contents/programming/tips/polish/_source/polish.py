@@ -6,11 +6,11 @@ import sys
 class Node:
   # コンストラクタ(与えられた式expressionを持つノードを構成する)
   def __init__(self, expression):
-    self.expression = expression # このノードが表す式(二分木への分解後は演算子または項となる)
+    self.expression = expression # このノードが表す式(二分木への分割後は演算子または項となる)
     self.left = None  # 左の子ノード
     self.right = None # 右の子ノード
 
-  # 式expressionを二分木へと分解するメソッド
+  # 式expressionを二分木へと分割するメソッド
   def parse(self):
     # 式expressionから最も外側にある丸括弧を取り除く
     self.expression = Node.__remove_outer_most_bracket(self.expression)
@@ -31,12 +31,12 @@ class Node:
     else:
       # 演算子の左側を左の部分式としてノードを作成
       self.left = Node(self.expression[0:pos_operator])
-      # 左側のノード(部分式)について、再帰的に二分木へと分解する
+      # 左側のノード(部分式)について、再帰的に二分木へと分割する
       self.left.parse()
 
       # 演算子の右側を右の部分式としてノードを作成
       self.right = Node(self.expression[pos_operator + 1:])
-      # 右側のノード(部分式)について、再帰的に二分木へと分解する
+      # 右側のノード(部分式)について、再帰的に二分木へと分割する
       self.right.parse()
 
       # 残った演算子部分をこのノードに設定する
@@ -233,7 +233,7 @@ class Node:
 
 
 def main():
-  # 標準入力から二分木に分解したい式を入力する
+  # 標準入力から二分木に分割したい式を入力する
   expression = input("input expression: ");
 
   # 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -245,28 +245,28 @@ def main():
   print("expression: {}".format(root.expression))
 
   try:
-    # 根ノードに格納した式を二分木へと分解する
+    # 根ノードに格納した式を二分木へと分割する
     root.parse()
   except Exception as err:
     print(err, file = sys.stderr)
     return
 
-  # 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+  # 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
   print("reverse polish notation: ", end = "")
   root.traverse_postorder()
   print()
 
-  # 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+  # 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
   print("infix notation: ", end = "")
   root.traverse_inorder()
   print()
 
-  # 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+  # 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
   print("polish notation: ", end = "")
   root.traverse_preorder()
   print()
 
-  # 分解した二分木から式全体の値を計算する
+  # 分割した二分木から式全体の値を計算する
   if root.calculate():
     # 計算できた場合はその値を表示する
     print("calculated result: {}".format(root.expression))

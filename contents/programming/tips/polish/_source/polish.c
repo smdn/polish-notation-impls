@@ -10,7 +10,7 @@ typedef struct Node Node;
 
 // ノードを構成するデータ構造
 struct Node {
-    char exp[MAX_EXP_LEN]; // このノードが表す式(二分木への分解後は演算子または項となる)
+    char exp[MAX_EXP_LEN]; // このノードが表す式(二分木への分割後は演算子または項となる)
     Node* left;  // 左の子ノードへのポインタ
     Node* right; // 右の子ノードへのポインタ
 };
@@ -138,7 +138,7 @@ size_t get_pos_operator(char *exp)
     return pos_operator;
 }
 
-// 与えられたノードnodeの式expを二分木へと分解する関数
+// 与えられたノードnodeの式expを二分木へと分割する関数
 // (成功した場合は0、エラーの場合は-1を返す)
 int parse_expression(Node* node)
 {
@@ -185,7 +185,7 @@ int parse_expression(Node* node)
         memset(node->left->exp, 0, MAX_EXP_LEN);
         strncpy(node->left->exp, node->exp, pos_operator);
 
-        // 左側のノード(部分式)について、再帰的に二分木へと分解する
+        // 左側のノード(部分式)について、再帰的に二分木へと分割する
         if (parse_expression(node->left) < 0)
             return -1;
 
@@ -193,7 +193,7 @@ int parse_expression(Node* node)
         memset(node->right->exp, 0, MAX_EXP_LEN);
         strncpy(node->right->exp, node->exp + pos_operator + 1, len_exp - pos_operator);
 
-        // 右側のノード(部分式)について、再帰的に二分木へと分解する
+        // 右側のノード(部分式)について、再帰的に二分木へと分割する
         if (parse_expression(node->right) < 0)
             return -1;
 
@@ -322,7 +322,7 @@ int main()
     // 二分木の根(root)ノードを作成する
     Node* root = create_node();
 
-    // 標準入力から二分木に分解したい式を入力して、式全体をroot->expに格納する
+    // 標準入力から二分木に分割したい式を入力して、式全体をroot->expに格納する
     printf("input expression: ");
     scanf("%[^\n]", root->exp);
 
@@ -331,26 +331,26 @@ int main()
 
     printf("expression: %s\n", root->exp);
 
-    // 根ノードに格納した式を二分木へと分解する
+    // 根ノードに格納した式を二分木へと分割する
     if (parse_expression(root) < 0)
         return -1;
 
-    // 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+    // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
     printf("reverse polish notation: ");
     traverse_postorder(root);
     printf("\n");
 
-    // 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+    // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
     printf("infix notation: ");
     traverse_inorder(root);
     printf("\n");
 
-    // 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+    // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
     printf("polish notation: ");
     traverse_preorder(root);
     printf("\n");
 
-    // 分解した二分木から式全体の値を計算する
+    // 分割した二分木から式全体の値を計算する
     if (calculate(root) < 0) {
         // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
         printf("calculated expression: ");

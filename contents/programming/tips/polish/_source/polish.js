@@ -6,12 +6,12 @@ class Node {
   // コンストラクタ(与えられた式expressionを持つノードを構成する)
   constructor(expression)
   {
-    this.expression = expression; // このノードが表す式(二分木への分解後は演算子または項となる)
+    this.expression = expression; // このノードが表す式(二分木への分割後は演算子または項となる)
     this.left = null;  // 左の子ノード
     this.right = null; // 右の子ノード
   }
 
-  // 式expressionを二分木へと分解するメソッド
+  // 式expressionを二分木へと分割するメソッド
   parse()
   {
     // 式expressionから最も外側にある丸括弧を取り除く
@@ -33,12 +33,12 @@ class Node {
     else {
       // 演算子の左側を左の部分式としてノードを作成
       this.left = new Node(this.expression.substr(0, posOperator));
-      // 左側のノード(部分式)について、再帰的に二分木へと分解する
+      // 左側のノード(部分式)について、再帰的に二分木へと分割する
       this.left.parse();
 
       // 演算子の右側を右の部分式としてノードを作成
       this.right = new Node(this.expression.substr(posOperator + 1));
-      // 右側のノード(部分式)について、再帰的に二分木へと分解する
+      // 右側のノード(部分式)について、再帰的に二分木へと分割する
       this.right.parse();
 
       // 残った演算子部分をこのノードに設定する
@@ -263,7 +263,7 @@ if (typeof require == "function") {
   if (rl) {
     process.stdout.write("input expression: ");
 
-    // 標準入力から二分木に分解したい式を入力する
+    // 標準入力から二分木に分割したい式を入力する
     rl.on("line", function(expression) {
       polish_main(expression);
       rl.close();
@@ -281,7 +281,7 @@ function polish_main(_expression) {
   console.log("expression: " + root.expression);
 
   try {
-    // 根ノードに格納した式を二分木へと分解する
+    // 根ノードに格納した式を二分木へと分割する
     root.parse()
   }
   catch (e) {
@@ -289,22 +289,22 @@ function polish_main(_expression) {
     return;
   }
 
-  // 分解した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+  // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
   process.stdout.write("reverse polish notation: ");
   root.traversePostorder(process.stdout);
   process.stdout.write("\n");
 
-  // 分解した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+  // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
   process.stdout.write("infix notation: ");
   root.traverseInorder(process.stdout);
   process.stdout.write("\n");
 
-  // 分解した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+  // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
   process.stdout.write("polish notation: ");
   root.traversePreorder(process.stdout);
   process.stdout.write("\n");
 
-  // 分解した二分木から式全体の値を計算する
+  // 分割した二分木から式全体の値を計算する
   if (root.calculate()) {
     // 計算できた場合はその値を表示する
     console.log("calculated result: " + root.expression);
