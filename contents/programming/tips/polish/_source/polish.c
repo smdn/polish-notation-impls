@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 typedef struct Node Node;
 
@@ -102,7 +103,7 @@ size_t get_pos_operator(char *exp)
 {
     size_t i;
     size_t pos_operator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
-    int priority_current = 4; // 現在見つかっている演算子の優先順位(初期値として4=最高(3)+1を設定)
+    int priority_current = INT_MAX; // 現在見つかっている演算子の優先順位(初期値としてINT_MAXを設定)
     int nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
     int priority;
 

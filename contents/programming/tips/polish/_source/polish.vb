@@ -103,7 +103,7 @@ Class Node
     If String.IsNullOrEmpty(expression) Then Return -1
 
     Dim posOperator As Integer = -1 ' 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
-    Dim currentPriority As Integer = 4 ' 現在見つかっている演算子の優先順位(初期値として4=最高(3)+1を設定)
+    Dim currentPriority As Integer = Integer.MaxValue ' 現在見つかっている演算子の優先順位(初期値としてInteger.MaxValueを設定)
     Dim nest As Integer = 0　' 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     ' 与えられた文字列を先頭から1文字ずつ検証する
