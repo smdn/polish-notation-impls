@@ -17,6 +17,15 @@ def exec_command(command, _stdin):
   return [ret[0].decode('utf-8').rstrip(), ret[1].decode('utf-8').rstrip(), p.returncode]
 
 def exec_tests_with(processor, show_output):
+  notations = [
+    # input, preorder notation, postorder notation, inorder notation
+    ["1+2",      "+ 1 2 ",       "1 2 + ",       "(1 + 2)"],
+    ["(1+2)",    "+ 1 2 ",       "1 2 + ",       "(1 + 2)"],
+    ["1+2+3",    "+ + 1 2 3 ",   "1 2 + 3 + ",   "((1 + 2) + 3)"],
+    ["1+(2+3)",  "+ 1 + 2 3 ",   "1 2 3 + + ",   "(1 + (2 + 3))"],
+    ["1.0+2A",   "+ 1.0 2A ",    "1.0 2A + ",    "(1.0 + 2A)"],
+  ]
+
   valid_expressions = [
     ["1",                 "1"],
     ["(1)",               "1"],
@@ -142,6 +151,62 @@ def exec_tests_with(processor, show_output):
     "1=",
     "=1",
   ]
+
+  for pair in notations:
+    expression      = pair[0]
+    notation_preorder_result  = pair[1]
+    notation_postorder_result = pair[2]
+    notation_inorder_result   = pair[3]
+
+    matched = 0
+
+    [out, err, retcode] = exec_command(processor, expression)
+
+    for line in out.splitlines():
+      result = re.search(r"^reverse polish notation: (.+)$", line)
+
+      if result:
+        matched += 1
+        actual_result = result.group(1)
+
+        if actual_result != notation_postorder_result:
+          print("['{}' -> '{}']".format(expression, notation_postorder_result))
+          print("  reverse polish notation not matched: expected '{}' but was '{}'".format(notation_postorder_result, actual_result))
+
+        continue
+
+      result = re.search(r"^infix notation: (.+)$", line)
+
+      if result:
+        matched += 1
+        actual_result = result.group(1)
+
+        if actual_result != notation_inorder_result:
+          print("['{}' -> '{}']".format(expression, notation_inorder_result))
+          print("  infix notation not matched: expected '{}' but was '{}'".format(notation_inorder_result, actual_result))
+
+        continue
+
+      result = re.search(r"^polish notation: (.+)$", line)
+
+      if result:
+        matched += 1
+        actual_result = result.group(1)
+
+        if actual_result != notation_preorder_result:
+          print("['{}' -> '{}']".format(expression, notation_preorder_result))
+          print("  polish notation not matched: expected '{}' but was '{}'".format(notation_preorder_result, actual_result))
+
+        continue
+
+    if matched != 3:
+      print("['{}']".format(expression))
+      print("  expresion not converted")
+
+    # TODO: show output
+    #elif show_output:
+    #  print("['{}' = {}]".format(expression, expected_result))
+    #  print(out)
 
 
   for pair in valid_expressions:
