@@ -153,7 +153,8 @@ class Node {
       this.right.traversePostorder(stdout);
 
     // 巡回を終えた後でノードの演算子または項を表示する
-    stdout.write(this.expression);
+    // (読みやすさのために項の後に空白を補って表示する)
+    stdout.write(this.expression + " ");
   }
 
   // 中間順序訪問(通りがけ順)で二分木を巡回して
@@ -165,15 +166,23 @@ class Node {
       stdout.write("(");
 
     // 表示する前に左の子ノードを再帰的に巡回する
-    if (this.left)
+    if (this.left) {
       this.left.traverseInorder(stdout);
+
+      // 読みやすさのために空白を補う
+      stdout.write(" ");
+    }
 
     // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
     stdout.write(this.expression);
 
     // 表示した後に右の子ノードを再帰的に巡回する
-    if (this.right)
+    if (this.right) {
+      // 読みやすさのために空白を補う
+      stdout.write(" ");
+
       this.right.traverseInorder(stdout);
+    }
 
     // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
     if (this.left && this.right)
@@ -185,7 +194,8 @@ class Node {
   traversePreorder(stdout)
   {
     // 巡回を始める前にノードの演算子または項を表示する
-    stdout.write(this.expression);
+    // (読みやすさのために項の後に空白を補って表示する)
+    stdout.write(this.expression + " ");
 
     // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if (this.left)

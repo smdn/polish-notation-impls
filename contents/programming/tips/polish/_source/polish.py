@@ -148,7 +148,8 @@ class Node:
       self.right.traverse_postorder()
 
     # 巡回を終えた後でノードの演算子または項を表示する
-    print(self.expression, end = "")
+    # (読みやすさのために項の後に空白を補って表示する)
+    print(self.expression + " ", end = "")
 
   # 中間順序訪問(通りがけ順)で二分木を巡回して
   # すべてのノードの演算子または項を表示するメソッド
@@ -161,11 +162,17 @@ class Node:
     if self.left:
       self.left.traverse_inorder()
 
+      # 読みやすさのために空白を補う
+      print(" ", end = "")
+
     # 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
     print(self.expression, end = "")
 
     # 表示した後に右の子ノードを再帰的に巡回する
     if self.right:
+      # 読みやすさのために空白を補う
+      print(" ", end = "")
+
       self.right.traverse_inorder()
 
     # 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
@@ -176,7 +183,8 @@ class Node:
   # すべてのノードの演算子または項を表示するメソッド
   def traverse_preorder(self):
     # 巡回を始める前にノードの演算子または項を表示する
-    print(self.expression, end = "")
+    # (読みやすさのために項の後に空白を補って表示する)
+    print(self.expression + " ", end = "")
 
     # 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if self.left:

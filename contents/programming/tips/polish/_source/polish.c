@@ -216,7 +216,8 @@ void traverse_postorder(Node* node)
         traverse_postorder(node->right);
 
     // 巡回を終えた後でノードの演算子または項を表示する
-    printf("%s", node->exp);
+    // (読みやすさのために項の後に空白を補って表示する)
+    printf("%s ", node->exp);
 }
 
 // 中間順序訪問(通りがけ順)で二分木を巡回して
@@ -228,15 +229,23 @@ void traverse_inorder(Node* node)
         printf("(");
 
     // 表示する前に左の子ノードを再帰的に巡回する
-    if (node->left)
+    if (node->left) {
         traverse_inorder(node->left);
+
+        // 読みやすさのために空白を補う
+        printf(" ");
+    }
 
     // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
     printf("%s", node->exp);
 
     // 表示した後に右の子ノードを再帰的に巡回する
-    if (node->right)
+    if (node->right) {
+        // 読みやすさのために空白を補う
+        printf(" ");
+
         traverse_inorder(node->right);
+    }
 
     // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
     if (node->left && node->right)
@@ -248,7 +257,8 @@ void traverse_inorder(Node* node)
 void traverse_preorder(Node* node)
 {
     // 巡回を始める前にノードの演算子または項を表示する
-    printf("%s", node->exp);
+    // (読みやすさのために項の後に空白を補って表示する)
+    printf("%s ", node->exp);
 
     // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if (node->left)

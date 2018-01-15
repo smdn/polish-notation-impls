@@ -156,7 +156,8 @@ class Node {
       Right.TraversePostorder();
 
     // 巡回を終えた後でノードの演算子または項を表示する
-    Console.Write(Expression);
+    // (読みやすさのために項の後に空白を補って表示する)
+    Console.Write(Expression + " ");
   }
 
   // 中間順序訪問(通りがけ順)で二分木を巡回して
@@ -168,15 +169,23 @@ class Node {
       Console.Write("(");
 
     // 表示する前に左の子ノードを再帰的に巡回する
-    if (Left != null)
+    if (Left != null) {
       Left.TraverseInorder();
+
+      // 読みやすさのために空白を補う
+      Console.Write(" ");
+    }
 
     // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
     Console.Write(Expression);
 
     // 表示した後に右の子ノードを再帰的に巡回する
-    if (Right != null)
+    if (Right != null) {
+      // 読みやすさのために空白を補う
+      Console.Write(" ");
+
       Right.TraverseInorder();
+    }
 
     // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
     if (Left != null && Right != null)
@@ -188,7 +197,8 @@ class Node {
   public void TraversePreorder()
   {
     // 巡回を始める前にノードの演算子または項を表示する
-    Console.Write(Expression);
+    // (読みやすさのために項の後に空白を補って表示する)
+    Console.Write(Expression + " ");
 
     // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if (Left != null)
