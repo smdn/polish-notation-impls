@@ -29,12 +29,12 @@ class Node:
       self.right = None
 
     else:
-      # 演算子の左側を左の部分式としてノードを作成
+      # 演算子の左側を左の部分式としてノードを作成する
       self.left = Node(self.expression[0:pos_operator])
       # 左側のノード(部分式)について、再帰的に二分木へと分割する
       self.left.parse()
 
-      # 演算子の右側を右の部分式としてノードを作成
+      # 演算子の右側を右の部分式としてノードを作成する
       self.right = Node(self.expression[pos_operator + 1:])
       # 右側のノード(部分式)について、再帰的に二分木へと分割する
       self.right.parse()
@@ -56,7 +56,7 @@ class Node:
       # 0文字目が閉じ丸括弧の場合、エラーとする
       raise Exception("unbalanced bracket: {}".format(expression))
 
-    # 1文字目以降を1文字ずつ検証
+    # 1文字目以降を1文字ずつ検証する
     for i in range(1, len(expression)):
       if expression[i] == "(":
         # 開き丸括弧なので深度を1増やす
@@ -257,17 +257,17 @@ def main():
     print(err, file = sys.stderr)
     return
 
-  # 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+  # 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
   print("reverse polish notation: ", end = "")
   root.traverse_postorder()
   print()
 
-  # 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+  # 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
   print("infix notation: ", end = "")
   root.traverse_inorder()
   print()
 
-  # 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+  # 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
   print("polish notation: ", end = "")
   root.traverse_preorder()
   print()

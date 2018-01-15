@@ -31,12 +31,12 @@ class Node {
       this.right = null;
     }
     else {
-      // 演算子の左側を左の部分式としてノードを作成
+      // 演算子の左側を左の部分式としてノードを作成する
       this.left = new Node(this.expression.substr(0, posOperator));
       // 左側のノード(部分式)について、再帰的に二分木へと分割する
       this.left.parse();
 
-      // 演算子の右側を右の部分式としてノードを作成
+      // 演算子の右側を右の部分式としてノードを作成する
       this.right = new Node(this.expression.substr(posOperator + 1));
       // 右側のノード(部分式)について、再帰的に二分木へと分割する
       this.right.parse();
@@ -62,7 +62,7 @@ class Node {
       throw "unbalanced bracket: " + expression;
     }
 
-    // 1文字目以降を1文字ずつ検証
+    // 1文字目以降を1文字ずつ検証する
     for (let i = 1; i < expression.length; i++) {
       if (expression[i] == "(") {
         // 開き丸括弧なので深度を1増やす
@@ -299,17 +299,17 @@ function polish_main(_expression) {
     return;
   }
 
-  // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+  // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
   process.stdout.write("reverse polish notation: ");
   root.traversePostorder(process.stdout);
   process.stdout.write("\n");
 
-  // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+  // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
   process.stdout.write("infix notation: ");
   root.traverseInorder(process.stdout);
   process.stdout.write("\n");
 
-  // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+  // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
   process.stdout.write("polish notation: ");
   root.traversePreorder(process.stdout);
   process.stdout.write("\n");

@@ -49,7 +49,7 @@ int remove_outer_most_bracket(char *exp)
         return -1;
     }
 
-    // 1文字目以降を1文字ずつ検証
+    // 1文字目以降を1文字ずつ検証する
     for (i = 1; i < len; i++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
@@ -172,7 +172,7 @@ int parse_expression(Node* node)
         return 0;
     }
     else {
-        // 左側・右側のノードを作成
+        // 左側・右側のノードを作成する
         node->left   = create_node();
         node->right  = create_node();
 
@@ -182,7 +182,7 @@ int parse_expression(Node* node)
             return -1;
         }
 
-        // 演算子の左側を左の部分式としてノードを構成
+        // 演算子の左側を左の部分式としてノードを構成する
         memset(node->left->exp, 0, MAX_EXP_LEN);
         strncpy(node->left->exp, node->exp, pos_operator);
 
@@ -190,7 +190,7 @@ int parse_expression(Node* node)
         if (parse_expression(node->left) < 0)
             return -1;
 
-        // 演算子の右側を右の部分式としてノードを構成
+        // 演算子の右側を右の部分式としてノードを構成する
         memset(node->right->exp, 0, MAX_EXP_LEN);
         strncpy(node->right->exp, node->exp + pos_operator + 1, len_exp - pos_operator);
 
@@ -346,17 +346,17 @@ int main()
     if (parse_expression(root) < 0)
         return -1;
 
-    // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
     printf("reverse polish notation: ");
     traverse_postorder(root);
     printf("\n");
 
-    // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
     printf("infix notation: ");
     traverse_inorder(root);
     printf("\n");
 
-    // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
     printf("polish notation: ");
     traverse_preorder(root);
     printf("\n");

@@ -34,12 +34,12 @@ class Node {
       Right = null;
     }
     else {
-      // 演算子の左側を左の部分式としてノードを作成
+      // 演算子の左側を左の部分式としてノードを作成する
       Left = new Node(Expression.Substring(0, posOperator));
       // 左側のノード(部分式)について、再帰的に二分木へと分割する
       Left.Parse();
 
-      // 演算子の右側を右の部分式としてノードを作成
+      // 演算子の右側を右の部分式としてノードを作成する
       Right = new Node(Expression.Substring(posOperator + 1));
       // 右側のノード(部分式)について、再帰的に二分木へと分割する
       Right.Parse();
@@ -65,7 +65,7 @@ class Node {
       throw new Exception("unbalanced bracket: " + expression);
     }
 
-    // 1文字目以降を1文字ずつ検証
+    // 1文字目以降を1文字ずつ検証する
     for (var i = 1; i < expression.Length; i++) {
       if (expression[i] == '(') {
         // 開き丸括弧なので深度を1増やす
@@ -282,17 +282,17 @@ class Polish {
       return;
     }
 
-    // 分割した二分木を帰りがけ順で巡回して表示(前置記法/逆ポーランド記法で表示される)
+    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
     Console.Write("reverse polish notation: ");
     root.TraversePostorder();
     Console.WriteLine();
 
-    // 分割した二分木を通りがけ順で巡回して表示(中置記法で表示される)
+    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
     Console.Write("infix notation: ");
     root.TraverseInorder();
     Console.WriteLine();
 
-    // 分割した二分木を行きがけ順で巡回して表示(後置記法/ポーランド記法で表示される)
+    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
     Console.Write("polish notation: ");
     root.TraversePreorder();
     Console.WriteLine();
