@@ -19,11 +19,11 @@ class Node {
 
     // 1文字ずつ検証する
     for (let i = 0; i < expression.length; i++) {
-      if (expression[i] == '(') {
+      if (expression[i] === '(') {
         // 開き丸括弧なので深度を1増やす
         nest++;
       }
-      else if (expression[i] == ')') {
+      else if (expression[i] === ')') {
         // 閉じ丸括弧なので深度を1減らす
         nest--;
 
@@ -36,7 +36,7 @@ class Node {
     }
 
     // 深度が0でない場合
-    if (nest != 0)
+    if (nest !== 0)
       // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
       // 例:"((1+2)"などの場合
       throw "unbalanced bracket: " + expression;
@@ -59,7 +59,7 @@ class Node {
       return;
     }
 
-    if (posOperator == 0 || posOperator == this.expression.length - 1)
+    if (posOperator === 0 || posOperator === this.expression.length - 1)
       // 演算子の位置が式の先頭または末尾の場合は不正な式とする
       throw "invalid expression: " + this.expression;
 
@@ -85,7 +85,7 @@ class Node {
     let hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
     let nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    if (expression[0] == "(") {
+    if (expression[0] === "(") {
       // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       hasOuterMostBracket = true;
       nest = 1;
@@ -93,21 +93,21 @@ class Node {
 
     // 1文字目以降を1文字ずつ検証
     for (let i = 1; i < expression.length; i++) {
-      if (expression[i] == "(") {
+      if (expression[i] === "(") {
         // 開き丸括弧なので深度を1増やす
         nest++;
 
         // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        if (i == 0)
+        if (i === 0)
           hasOuterMostBracket = true;
       }
-      else if (expression[i] == ")") {
+      else if (expression[i] === ")") {
         // 閉じ丸括弧なので深度を1減らす
         nest--;
 
         // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         // 例:"(1+2)+(3+4)"などの場合
-        if (nest == 0 && i < expression.length - 1) {
+        if (nest === 0 && i < expression.length - 1) {
           hasOuterMostBracket = false;
           break;
         }
@@ -127,7 +127,7 @@ class Node {
 
     // 取り除いた後の文字列の最も外側に括弧が残っている場合
     // 例:"((1+2))"などの場合
-    if (expression[0] == '(' && expression[expression.length - 1] == ')')
+    if (expression[0] === '(' && expression[expression.length - 1] === ')')
       // 再帰的に呼び出して取り除く
       expression = Node.removeOuterMostBracket(expression);
 
@@ -139,7 +139,7 @@ class Node {
   // (演算子がない場合は-1を返す)
   static getOperatorPosition(expression)
   {
-    if (!expression || expression.length == 0)
+    if (!expression || expression.length === 0)
       return -1;
 
     let posOperator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
