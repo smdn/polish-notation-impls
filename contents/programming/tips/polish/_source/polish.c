@@ -353,7 +353,6 @@ int validate_bracket_balance(char *exp)
     return nest;
 }
 
-
 int main()
 {
     // 二分木の根(root)ノードを作成する
