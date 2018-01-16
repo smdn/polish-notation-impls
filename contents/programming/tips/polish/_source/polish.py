@@ -10,6 +10,32 @@ class Node:
     self.left = None  # 左の子ノード
     self.right = None # 右の子ノード
 
+  # 式expression内の括弧の対応を検証するメソッド
+  # 開き括弧と閉じ括弧が同数でない場合はエラーとする
+  @staticmethod
+  def validate_bracket_balance(expression):
+    nest = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+
+    # 1文字ずつ検証する
+    for i in range(0, len(expression)):
+      if expression[i] == "(":
+        # 開き丸括弧なので深度を1増やす
+        nest += 1
+
+      elif expression[i] == ")":
+        # 閉じ丸括弧なので深度を1減らす
+        nest -= 1
+
+        # 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
+        if nest < 0:
+          break
+
+    # 深度が0でない場合
+    if nest != 0:
+      # 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+      # 例:"((1+2)"などの場合
+      raise Exception("unbalanced bracket: {}".format(expression))
+
   # 式expressionを二分木へと分割するメソッド
   def parse(self):
     # 式expressionから最も外側にある丸括弧を取り除く
@@ -46,49 +72,47 @@ class Node:
   @staticmethod
   def __remove_outer_most_bracket(expression):
     has_outer_most_bracket = False # 最も外側に括弧を持つかどうか
-    nest = 0 # 丸括弧の深度(括弧が正しく閉じられているかを調べるために用いる)
+    nest = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    if expression[0] == "(":
-      # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-      nest = 1
-      has_outer_most_bracket = True
-    elif expression[0] == ")":
-      # 0文字目が閉じ丸括弧の場合、エラーとする
-      raise Exception("unbalanced bracket: {}".format(expression))
-
-    # 1文字目以降を1文字ずつ検証する
-    for i in range(1, len(expression)):
+    # 1文字ずつ検証する
+    for i in range(0, len(expression)):
       if expression[i] == "(":
         # 開き丸括弧なので深度を1増やす
         nest += 1
+
+        # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+        if i == 0:
+          has_outer_most_bracket = True
 
       elif expression[i] == ")":
         # 閉じ丸括弧なので深度を1減らす
         nest -= 1
 
-        # 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-        if i < len(expression) - 1 and nest == 0:
+        # 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
+        # 例:"(1+2)+(3+4)"などの場合
+        if nest == 0 and i < len(expression) - 1:
           has_outer_most_bracket = False
+          break
 
-    # 括弧の深度が0以外の場合
-    if nest != 0:
-      # 開かれていない/閉じられていない括弧があるので、エラーとする
-      raise Exception("unbalanced bracket: {}".format(expression))
-
-    # 最も外側に丸括弧がある場合
-    elif has_outer_most_bracket:
-      if len(expression) <= 2:
-        # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        raise Exception("empty bracket: {}".format(expression))
-      else:
-        # 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
-        # "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
-        return Node.__remove_outer_most_bracket(expression[1:len(expression) - 1])
-
-    # 最も外側に丸括弧がない場合
-    else:
-      # 与えられた文字列をそのまま返す
+    # 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
+    if not has_outer_most_bracket:
       return expression
+
+    # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    if len(expression) <= 2:
+      raise Exception("empty bracket: {}".format(expression))
+
+    # 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
+    expression = expression[1:-1]
+
+    # 取り除いた後の文字列の最も外側に括弧が残っている場合
+    # 例:"((1+2))"などの場合
+    if expression[:1] == "(" and expression[-1:] == ")":
+      # 再帰的に呼び出して取り除く
+      expression = Node.__remove_outer_most_bracket(expression)
+
+    # 取り除いた結果を返す
+    return expression
 
   # 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
   # (演算子がない場合は-1を返す)
@@ -242,45 +266,49 @@ def main():
   # 標準入力から二分木に分割したい式を入力する
   expression = input("input expression: ")
 
-  # 入力された式から空白を除去する(空白を空の文字列に置き換える)
-  expression = expression.replace(" ", "")
-
-  # 二分木の根(root)ノードを作成し、式全体を格納する
-  root = Node(expression)
-
-  print("expression: {}".format(root.expression))
-
   try:
+    # 入力された式から空白を除去する(空白を空の文字列に置き換える)
+    expression = expression.replace(" ", "")
+
+    # 入力された式における括弧の対応数をチェックする
+    Node.validate_bracket_balance(expression)
+
+    # 二分木の根(root)ノードを作成し、式全体を格納する
+    root = Node(expression)
+
+    print("expression: {}".format(root.expression))
+
     # 根ノードに格納した式を二分木へと分割する
     root.parse()
+
+    # 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+    print("reverse polish notation: ", end = "")
+    root.traverse_postorder()
+    print()
+
+    # 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+    print("infix notation: ", end = "")
+    root.traverse_inorder()
+    print()
+
+    # 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+    print("polish notation: ", end = "")
+    root.traverse_preorder()
+    print()
+
+    # 分割した二分木から式全体の値を計算する
+    if root.calculate():
+      # 計算できた場合はその値を表示する
+      print("calculated result: {}".format(root.expression))
+    else:
+      # (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+      print("calculated expression: ", end = "")
+      root.traverse_inorder()
+      print()
+
   except Exception as err:
     print(err, file = sys.stderr)
     return
-
-  # 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-  print("reverse polish notation: ", end = "")
-  root.traverse_postorder()
-  print()
-
-  # 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-  print("infix notation: ", end = "")
-  root.traverse_inorder()
-  print()
-
-  # 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-  print("polish notation: ", end = "")
-  root.traverse_preorder()
-  print()
-
-  # 分割した二分木から式全体の値を計算する
-  if root.calculate():
-    # 計算できた場合はその値を表示する
-    print("calculated result: {}".format(root.expression))
-  else:
-    # (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-    print("calculated expression: ", end = "")
-    root.traverse_inorder()
-    print()
 
 if __name__ == "__main__":
   main()

@@ -21,6 +21,37 @@ class Node {
     this.expression = expression;
   }
 
+  // 式expression内の括弧の対応を検証するメソッド
+  // 開き括弧と閉じ括弧が同数でない場合はエラーとする
+  public static void ValidateBracketBalance(String expression) throws ExpressionParserException
+  {
+    int nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+
+    // 1文字ずつ検証する
+    for (int i = 0; i < expression.length(); i++) {
+      if (expression.charAt(i) == '(') {
+        // 開き丸括弧なので深度を1増やす
+        nest++;
+      }
+      else if (expression.charAt(i) == ')') {
+        // 閉じ丸括弧なので深度を1減らす
+        nest--;
+
+        // 深度が負になった場合
+        if (nest < 0)
+          // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+          // 例:"(1+2))"などの場合
+          break;
+      }
+    }
+
+    // 深度が0でない場合
+    if (nest != 0)
+      // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+      // 例:"((1+2)"などの場合
+      throw new ExpressionParserException("unbalanced bracket: " + expression);
+  }
+
   // 式expressionを二分木へと分割するメソッド
   public void parse() throws ExpressionParserException
   {
@@ -60,54 +91,50 @@ class Node {
   private static String removeOuterMostBracket(String expression) throws ExpressionParserException
   {
     boolean hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
-    int nest = 0; // 丸括弧の深度(括弧が正しく閉じられているかを調べるために用いる)
+    int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    if (expression.charAt(0) == '(') {
-      // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-      nest = 1;
-      hasOuterMostBracket = true;
-    }
-    else if (expression.charAt(0) == ')') {
-      // 0文字目が閉じ丸括弧の場合、エラーとする
-      throw new ExpressionParserException("unbalanced bracket: " + expression);
-    }
-
-    // 1文字目以降を1文字ずつ検証する
-    for (int i = 1; i < expression.length(); i++) {
+    // 1文字ずつ検証する
+    for (int i = 0; i < expression.length(); i++) {
       if (expression.charAt(i) == '(') {
         // 開き丸括弧なので深度を1増やす
         nest++;
+
+        // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+        if (i == 0)
+          hasOuterMostBracket = true;
       }
       else if (expression.charAt(i) == ')') {
         // 閉じ丸括弧なので深度を1減らす
         nest--;
 
-        // 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-        if (i < expression.length() - 1 && nest == 0)
+        // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
+        // 例:"(1+2)+(3+4)"などの場合
+        if (nest == 0 && i < expression.length() - 1) {
           hasOuterMostBracket = false;
+          break;
+        }
       }
     }
 
-    // 括弧の深度が0以外の場合
-    if (nest != 0) {
-      // 開かれていない/閉じられていない括弧があるので、エラーとする
-      throw new ExpressionParserException("unbalanced bracket: " + expression);
-    }
-    // 最も外側に丸括弧がある場合
-    else if (hasOuterMostBracket) {
-      if (expression.length() <= 2)
-        // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        throw new ExpressionParserException("empty bracket: " + expression);
-      else
-        // 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
-        // "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
-        return removeOuterMostBracket(expression.substring(1, expression.length() - 1));
-    }
-    // 最も外側に丸括弧がない場合
-    else {
-      // 与えられた文字列をそのまま返す
+    // 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
+    if (!hasOuterMostBracket)
       return expression;
-    }
+
+    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    if (expression.length() <= 2)
+      throw new ExpressionParserException("empty bracket: " + expression);
+
+    // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
+    expression = expression.substring(1, expression.length() - 1);
+
+    // 取り除いた後の文字列の最も外側に括弧が残っている場合
+    // 例:"((1+2))"などの場合
+    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')')
+      // 再帰的に呼び出して取り除く
+      expression = removeOuterMostBracket(expression);
+
+    // 取り除いた結果を返す
+    return expression;
   }
 
   // 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
@@ -279,48 +306,51 @@ public class Polish {
     // 標準入力から二分木に分割したい式を入力する
     String expression = r.readLine();
 
-    // 入力された式から空白を除去する(空白を空の文字列に置き換える)
-    expression = expression.replace(" ", "");
-
-    // 二分木の根(root)ノードを作成し、式全体を格納する
-    Node root = new Node(expression);
-
-    System.out.println("expression: " + root.expression);
-
     try {
+      // 入力された式から空白を除去する(空白を空の文字列に置き換える)
+      expression = expression.replace(" ", "");
+
+      // 入力された式における括弧の対応数をチェックする
+      Node.ValidateBracketBalance(expression);
+
+      // 二分木の根(root)ノードを作成し、式全体を格納する
+      Node root = new Node(expression);
+
+      System.out.println("expression: " + root.expression);
+
       // 根ノードに格納した式を二分木へと分割する
       root.parse();
+
+      // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+      System.out.print("reverse polish notation: ");
+      root.traversePostorder();
+      System.out.println();
+
+      // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+      System.out.print("infix notation: ");
+      root.traverseInorder();
+      System.out.println();
+
+      // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+      System.out.print("polish notation: ");
+      root.traversePreorder();
+      System.out.println();
+
+      // 分割した二分木から式全体の値を計算する
+      if (root.calculate()) {
+        // 計算できた場合はその値を表示する
+        System.out.println("calculated result: " + root.expression);
+      }
+      else {
+        // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+        System.out.print("calculated expression: ");
+        root.traverseInorder();
+        System.out.println();
+      }
     }
     catch (ExpressionParserException ex) {
       System.err.println(ex.getMessage());
       return;
-    }
-
-    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-    System.out.print("reverse polish notation: ");
-    root.traversePostorder();
-    System.out.println();
-
-    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-    System.out.print("infix notation: ");
-    root.traverseInorder();
-    System.out.println();
-
-    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-    System.out.print("polish notation: ");
-    root.traversePreorder();
-    System.out.println();
-
-    // 分割した二分木から式全体の値を計算する
-    if (root.calculate()) {
-      // 計算できた場合はその値を表示する
-      System.out.println("calculated result: " + root.expression);
-    }
-    else {
-      // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-      System.out.print("calculated expression: ");
-      root.traverseInorder();
-      System.out.println();
     }
   }
 }

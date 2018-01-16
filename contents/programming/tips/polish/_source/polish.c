@@ -33,68 +33,58 @@ Node* create_node()
 // (成功した場合は0、エラーの場合は-1を返す)
 int remove_outer_most_bracket(char *exp)
 {
-    size_t i;
+    int i;
     size_t len = strlen(exp);
     int has_outer_most_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
-    int nest = 0;
+    int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    if ('(' == exp[0]) {
-        // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        nest = 1;
-        has_outer_most_bracket = 1;
-    }
-    else if (')' == exp[0]) {
-        // 0文字目が閉じ丸括弧の場合、エラーとする
-        fprintf(stderr, "unbalanced bracket: %s\n", exp);
-        return -1;
-    }
-
-    // 1文字目以降を1文字ずつ検証する
-    for (i = 1; i < len; i++) {
+    // 1文字ずつ検証する
+    for (i = 0; i < len; i++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
             nest++;
+
+            // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+            if (0 == i)
+                has_outer_most_bracket = 1;
         }
         else if (')' == exp[i]) {
             // 閉じ丸括弧なので深度を1減らす
             nest--;
 
-            // 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-            if (i < len - 1 && 0 == nest)
-              has_outer_most_bracket = 0;
+            // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
+            // 例:"(1+2)+(3+4)"などの場合
+            if (0 == nest && i < len - 1) {
+                has_outer_most_bracket = 0;
+                break;
+            }
         }
     }
 
-    // 括弧の深度が0以外の場合
-    if (0 != nest) {
-        // 開かれていない/閉じられていない括弧があるので、エラーとする
-        fprintf(stderr, "unbalanced bracket: %s\n", exp);
+    // 最も外側に丸括弧がない場合は、何もしない
+    if (0 == has_outer_most_bracket)
+        return 0;
+
+    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    if (len <= 2) {
+        fprintf(stderr, "empty bracket: %s\n", exp);
         return -1;
     }
-    // 最も外側に丸括弧がある場合
-    else if (0 != has_outer_most_bracket) {
-      if (len <= 2) {
-          // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-          fprintf(stderr, "empty bracket: %s\n", exp);
-          return -1;
-      }
-      else {
-        // 最初と最後の文字を取り除く
-        for (i = 0; i < len - 2; i++) {
-            exp[i] = exp[i + 1];
-        }
-        exp[i] = '\0';
 
-        // 再帰的に呼び出す
-        // "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
+    // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
+    for (i = 0; i < len - 2; i++) {
+        exp[i] = exp[i + 1];
+    }
+    exp[i] = '\0';
+
+    // 取り除いた後の文字列の最も外側に括弧が残っている場合
+    // 例:"((1+2))"などの場合
+    if ('(' == exp[0] && ')' == exp[len - 1])
+        // 再帰的に呼び出して取り除く
         return remove_outer_most_bracket(exp);
-      }
-    }
-    // 最も外側に丸括弧がない場合
-    else {
-        // 何もしない
+    else
+        // そうでない場合は処理を終える
         return 0;
-    }
 }
 
 // 式expから最も優先順位が低い演算子を探して位置を返す関数
@@ -253,8 +243,8 @@ void traverse_inorder(Node* node)
         printf(")");
 }
 
-  // 先行順序訪問(行きがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示する関数
+// 先行順序訪問(行きがけ順)で二分木を巡回して
+// すべてのノードの演算子または項を表示する関数
 void traverse_preorder(Node* node)
 {
     // 巡回を始める前にノードの演算子または項を表示する
@@ -328,6 +318,42 @@ void remove_space(char *exp)
     *dst = '\0';
 }
 
+// 式exp内の括弧の対応を検証する関数
+// 開き括弧と閉じ括弧が同数でない場合はエラーとして0以外、同数の場合は0を返す
+int validate_bracket_balance(char *exp)
+{
+    int i;
+    size_t len = strlen(exp);
+    int nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+
+    // 1文字ずつ検証する
+    for (i = 0; i < len; i++) {
+        if ('(' == exp[i]) {
+            // 開き丸括弧なので深度を1増やす
+            nest++;
+        }
+        else if (')' == exp[i]) {
+            // 閉じ丸括弧なので深度を1減らす
+            nest--;
+
+            // 深度が負になった場合
+            if (nest < 0)
+                // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+                // 例:"(1+2))"などの場合
+                break;
+        }
+    }
+
+    // 深度が0でない場合
+    if (0 != nest)
+        // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+        // 例:"((1+2)"などの場合
+        fprintf(stderr, "unbalanced bracket: %s\n", exp);
+
+    return nest;
+}
+
+
 int main()
 {
     // 二分木の根(root)ノードを作成する
@@ -339,6 +365,10 @@ int main()
 
     // 入力された式から空白を除去する
     remove_space(root->exp);
+
+    // 入力された式における括弧の対応数をチェックする
+    if (0 != validate_bracket_balance(root->exp))
+        return -1;
 
     printf("expression: %s\n", root->exp);
 

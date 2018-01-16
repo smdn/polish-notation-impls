@@ -14,6 +14,37 @@ class Node {
     Expression = expression;
   }
 
+  // 式expression内の括弧の対応を検証するメソッド
+  // 開き括弧と閉じ括弧が同数でない場合はエラーとする
+  public static void ValidateBracketBalance(string expression)
+  {
+    var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+
+    // 1文字ずつ検証する
+    for (var i = 0; i < expression.Length; i++) {
+      if (expression[i] == '(') {
+        // 開き丸括弧なので深度を1増やす
+        nest++;
+      }
+      else if (expression[i] == ')') {
+        // 閉じ丸括弧なので深度を1減らす
+        nest--;
+
+        // 深度が負になった場合
+        if (nest < 0)
+          // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+          // 例:"(1+2))"などの場合
+          break;
+      }
+    }
+
+    // 深度が0でない場合
+    if (nest != 0)
+      // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+      // 例:"((1+2)"などの場合
+      throw new Exception("unbalanced bracket: " + expression);
+  }
+
   // 式Expressionを二分木へと分割するメソッド
   public void Parse()
   {
@@ -53,54 +84,50 @@ class Node {
   private static string RemoveOuterMostBracket(string expression)
   {
     var hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
-    var nest = 0; // 丸括弧の深度(括弧が正しく閉じられているかを調べるために用いる)
+    var nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    if (expression[0] == '(') {
-      // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-      nest = 1;
-      hasOuterMostBracket = true;
-    }
-    else if (expression[0] == ')') {
-      // 0文字目が閉じ丸括弧の場合、エラーとする
-      throw new Exception("unbalanced bracket: " + expression);
-    }
-
-    // 1文字目以降を1文字ずつ検証する
-    for (var i = 1; i < expression.Length; i++) {
+    // 1文字ずつ検証する
+    for (var i = 0; i < expression.Length; i++) {
       if (expression[i] == '(') {
         // 開き丸括弧なので深度を1増やす
         nest++;
+
+        // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+        if (i == 0)
+          hasOuterMostBracket = true;
       }
       else if (expression[i] == ')') {
         // 閉じ丸括弧なので深度を1減らす
         nest--;
 
-        // 最後の文字以外で閉じ丸括弧が現れた場合、最も外側には丸括弧がないと判断する
-        if (i < expression.Length - 1 && nest == 0)
+        // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
+        // 例:"(1+2)+(3+4)"などの場合
+        if (nest == 0 && i < expression.Length - 1) {
           hasOuterMostBracket = false;
+          break;
+        }
       }
     }
 
-    // 括弧の深度が0以外の場合
-    if (nest != 0) {
-      // 開かれていない/閉じられていない括弧があるので、エラーとする
-      throw new Exception("unbalanced bracket: " + expression);
-    }
-    // 最も外側に丸括弧がある場合
-    else if (hasOuterMostBracket) {
-      if (expression.Length <= 2)
-        // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-        throw new Exception("empty bracket: " + expression);
-      else
-        // 最初と最後の文字を取り除き、再帰的にメソッドを呼び出した結果を返す
-        // "((1+2))"など、多重になっている括弧を取り除くため再帰的に呼び出す
-        return RemoveOuterMostBracket(expression.Substring(1, expression.Length - 2));
-    }
-    // 最も外側に丸括弧がない場合
-    else {
-      // 与えられた文字列をそのまま返す
+    // 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
+    if (!hasOuterMostBracket)
       return expression;
-    }
+
+    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    if (expression.Length <= 2)
+      throw new Exception("empty bracket: " + expression);
+
+    // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
+    expression = expression.Substring(1, expression.Length - 2);
+
+    // 取り除いた後の文字列の最も外側に括弧が残っている場合
+    // 例:"((1+2))"などの場合
+    if (expression[0] == '(' && expression[expression.Length - 1] == ')')
+      // 再帰的に呼び出して取り除く
+      expression = RemoveOuterMostBracket(expression);
+
+    // 取り除いた結果を返す
+    return expression;
   }
 
   // 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
@@ -265,48 +292,51 @@ class Polish {
     // 標準入力から二分木に分割したい式を入力する
     var expression = Console.ReadLine();
 
-    // 入力された式から空白を除去する(空白を空の文字列に置き換える)
-    expression = expression.Replace(" ", "");
-
-    // 二分木の根(root)ノードを作成し、式全体を格納する
-    var root = new Node(expression);
-
-    Console.WriteLine("expression: {0}", root.Expression);
-
     try {
+      // 入力された式から空白を除去する(空白を空の文字列に置き換える)
+      expression = expression.Replace(" ", "");
+
+      // 入力された式における括弧の対応数をチェックする
+      Node.ValidateBracketBalance(expression);
+
+      // 二分木の根(root)ノードを作成し、式全体を格納する
+      var root = new Node(expression);
+
+      Console.WriteLine("expression: {0}", root.Expression);
+
       // 根ノードに格納した式を二分木へと分割する
       root.Parse();
+
+      // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+      Console.Write("reverse polish notation: ");
+      root.TraversePostorder();
+      Console.WriteLine();
+
+      // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+      Console.Write("infix notation: ");
+      root.TraverseInorder();
+      Console.WriteLine();
+
+      // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+      Console.Write("polish notation: ");
+      root.TraversePreorder();
+      Console.WriteLine();
+
+      // 分割した二分木から式全体の値を計算する
+      if (root.Calculate()) {
+        // 計算できた場合はその値を表示する
+        Console.WriteLine("calculated result: {0}", root.Expression);
+      }
+      else {
+        // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+        Console.Write("calculated expression: ");
+        root.TraverseInorder();
+        Console.WriteLine();
+      }
     }
     catch (Exception ex) {
       Console.Error.WriteLine(ex.Message);
       return;
-    }
-
-    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-    Console.Write("reverse polish notation: ");
-    root.TraversePostorder();
-    Console.WriteLine();
-
-    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-    Console.Write("infix notation: ");
-    root.TraverseInorder();
-    Console.WriteLine();
-
-    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-    Console.Write("polish notation: ");
-    root.TraversePreorder();
-    Console.WriteLine();
-
-    // 分割した二分木から式全体の値を計算する
-    if (root.Calculate()) {
-      // 計算できた場合はその値を表示する
-      Console.WriteLine("calculated result: {0}", root.Expression);
-    }
-    else {
-      // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-      Console.Write("calculated expression: ");
-      root.TraverseInorder();
-      Console.WriteLine();
     }
   }
 }
