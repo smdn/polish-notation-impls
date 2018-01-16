@@ -34,12 +34,12 @@ Node* create_node()
 int remove_outer_most_bracket(char *exp)
 {
     int i;
-    size_t len = strlen(exp);
+    size_t len;
     int has_outer_most_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
     int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     // 1文字ずつ検証する
-    for (i = 0; i < len; i++) {
+    for (i = 0, len = 0; exp[i]; i++, len++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
             nest++;
@@ -54,7 +54,7 @@ int remove_outer_most_bracket(char *exp)
 
             // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
             // 例:"(1+2)+(3+4)"などの場合
-            if (0 == nest && i < len - 1) {
+            if (0 == nest && exp[i + 1]) {
                 has_outer_most_bracket = 0;
                 break;
             }
@@ -72,7 +72,9 @@ int remove_outer_most_bracket(char *exp)
     }
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
-    for (i = 0; i < len - 2; i++) {
+    len -= 2; // 文字列の長さを2(=外側の括弧の分)減らす
+
+    for (i = 0; i < len; i++) {
         exp[i] = exp[i + 1];
     }
     exp[i] = '\0';
@@ -89,10 +91,10 @@ int remove_outer_most_bracket(char *exp)
 
 // 式expから最も優先順位が低い演算子を探して位置を返す関数
 // (演算子がない場合は-1を返す)
-size_t get_pos_operator(char *exp)
+int get_pos_operator(char *exp)
 {
-    size_t i;
-    size_t pos_operator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
+    int i;
+    int pos_operator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     int priority_current = INT_MAX; // 現在見つかっている演算子の優先順位(初期値としてINT_MAXを設定)
     int nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
     int priority;
@@ -133,8 +135,8 @@ size_t get_pos_operator(char *exp)
 // (成功した場合は0、エラーの場合は-1を返す)
 int parse_expression(Node* node)
 {
-    size_t pos_operator;
-    size_t len_exp;
+    int pos_operator;
+    size_t len;
 
     if (!node)
         return -1;
@@ -143,17 +145,17 @@ int parse_expression(Node* node)
     if (remove_outer_most_bracket(node->exp) < 0)
         return -1;
 
-    len_exp = strlen(node->exp);
+    len = strlen(node->exp);
 
     // 式expから演算子を探して位置を取得する
     pos_operator = get_pos_operator(node->exp);
 
-    if ((size_t)0 == pos_operator || (size_t)(len_exp - 1) == pos_operator) {
+    if (0 == pos_operator || (len - 1) == pos_operator) {
       // 演算子の位置が式の先頭または末尾の場合は不正な式とする
         fprintf(stderr, "invalid expression: %s\n", node->exp);
         return -1;
     }
-    else if ((size_t)-1 == pos_operator) {
+    else if (-1 == pos_operator) {
         // 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
         // (左右に子ノードを持たないノードとする)
         node->left  = NULL;
@@ -182,7 +184,7 @@ int parse_expression(Node* node)
 
         // 演算子の右側を右の部分式としてノードを構成する
         memset(node->right->exp, 0, MAX_EXP_LEN);
-        strncpy(node->right->exp, node->exp + pos_operator + 1, len_exp - pos_operator);
+        strncpy(node->right->exp, node->exp + pos_operator + 1, len - pos_operator);
 
         // 右側のノード(部分式)について、再帰的に二分木へと分割する
         if (parse_expression(node->right) < 0)
@@ -323,11 +325,10 @@ void remove_space(char *exp)
 int validate_bracket_balance(char *exp)
 {
     int i;
-    size_t len = strlen(exp);
     int nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     // 1文字ずつ検証する
-    for (i = 0; i < len; i++) {
+    for (i = 0; exp[i]; i++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
             nest++;
