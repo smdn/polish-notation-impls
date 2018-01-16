@@ -48,28 +48,33 @@ Class Node
     ' 式Expressionから演算子を探して位置を取得する
     Dim posOperator As Integer = GetOperatorPosition(Expression)
 
-    If posOperator = 0 OrElse posOperator = Expression.Length - 1 Then
-      ' 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      Throw New Exception("invalid expression: " + Expression)
-    Else If posOperator < 0 Then
+    If posOperator < 0 Then
       ' 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
       ' (左右に子ノードを持たないノードとする)
       Left = Nothing
       Right = Nothing
-    Else
-      ' 演算子の左側を左の部分式としてノードを作成する
-      Left = New Node(Expression.Substring(0, posOperator))
-      ' 左側のノード(部分式)について、再帰的に二分木へと分割する
-      Left.Parse()
-
-      ' 演算子の右側を右の部分式としてノードを作成する
-      Right = New Node(Expression.Substring(posOperator + 1))
-      ' 右側のノード(部分式)について、再帰的に二分木へと分割する
-      Right.Parse()
-
-      ' 残った演算子部分をこのノードに設定する
-      Expression = Expression.Substring(posOperator, 1)
+      Return
     End If
+
+    If posOperator = 0 OrElse posOperator = Expression.Length - 1 Then
+      ' 演算子の位置が式の先頭または末尾の場合は不正な式とする
+      Throw New Exception("invalid expression: " + Expression)
+    End If
+
+    ' 以下、演算子の位置をもとに左右の部分式に分割する
+
+    ' 演算子の左側を左の部分式としてノードを作成する
+    Left = New Node(Expression.Substring(0, posOperator))
+    ' 左側のノード(部分式)について、再帰的に二分木へと分割する
+    Left.Parse()
+
+    ' 演算子の右側を右の部分式としてノードを作成する
+    Right = New Node(Expression.Substring(posOperator + 1))
+    ' 右側のノード(部分式)について、再帰的に二分木へと分割する
+    Right.Parse()
+
+    ' 残った演算子部分をこのノードに設定する
+    Expression = Expression.Substring(posOperator, 1)
   End Sub
 
   ' 式expressionから最も外側にある丸括弧を取り除いて返すメソッド

@@ -145,57 +145,58 @@ int parse_expression(Node* node)
     if (remove_outer_most_bracket(node->exp) < 0)
         return -1;
 
-    len = strlen(node->exp);
-
     // 式expから演算子を探して位置を取得する
     pos_operator = get_pos_operator(node->exp);
+
+    if (-1 == pos_operator) {
+        // 式expに演算子が含まれない場合、expは項であるとみなす
+        // (左右に子ノードを持たないノードとする)
+        node->left  = NULL;
+        node->right = NULL;
+        return 0;
+    }
+
+    len = strlen(node->exp);
 
     if (0 == pos_operator || (len - 1) == pos_operator) {
       // 演算子の位置が式の先頭または末尾の場合は不正な式とする
         fprintf(stderr, "invalid expression: %s\n", node->exp);
         return -1;
     }
-    else if (-1 == pos_operator) {
-        // 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
-        // (左右に子ノードを持たないノードとする)
-        node->left  = NULL;
-        node->right = NULL;
 
-        return 0;
+    // 以下、演算子の位置をもとに左右の部分式に分割する
+
+    // 左側・右側のノードを作成する
+    node->left   = create_node();
+    node->right  = create_node();
+
+    if (!node->left || !node->right) {
+        // ノードが作成できない場合は、式が長過ぎるためエラーとする
+        fprintf(stderr, "expression too long\n");
+        return -1;
     }
-    else {
-        // 左側・右側のノードを作成する
-        node->left   = create_node();
-        node->right  = create_node();
 
-        if (!node->left || !node->right) {
-            // ノードが作成できない場合は、式が長過ぎるためエラーとする
-            fprintf(stderr, "expression too long\n");
-            return -1;
-        }
+    // 演算子の左側を左の部分式としてノードを構成する
+    memset(node->left->exp, 0, MAX_EXP_LEN);
+    strncpy(node->left->exp, node->exp, pos_operator);
 
-        // 演算子の左側を左の部分式としてノードを構成する
-        memset(node->left->exp, 0, MAX_EXP_LEN);
-        strncpy(node->left->exp, node->exp, pos_operator);
+    // 左側のノード(部分式)について、再帰的に二分木へと分割する
+    if (parse_expression(node->left) < 0)
+        return -1;
 
-        // 左側のノード(部分式)について、再帰的に二分木へと分割する
-        if (parse_expression(node->left) < 0)
-            return -1;
+    // 演算子の右側を右の部分式としてノードを構成する
+    memset(node->right->exp, 0, MAX_EXP_LEN);
+    strncpy(node->right->exp, node->exp + pos_operator + 1, len - pos_operator);
 
-        // 演算子の右側を右の部分式としてノードを構成する
-        memset(node->right->exp, 0, MAX_EXP_LEN);
-        strncpy(node->right->exp, node->exp + pos_operator + 1, len - pos_operator);
+    // 右側のノード(部分式)について、再帰的に二分木へと分割する
+    if (parse_expression(node->right) < 0)
+        return -1;
 
-        // 右側のノード(部分式)について、再帰的に二分木へと分割する
-        if (parse_expression(node->right) < 0)
-            return -1;
+    // 残った演算子部分をこのノードに設定する
+    node->exp[0] = node->exp[pos_operator];
+    node->exp[1] = '\0';
 
-        // 残った演算子部分をこのノードに設定する
-        node->exp[0] = node->exp[pos_operator];
-        node->exp[1] = '\0';
-
-        return 0;
-    }
+    return 0;
 }
 
 // 後行順序訪問(帰りがけ順)で二分木を巡回して

@@ -51,30 +51,32 @@ class Node {
     // 式expressionから演算子を探して位置を取得する
     let posOperator = Node.getOperatorPosition(this.expression);
 
-    if (posOperator == 0 || posOperator == this.expression.length - 1) {
-      // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      throw "invalid expression: " + this.expression;
-    }
-    else if (posOperator < 0) {
+    if (posOperator < 0) {
       // 式expressionに演算子が含まれない場合、expressionは項であるとみなす
       // (左右に子ノードを持たないノードとする)
       this.left = null;
       this.right = null;
+      return;
     }
-    else {
-      // 演算子の左側を左の部分式としてノードを作成する
-      this.left = new Node(this.expression.substr(0, posOperator));
-      // 左側のノード(部分式)について、再帰的に二分木へと分割する
-      this.left.parse();
 
-      // 演算子の右側を右の部分式としてノードを作成する
-      this.right = new Node(this.expression.substr(posOperator + 1));
-      // 右側のノード(部分式)について、再帰的に二分木へと分割する
-      this.right.parse();
+    if (posOperator == 0 || posOperator == this.expression.length - 1)
+      // 演算子の位置が式の先頭または末尾の場合は不正な式とする
+      throw "invalid expression: " + this.expression;
 
-      // 残った演算子部分をこのノードに設定する
-      this.expression = this.expression.substr(posOperator, 1);
-    }
+    // 以下、演算子の位置をもとに左右の部分式に分割する
+
+    // 演算子の左側を左の部分式としてノードを作成する
+    this.left = new Node(this.expression.substr(0, posOperator));
+    // 左側のノード(部分式)について、再帰的に二分木へと分割する
+    this.left.parse();
+
+    // 演算子の右側を右の部分式としてノードを作成する
+    this.right = new Node(this.expression.substr(posOperator + 1));
+    // 右側のノード(部分式)について、再帰的に二分木へと分割する
+    this.right.parse();
+
+    // 残った演算子部分をこのノードに設定する
+    this.expression = this.expression.substr(posOperator, 1);
   }
 
   // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド

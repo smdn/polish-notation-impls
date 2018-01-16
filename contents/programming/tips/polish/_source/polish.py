@@ -44,29 +44,31 @@ class Node:
     # 式expressionから演算子を探して位置を取得する
     pos_operator = Node.__get_operator_position(self.expression)
 
-    if pos_operator == 0 or pos_operator == len(self.expression) - 1:
-      # 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      raise Exception("invalid expression: {}".format(self.expression))
-
-    elif pos_operator < 0:
+    if pos_operator < 0:
       # 式expressionに演算子が含まれない場合、expressionは項であるとみなす
       # (左右に子ノードを持たないノードとする)
       self.left = None
       self.right = None
+      return
 
-    else:
-      # 演算子の左側を左の部分式としてノードを作成する
-      self.left = Node(self.expression[0:pos_operator])
-      # 左側のノード(部分式)について、再帰的に二分木へと分割する
-      self.left.parse()
+    if pos_operator == 0 or pos_operator == len(self.expression) - 1:
+      # 演算子の位置が式の先頭または末尾の場合は不正な式とする
+      raise Exception("invalid expression: {}".format(self.expression))
 
-      # 演算子の右側を右の部分式としてノードを作成する
-      self.right = Node(self.expression[pos_operator + 1:])
-      # 右側のノード(部分式)について、再帰的に二分木へと分割する
-      self.right.parse()
+    # 以下、演算子の位置をもとに左右の部分式に分割する
 
-      # 残った演算子部分をこのノードに設定する
-      self.expression = self.expression[pos_operator]
+    # 演算子の左側を左の部分式としてノードを作成する
+    self.left = Node(self.expression[0:pos_operator])
+    # 左側のノード(部分式)について、再帰的に二分木へと分割する
+    self.left.parse()
+
+    # 演算子の右側を右の部分式としてノードを作成する
+    self.right = Node(self.expression[pos_operator + 1:])
+    # 右側のノード(部分式)について、再帰的に二分木へと分割する
+    self.right.parse()
+
+    # 残った演算子部分をこのノードに設定する
+    self.expression = self.expression[pos_operator]
 
   # 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
   @staticmethod
