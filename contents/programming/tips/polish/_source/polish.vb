@@ -82,8 +82,14 @@ Class Node
     Dim hasOuterMostBracket As Boolean = False ' 最も外側に括弧を持つかどうか
     Dim nest As Integer = 0 ' 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    ' 1文字ずつ検証する
-    For i As Integer = 0 To expression.Length - 1
+    If expression(0) = "("c Then
+      ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+      hasOuterMostBracket = True
+      nest = 1
+    End If
+
+    ' 1文字目以降を1文字ずつ検証
+    For i As Integer = 1 To expression.Length - 1
       If expression(i) = "("c Then
         ' 開き丸括弧なので深度を1増やす
         nest += 1

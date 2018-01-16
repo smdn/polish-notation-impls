@@ -85,8 +85,14 @@ class Node {
     let hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
     let nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    // 1文字ずつ検証する
-    for (let i = 0; i < expression.length; i++) {
+    if (expression[0] == "(") {
+      // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+      hasOuterMostBracket = true;
+      nest = 1;
+    }
+
+    // 1文字目以降を1文字ずつ検証
+    for (let i = 1; i < expression.length; i++) {
       if (expression[i] == "(") {
         // 開き丸括弧なので深度を1増やす
         nest++;

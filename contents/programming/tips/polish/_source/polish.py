@@ -76,8 +76,13 @@ class Node:
     has_outer_most_bracket = False # 最も外側に括弧を持つかどうか
     nest = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    # 1文字ずつ検証する
-    for i in range(0, len(expression)):
+    if expression[0] == "(":
+      # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+      has_outer_most_bracket = True
+      nest = 1
+
+    # 1文字目以降を1文字ずつ検証
+    for i in range(1, len(expression)):
       if expression[i] == "(":
         # 開き丸括弧なので深度を1増やす
         nest += 1

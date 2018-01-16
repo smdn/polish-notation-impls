@@ -38,15 +38,17 @@ int remove_outer_most_bracket(char *exp)
     int has_outer_most_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
     int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    // 1文字ずつ検証する
-    for (i = 0, len = 0; exp[i]; i++, len++) {
+    if ('(' == exp[0]) {
+        // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+        has_outer_most_bracket = 1;
+        nest = 1;
+    }
+
+    // 1文字目以降を1文字ずつ検証
+    for (i = 1, len = 1; exp[i]; i++, len++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
             nest++;
-
-            // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-            if (0 == i)
-                has_outer_most_bracket = 1;
         }
         else if (')' == exp[i]) {
             // 閉じ丸括弧なので深度を1減らす

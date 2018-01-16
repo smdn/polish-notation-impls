@@ -95,8 +95,14 @@ class Node {
     boolean hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
     int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
-    // 1文字ずつ検証する
-    for (int i = 0; i < expression.length(); i++) {
+    if (expression.charAt(0) == '(') {
+      // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
+      hasOuterMostBracket = true;
+      nest = 1;
+    }
+
+    // 1文字目以降を1文字ずつ検証
+    for (int i = 1; i < expression.length(); i++) {
       if (expression.charAt(i) == '(') {
         // 開き丸括弧なので深度を1増やす
         nest++;
