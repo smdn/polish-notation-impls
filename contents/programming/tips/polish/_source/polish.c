@@ -74,16 +74,14 @@ int remove_outer_most_bracket(char *exp)
     }
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
-    len -= 2; // 文字列の長さを2(=外側の括弧の分)減らす
-
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len - 2; i++) {
         exp[i] = exp[i + 1];
     }
     exp[i] = '\0';
 
     // 取り除いた後の文字列の最も外側に括弧が残っている場合
     // 例:"((1+2))"などの場合
-    if ('(' == exp[0] && ')' == exp[len - 1])
+    if ('(' == exp[0] && ')' == exp[i - 1])
         // 再帰的に呼び出して取り除く
         return remove_outer_most_bracket(exp);
     else
