@@ -1,0 +1,118 @@
+.expressiontree {
+  shape-rendering: geometricPrecision;
+}
+
+.expressiontree-node-body {
+  fill: powderblue;
+}
+
+.expressiontree-node-label {
+  font-size: 100%;
+  font-family: monospace;
+  stroke: none;
+  fill: black;
+}
+
+.expressiontree-branch,
+.expressiontree-node-body {
+  stroke: midnightblue;
+  stroke-width: 2.5px;
+}
+
+.expressiontree-subtree-bound {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.expressiontree-subtree-label {
+  font-size: 75%;
+  stroke: none;
+  fill: transparent;
+}
+
+.expressiontree-subtree-bound,
+.expressiontree-subtree-label {
+  transition: 50ms;
+  transition-timing-function: ease-in-out;
+}
+
+.expressiontree-subtree-bound:hover {
+  fill: lightskyblue;
+  opacity: 0.4;
+}
+
+.expressiontree-subtree-bound:hover ~ .expressiontree-subtree-label {
+  fill: black;
+}
+
+.expressiontree-traversalorder-path,
+.expressiontree-traversalorder-path-marker {
+  stroke: crimson;
+  stroke-width: 1.5px;
+  fill: crimson;
+}
+
+.expressiontree-traversalorder-path {
+  fill: none;
+}
+
+.expressiontree-traversalorder-order {
+  font-size: 75%;
+}
+
+.expressiontree-traversalorder-order-content-box,
+.expressiontree-traversalorder-order-label-box {
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+.expressiontree-traversalorder-order-label {
+  fill: black;
+}
+
+.expressiontree-traversalorder-order-label-box {
+  fill: powderblue;
+}
+
+.expressiontree-traversalorder-order-content {
+  fill: black;
+}
+
+.expressiontree-traversalorder-order-content-box {
+  fill: white;
+}
+
+.expressiontree-calculation-subtreebound {
+  fill: tomato;
+  opacity: 0.4;
+}
+
+.expressiontree-calculation-subexpression {
+  font-size: 75%;
+}
+
+.expressiontree-branch,
+.expressiontree-node,
+.expressiontree-subtree-label,
+.expressiontree-traversalorder-order,
+.expressiontree-traversalorder-order-content,
+.expressiontree-traversalorder-order-content-box,
+.expressiontree-traversalorder-order-label,
+.expressiontree-traversalorder-order-label-box,
+.expressiontree-traversalorder-path,
+.expressiontree-traversalorder-nodemask,
+.expressiontree-calculation-subtreebound,
+.expressiontree-calculation-subexpression {
+  pointer-events: none;
+}
+
+.expressiontree-subtree-label,
+.expressiontree-traversalorder-order-content,
+.expressiontree-traversalorder-order-label,
+.expressiontree-calculation-subexpression {
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
