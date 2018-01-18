@@ -129,7 +129,7 @@ Class Node
     Return expression
   End Function
 
-  ' 式expressionから最も優先順位が低い演算子を探して位置を返すメソッド
+  ' 式expressionから最も右側にあり、かつ優先順位が低い演算子を探して位置を返すメソッド
   ' (演算子がない場合は-1を返す)
   Private Shared Function GetOperatorPosition(ByVal expression As String) As Integer
     If String.IsNullOrEmpty(expression) Then Return -1
@@ -158,6 +158,7 @@ Class Node
 
       ' 括弧の深度が0(丸括弧でくくられていない部分)かつ、
       ' 現在見つかっている演算子よりも優先順位が同じか低い場合
+      ' (優先順位が同じ場合は、より右側に同じ優先順位の演算子があることになる)
       If nest = 0 AndAlso priority <= currentPriority Then
         ' 最も優先順位が低い演算子とみなし、その位置を保存する
         currentPriority = priority

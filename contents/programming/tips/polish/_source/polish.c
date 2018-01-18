@@ -89,7 +89,7 @@ int remove_outer_most_bracket(char *exp)
         return 0;
 }
 
-// 式expから最も優先順位が低い演算子を探して位置を返す関数
+// 式expから最も右側にあり、かつ優先順位が低い演算子を探して位置を返す関数
 // (演算子がない場合は-1を返す)
 int get_pos_operator(char *exp)
 {
@@ -120,6 +120,7 @@ int get_pos_operator(char *exp)
 
         // 括弧の深度が0(丸括弧でくくられていない部分)かつ、
         // 現在見つかっている演算子よりも優先順位が同じか低い場合
+        // (優先順位が同じ場合は、より右側に同じ優先順位の演算子があることになる)
         if (0 == nest && priority <= priority_current) {
           // 最も優先順位が低い演算子とみなし、その位置を保存する
           priority_current = priority;
