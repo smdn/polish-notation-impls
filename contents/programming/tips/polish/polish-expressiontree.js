@@ -96,7 +96,7 @@ class Svg {
     );
   }
 
-  static minimizeElement(svgElement, padding)
+  static minimizeElement(svgElement, padding, maxWidth, maxHeight)
   {
     if (svgElement.ownerSVGElement)
       svgElement = svgElement.ownerSVGElement;
@@ -130,11 +130,24 @@ class Svg {
       width:  (r - l) + padding * 2.0,
       height: (b - t) + padding * 2.0,
     };
+    let viewportWidth = viewBox.width;
+    let viewportHeight = viewBox.height;
+
+    if (maxWidth || maxHeight) {
+      if (maxWidth < viewportWidth) {
+        viewportHeight = viewportHeight * (maxWidth / viewportWidth);
+        viewportWidth = maxWidth;
+      }
+      else if (maxHeight < viewportHeight) {
+        viewportWidth = viewportWidth * (maxHeight / viewportHeight);
+        viewportHeight = maxHeight;
+      }
+    }
 
     let viewportElement = svgElement.viewportElement ? svgElement.viewportElement : svgElement;
 
-    viewportElement.setAttribute("width", viewBox.width);
-    viewportElement.setAttribute("height", viewBox.height);
+    viewportElement.setAttribute("width", viewportWidth);
+    viewportElement.setAttribute("height", viewportHeight);
     viewportElement.setAttribute("viewBox", `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
   }
 
