@@ -58,7 +58,7 @@ function polish_demo_visualize(expression)
 {
   let ua = window.navigator.userAgent.toLowerCase();
 
-  if (ua.indexOf('edge') !== -1)
+  if (ua.indexOf("edge") !== -1 || ua.indexOf("msie") !== -1 || ua.indexOf("trident") !== -1)
     return;
 
   let root = new ExpressionTreeNode(expression);
