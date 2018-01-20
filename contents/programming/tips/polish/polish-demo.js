@@ -56,6 +56,11 @@ function polish_demo_convert_notation(expression)
 
 function polish_demo_visualize(expression)
 {
+  let ua = window.navigator.userAgent.toLowerCase();
+
+  if (ua.indexOf('edge') !== -1)
+    return;
+
   let root = new ExpressionTreeNode(expression);
 
   root.parse();
