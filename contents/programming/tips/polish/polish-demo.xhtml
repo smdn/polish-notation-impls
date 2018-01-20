@@ -15,16 +15,18 @@
           </datalist>
           <input type="button" value="変換" onclick="polish_demo_run(this);"/>
           <input type="button" value="クリア" onclick="polish_demo_clear(true);"/>
+          <input type="checkbox" id="polish-demo-visualize" checked="checked" title="項の数が多い場合や式の形態によっては作図に時間がかかることがあります"/>
+          <label for="polish-demo-visualize">作図する</label>
         </div>
         <div><pre id="polish-demo-message"></pre></div>
         <div>
-          記入例
+          <span>記入例</span>
           <ul>
-            <li><code class="inline">x = 1 - 2 + 3</code></li>
-            <li><code class="inline">x = a * (b + c)</code></li>
-            <li><code class="inline">2 + 5 * 3 - 4</code></li>
-            <li><code class="inline">1.0+2/.3/(0-1)</code></li>
-            <li><code class="inline">1 + 2 + X = Y + 3 + 4</code></li>
+            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">x = 1 - 2 + 3</code></li>
+            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">x = a * (b + c)</code></li>
+            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">2 + 5 * 3 - 4</code></li>
+            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">1.0+2/.3/(0-1)</code></li>
+            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">1 + 2 + X = Y + 3 + 4</code></li>
           </ul>
         </div>
       </td>

@@ -152,7 +152,8 @@ function polish_demo_run(e)
 
       polish_demo_convert_notation(expression);
 
-      polish_demo_visualize(expression);
+      if (document.getElementById("polish-demo-visualize").checked)
+        polish_demo_visualize(expression);
     }
     catch(e) {
       polish_demo_set_message(e.toString(), "red");
