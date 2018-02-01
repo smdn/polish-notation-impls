@@ -255,15 +255,19 @@ class VisualTreeNode {
 
   static createSvgElement(id)
   {
-    let e = Svg.createElement("svg", {
+    return VisualTreeNode.initializeSvgElement(Svg.createElement("svg", {
       "id": id,
-      "class": "expressiontree",
-      "width":  "300", // as default
-      "height": "300", // as default
-      "viewBox": "-150 -40 300 300",
       "version": "1.1",
       "xmlns": Svg.NS,
-    });
+    }));
+  }
+
+  static initializeSvgElement(e)
+  {
+    e.classList.add("expressiontree");
+    e.setAttribute("width", "300"); // as default
+    e.setAttribute("height", "300"); // as default
+    e.setAttribute("viewBox", "-150 -40 300 300"); // as default
 
     return e;
   }

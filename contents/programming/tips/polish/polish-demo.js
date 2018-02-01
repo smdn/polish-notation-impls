@@ -96,8 +96,7 @@ function polish_demo_visualize(expression)
   ];
 
   visualizations.forEach(v => {
-    let target = document.getElementById(v.targetId)
-                         .appendChild(VisualTreeNode.createSvgElement());
+    let target = VisualTreeNode.initializeSvgElement(document.getElementById(v.targetId));
 
     selectTabOfContent(target); // XXX
 
@@ -106,6 +105,9 @@ function polish_demo_visualize(expression)
     const maxWidth = 1080;
 
     Svg.minimizeElement(target, 5, maxWidth);
+
+    target.setCurrentTime(0);
+    target.unpauseAnimations();
   });
 
 /*
