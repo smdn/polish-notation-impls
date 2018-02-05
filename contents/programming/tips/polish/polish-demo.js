@@ -98,7 +98,7 @@ function polish_demo_visualize(expression)
   visualizations.forEach(v => {
     let target = VisualTreeNode.initializeSvgElement(document.getElementById(v.targetId));
 
-    tabSelectByTabContent(target);
+    smdn.tabs.selectByTabContent(target);
 
     v.action(root.createVisualTree(), target);
 
