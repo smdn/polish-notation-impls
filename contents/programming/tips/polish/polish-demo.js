@@ -1,5 +1,3 @@
-"use strict"
-
 function polish_demo_remove_children(e)
 {
   while (e.firstChild)
@@ -56,10 +54,7 @@ function polish_demo_convert_notation(expression)
 
 function polish_demo_visualize(expression)
 {
-  let ua = window.navigator.userAgent.toLowerCase();
-
-  if (ua.indexOf("edge") !== -1 || ua.indexOf("msie") !== -1 || ua.indexOf("trident") !== -1)
-    return;
+  if (smdn.ua.isMSEdgeOrIE) return;
 
   let root = new ExpressionTreeNode(expression);
 
@@ -95,7 +90,7 @@ function polish_demo_visualize(expression)
     },
   ];
 
-  visualizations.forEach(v => {
+  visualizations.forEach(function(v) {
     let target = VisualTreeNode.initializeSvgElement(document.getElementById(v.targetId));
 
     smdn.tabs.selectByTabContent(target);
@@ -165,3 +160,22 @@ function polish_demo_run(e)
     e.disabled = false;
   }
 }
+
+smdn.onReady(function() {
+  if (smdn.ua.isMSEdgeOrIE) {
+    if (smdn.ua.isMSIE) {
+      smdn.selectNodes(null, "#polish-demo-input input", function(i) {
+        i.disabled = true;
+      });
+
+      let i = document.getElementById("polish-demo-input-expression");
+      i.value = "(Internet Explorerには対応していません)";
+    }
+
+    let e = document.getElementById("polish-demo-visualize");
+    e.disabled = true;
+    e.checked = false;
+    e.title = "このブラウザでは作図できません";
+  }
+});
+
