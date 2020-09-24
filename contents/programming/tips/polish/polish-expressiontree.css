@@ -1,21 +1,40 @@
+:root {
+  --expressiontree-text-color: rgb(24, 24, 24);
+  --expressiontree-node-border-color: midnightblue;
+  --expressiontree-node-fill-color: powderblue;
+  --expressiontree-node-text-color: var(--expressiontree-text-color);
+}
+
+@media screen and (prefers-color-scheme: dark){
+  :root {
+    --expressiontree-text-color: rgb(224, 224, 224);
+    --expressiontree-node-border-color: rgb(160, 160, 160);
+    --expressiontree-node-fill-color: rgb(48, 48, 48);
+  }
+}
+
 .expressiontree {
   shape-rendering: geometricPrecision;
 }
 
 .expressiontree-node-body {
-  fill: powderblue;
+  fill: var(--expressiontree-node-fill-color);
+  stroke: var(--expressiontree-node-border-color);
 }
 
 .expressiontree-node-label {
   font-size: 100%;
   font-family: monospace;
   stroke: none;
-  fill: black;
+  fill: var(--expressiontree-node-text-color);
+}
+
+.expressiontree-branch {
+  stroke: var(--expressiontree-node-border-color);
 }
 
 .expressiontree-branch,
 .expressiontree-node-body {
-  stroke: midnightblue;
   stroke-width: 2.5px;
 }
 
@@ -24,7 +43,8 @@
   stroke: transparent;
 }
 
-.expressiontree-subtree-label {
+.expressiontree-subtree-label,
+.expressiontree-subtree-label-static {
   font-size: 75%;
   stroke: none;
   fill: transparent;
@@ -36,13 +56,15 @@
   transition-timing-function: ease-in-out;
 }
 
-.expressiontree-subtree-bound:hover {
+.expressiontree-subtree-bound:hover,
+.expressiontree-subtree-bound-static {
   fill: lightskyblue;
   opacity: 0.4;
 }
 
-.expressiontree-subtree-bound:hover ~ .expressiontree-subtree-label {
-  fill: black;
+.expressiontree-subtree-bound:hover ~ .expressiontree-subtree-label,
+.expressiontree-subtree-label-static {
+  fill: var(--expressiontree-text-color);
 }
 
 .expressiontree-traversalorder-path,
@@ -88,6 +110,7 @@
 }
 
 .expressiontree-calculation-subexpression {
+  fill: var(--expressiontree-text-color);
   font-size: 75%;
 }
 
