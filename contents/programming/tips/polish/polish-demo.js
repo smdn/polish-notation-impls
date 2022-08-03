@@ -160,22 +160,3 @@ function polish_demo_run(e)
     e.disabled = false;
   }
 }
-
-smdn.onReady(function() {
-  if (smdn.ua.isMSEdgeOrIE) {
-    if (smdn.ua.isMSIE) {
-      smdn.selectNodes(null, "#polish-demo-input input", function(i) {
-        i.disabled = true;
-      });
-
-      let i = document.getElementById("polish-demo-input-expression");
-      i.value = "(Internet Explorerには対応していません)";
-    }
-
-    let e = document.getElementById("polish-demo-visualize");
-    e.disabled = true;
-    e.checked = false;
-    e.title = "このブラウザでは作図できません";
-  }
-});
-
