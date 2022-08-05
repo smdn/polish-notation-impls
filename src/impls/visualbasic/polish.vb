@@ -1,3 +1,6 @@
+' SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+' SPDX-License-Identifier: MIT
+
 ' vbc polish.vb && polish.exe (.NET Framework)
 ' vbnc2 polish.vb && mono polish.exe (Mono)
 Option Explicit On

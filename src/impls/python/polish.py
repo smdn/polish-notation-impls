@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+# SPDX-License-Identifier: MIT
 # -*- coding: utf-8 -*-
 import sys
 

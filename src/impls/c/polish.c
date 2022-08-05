@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
+
 // gcc polish.c -o polish && ./polish
 #include <stdio.h>
 #include <stdlib.h>
