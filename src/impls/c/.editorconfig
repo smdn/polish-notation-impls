@@ -1,0 +1,5 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+[*.c]
+indent_style = space
+indent_size = 4

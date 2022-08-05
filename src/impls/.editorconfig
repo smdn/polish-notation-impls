@@ -1,0 +1,7 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+[*.{c,cs,java,js,py,rb,vb}]
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true:suggestion
+insert_final_newline = true
