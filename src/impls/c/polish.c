@@ -282,7 +282,7 @@ int calculate(Node* node)
     calculate(node->right);
 
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
-    if (1 != sscanf(node->left->exp,  "%lf", &left_operand) || 
+    if (1 != sscanf(node->left->exp,  "%lf", &left_operand) ||
         1 != sscanf(node->right->exp, "%lf", &right_operand)) {
         // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
         // ノードの値が計算できないものとして、-1(失敗)を返す
