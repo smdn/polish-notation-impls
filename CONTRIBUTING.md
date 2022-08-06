@@ -17,6 +17,8 @@ IssueやPull Requestを作成する際は、本文をご一読ください。
 - 不具合が起こった実装の言語
 - 実行環境 (OS情報・ランタイムバージョンなど)
 
+なお、各実装がサポートする機能と、制限事項については[二分木を使った数式の逆ポーランド記法化と計算 §Cでの実装 機能と制限](https://smdn.jp/programming/tips/polish/#Implementation_C_FeaturesAndLimitations)を参照してください。
+
 不具合以外にも、改善点等の提案がある場合なども[Issue](/issues/)にてお知らせください。
 
 # Pull Request / コードの変更
