@@ -1,8 +1,5 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-
-// csc polish.cs && polish.exe (.NET Framework)
-// mcs polish.cs && mono polish.exe (Mono)
 using System;
 
 // ノードを構成するデータ構造

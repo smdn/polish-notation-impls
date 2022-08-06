@@ -1,7 +1,5 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-
-// nodejs polish.js
 "use strict"
 
 // ノードを構成するデータ構造
