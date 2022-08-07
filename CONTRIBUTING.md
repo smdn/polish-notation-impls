@@ -11,7 +11,7 @@ IssueやPull Requestを作成する際は、本文をご一読ください。
 # Issue / 不具合の報告
 ある程度テストをした状態で公開していますが、未発見の不具合があるかもしれません。
 
-不具合を発見した場合は、以下の情報を添えて[Issue](/issues/)にてご報告ください。
+不具合を発見した場合は、以下の情報を添えて[Issue](https://github.com/smdn/polish-notation-impls/issues/)にてご報告ください。
 - 入力に与えた内容と、期待される出力、実際の出力
 - エラーとなった場合は、そのエラーメッセージ
 - 不具合が起こった実装の言語
@@ -19,13 +19,13 @@ IssueやPull Requestを作成する際は、本文をご一読ください。
 
 なお、各実装がサポートする機能と、制限事項については[二分木を使った数式の逆ポーランド記法化と計算 §Cでの実装 機能と制限](https://smdn.jp/programming/tips/polish/#Implementation_C_FeaturesAndLimitations)を参照してください。
 
-不具合以外にも、改善点等の提案がある場合なども[Issue](/issues/)にてお知らせください。
+不具合以外にも、改善点等の提案がある場合なども[Issue](https://github.com/smdn/polish-notation-impls/issues/)にてお知らせください。
 
 # Pull Request / コードの変更
-不具合の修正や、コードに改善点や変更したい箇所がある場合は、[Pull Request](/pulls/)を作成してください。
+不具合の修正や、コードに改善点や変更したい箇所がある場合は、[Pull Request](https://github.com/smdn/polish-notation-impls/pulls/)を作成してください。
 
 ## Pull Requests are welcome
-主に以下のような内容でのPull Requestを歓迎します。　この他の変更が可能かどうかについて疑問がある場合は、まず[Issue](/issues/)にてお問い合わせください。
+主に以下のような内容でのPull Requestを歓迎します。　この他の変更が可能かどうかについて疑問がある場合は、まず[Issue](https://github.com/smdn/polish-notation-impls/issues/)にてお問い合わせください。
 
 This repository uses mainly Japanese, pull requests in English are also welcome.
 
