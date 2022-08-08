@@ -1,0 +1,14 @@
+{
+  "Name": "Test cases of invalid expressions",
+  "TestCases": [
+    { "ExpectAsInvalidExpression": true, "Input": "+" },
+    { "ExpectAsInvalidExpression": true, "Input": "+1" },
+    { "ExpectAsInvalidExpression": true, "Input": "1+" },
+    { "ExpectAsInvalidExpression": true, "Input": "-(1+1)" },
+    { "ExpectAsInvalidExpression": true, "Input": "1++2" },
+    { "ExpectAsInvalidExpression": true, "Input": "1+(2+)" },
+    { "ExpectAsInvalidExpression": true, "Input": "1+(+2)" },
+    { "ExpectAsInvalidExpression": true, "Input": "1=" },
+    { "ExpectAsInvalidExpression": true, "Input": "=1" },
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "Name": "Test cases of incalculable expressions",
+  "TestCases": [
+    { "Input": "A",                       "ExpectedCalculationResult": "A" }, // is treated as calculated result
+    { "Input": "A + B",                   "ExpectAsCalculatedExpression":  "(A + B)" },
+    { "Input": "A = B",                   "ExpectAsCalculatedExpression": "(A = B)" },
+    { "Input": "(A + B) * C",             "ExpectAsCalculatedExpression": "((A + B) * C)" },
+    { "Input": "(A + B) = C",             "ExpectAsCalculatedExpression": "((A + B) = C)" },
+    { "Input": "(A = B) + C",             "ExpectAsCalculatedExpression": "((A = B) + C)" }, // is invalid notation but is considered as valid expression
+    { "Input": "x = a * (b + c)",         "ExpectAsCalculatedExpression": "(x = (a * (b + c)))" },
+    { "Input": "x = 1 + 2",               "ExpectAsCalculatedExpression": "(x = 3)" },
+    { "Input": "x + 1 + 2 = 3 + 4",       "ExpectAsCalculatedExpression": "(((x + 1) + 2) = 7)" },
+    { "Input": "x + (1 + 2) = 3 + 4",     "ExpectAsCalculatedExpression": "((x + 3) = 7)" },
+    { "Input": "(x + 1) + 2 = 3 + 4",     "ExpectAsCalculatedExpression": "(((x + 1) + 2) = 7)" },
+    { "Input": "1 + 2 + x = 3 + 4",       "ExpectAsCalculatedExpression": "((3 + x) = 7)" },
+    { "Input": "1 + (2 + x) = 3 + 4",     "ExpectAsCalculatedExpression": "((1 + (2 + x)) = 7)" },
+    { "Input": "(1 + 2) + x = 3 + 4",     "ExpectAsCalculatedExpression": "((3 + x) = 7)" },
+    { "Input": "x = 1 + a",               "ExpectAsCalculatedExpression": "(x = (1 + a))" },
+    { "Input": "x = 1 = 2",               "ExpectAsCalculatedExpression": "((x = 1) = 2)" },
+    { "Input": "x = (1 = 2)",             "ExpectAsCalculatedExpression": "(x = (1 = 2))" },
+    { "Input": "(x = 1) = 2",             "ExpectAsCalculatedExpression": "((x = 1) = 2)" },
+
+    /*
+    * implicit multiplications
+    */
+    { "Input": "6/2(1+2)",       "ExpectAsCalculatedExpression": "(6 / 2(1+2))" },
+    { "Input": "(2*3)/2(1+2)",   "ExpectAsCalculatedExpression": "(6 / 2(1+2))" },
+  ]
+}

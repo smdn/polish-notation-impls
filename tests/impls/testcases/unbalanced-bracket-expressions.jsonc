@@ -1,0 +1,42 @@
+{
+  "Name": "Test cases of unbalanced bracket expressions",
+  "TestCases": [
+    /*
+    * unbalanced brackets
+    */
+    { "ExpectAsUnbalancedBracket": true, "Input": "(" },
+    { "ExpectAsUnbalancedBracket": true, "Input": ")" },
+    { "ExpectAsUnbalancedBracket": true, "Input": ")(" },
+    { "ExpectAsUnbalancedBracket": true, "Input": ")1(" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "(1" },
+    { "ExpectAsUnbalancedBracket": true, "Input": ")1" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "1)" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "1(" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "(1+2" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "1+2)" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "((1+2)" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "(1+2))" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "1+(2+3))" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "1+((2+3)" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "((1)+(2)" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "(1)+(2))" },
+    { "ExpectAsUnbalancedBracket": true, "Input": ")1+2" },
+    { "ExpectAsUnbalancedBracket": true, "Input": "1+2(" },
+    { "ExpectAsUnbalancedBracket": true, "Input": ")1+2(" },
+
+    /*
+    * empty brackets
+    */
+    { "ExpectAsEmptyBracket": true, "Input": "()" },
+    { "ExpectAsEmptyBracket": true, "Input": "(())" },
+    { "ExpectAsEmptyBracket": true, "Input": "((()))" },
+    { "ExpectAsEmptyBracket": true, "Input": "1=()" },
+    { "ExpectAsEmptyBracket": true, "Input": "()=1" },
+
+    /*
+    * parsed as valid expression currently
+    */
+    { "ExpectAsInvalidExpression": false, "Input": "x()" },
+    { "ExpectAsInvalidExpression": false, "Input": "(x())" },
+  ]
+}
