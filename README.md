@@ -1,7 +1,7 @@
 [![GitHub license](https://img.shields.io/github/license/smdn/polish-notation-impls)](https://github.com/smdn/polish-notation-impls/blob/main/LICENSE.txt)
 
 # polish-notation-impls
-このリポジトリでは、[二分木を使った数式の逆ポーランド記法化と計算](https://smdn.jp/programming/tips/polish/)で掲載している**数式の二分木化・記法変換・計算のアルゴリズム**について、各種言語で実装したものを公開しています。
+このリポジトリでは、[二分木を使った数式の逆ポーランド記法化と計算](https://smdn.jp/programming/tips/polish/)で掲載している**数式の二分木化・記法変換・計算のアルゴリズム**について、[各種言語で実装したもの](src/impls/)を公開しています。
 
 ## 実装
 現在、以下の言語の実装があります。
