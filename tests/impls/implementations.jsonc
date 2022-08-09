@@ -1,0 +1,62 @@
+[
+  {
+    "ID": "csharp",
+    "DisplayName": "C#",
+    "Directory": "src/impls/csharp/",
+    "Commands": {
+      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net6.0", "--nologo", "-v:quiet" ] } ],
+      "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
+      "Run":    { "Command": "dotnet", "Arguments": [ "bin/Release/net6.0/polish.dll" ] },
+    }
+  },
+  {
+    "ID": "c",
+    "DisplayName": "C",
+    "Directory": "src/impls/c/",
+    "Commands": {
+      "Build":  [ { "Command": "make" } ],
+      "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
+      "Run":    { "Command": "make", "Arguments": [ "run" ] },
+    }
+  },
+  {
+    "ID": "python",
+    "DisplayName": "Python 3",
+    "Directory": "src/impls/python/",
+    "Commands": {
+      "Build":  [ ],
+      "Clean":  [ ],
+      "Run":    { "Command": "python3", "Arguments": [ "polish.py" ] },
+    }
+  },
+  {
+    "ID": "javascript",
+    "DisplayName": "JavaScript (Node.js)",
+    "Directory": "src/impls/javascript/",
+    "Commands": {
+      "Build":  [ ],
+      "Clean":  [ ],
+      "Run":    { "Command": "nodejs", "Arguments": [ "polish.js" ] },
+    }
+  },
+  {
+    "ID": "java",
+    "DisplayName": "Java",
+    "Directory": "src/impls/java/",
+    "Commands": {
+      "Build":  [ { "Command": "javac", "Arguments": [ "Polish.java" ] } ],
+      "Clean":  [ { "Command": "Remove-Item", "Arguments": [ "-Force", "*.class" ], "UseInvokeExpression": true } ],
+      "Run":    { "Command": "java", "Arguments": [ "Polish" ] },
+    }
+  },
+  {
+    "ID": "visualbasic",
+    "DisplayName": "Visual Basic",
+    "Directory": "src/impls/visualbasic/",
+    "Commands": {
+      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net6.0", "--nologo", "-v:quiet" ] } ],
+      "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
+      "Run":    { "Command": "dotnet", "Arguments": [ "bin/Release/net6.0/polish.dll" ] },
+    }
+  },
+]
