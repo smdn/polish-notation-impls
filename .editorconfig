@@ -17,15 +17,7 @@ charset = utf-8-bom
 indent_size = 2
 end_of_line = crlf
 
-[*.{sh,ps1}]
-indent_style = space
-indent_size = 2
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-[*.jsonc]
+[*.{sh,ps1,jsonc}]
 indent_style = space
 indent_size = 2
 end_of_line = lf
