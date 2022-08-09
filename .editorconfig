@@ -17,7 +17,7 @@ charset = utf-8-bom
 indent_size = 2
 end_of_line = crlf
 
-[*.{sh,ps1,jsonc}]
+[*.{sh,ps1,jsonc,yml}]
 indent_style = space
 indent_size = 2
 end_of_line = lf
