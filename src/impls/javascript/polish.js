@@ -356,7 +356,7 @@ function polish_main(_expression) {
     else {
       // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
       process.stdout.write("calculated expression: ");
-      root.traverseInorder();
+      root.traverseInorder(process.stdout);
       process.stdout.write("\n");
     }
   }
