@@ -13,7 +13,10 @@ on:
       - "!src/impls/**/README.md"
 
   pull_request:
-    branches: [main]
+    types:
+      - opened
+      - review_requested
+      - synchronize
     paths:
       - "src/impls/**/*"
       - "!src/impls/**/.editorconfig"
