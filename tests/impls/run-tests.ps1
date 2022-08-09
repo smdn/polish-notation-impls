@@ -268,13 +268,13 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
   exit 1
 }
 
-$implementations = Get-Content -Path "implementations.jsonc" | ConvertFrom-Json
+$implementations = Get-Content -Path $([System.IO.Path]::Combine($PSScriptRoot, "implementations.jsonc")) | ConvertFrom-Json
 
 if ($TargetImplementationId) {
   $implementations = $implementations | where ID -eq $TargetImplementationId
 }
 
-$testsuites = Get-ChildItem -Path "testcases/*.jsonc" -File |
+$testsuites = Get-ChildItem -Path $([System.IO.Path]::Combine($PSScriptRoot, "testcases/*.jsonc")) -File |
   # where Name -eq 'should-be-fail.jsonc' |
   ForEach-Object {
     Get-Content -Path $_ | ConvertFrom-Json
