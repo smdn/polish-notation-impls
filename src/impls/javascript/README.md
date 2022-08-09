@@ -4,11 +4,11 @@
 [Node.js](https://nodejs.org/ja/)が必要です。
 
 # ビルドおよび実行
-コマンド`nodejs polish.js`で実行できます。
+コマンド`node polish.js`で実行できます。
 
 実行例:
 ```sh
-$ nodejs polish.js
+$ node polish.js
 input expression: x=1+2
 expression: x=1+2
 reverse polish notation: x 1 2 + =

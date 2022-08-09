@@ -36,7 +36,7 @@
     "Commands": {
       "Build":  [ ],
       "Clean":  [ ],
-      "Run":    { "Command": "nodejs", "Arguments": [ "polish.js" ] },
+      "Run":    { "Command": "node", "Arguments": [ "polish.js" ] },
     }
   },
   {
