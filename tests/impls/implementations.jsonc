@@ -44,7 +44,7 @@
     "DisplayName": "Java",
     "Directory": "src/impls/java/",
     "Commands": {
-      "Build":  [ { "Command": "javac", "Arguments": [ "Polish.java" ] } ],
+      "Build":  [ { "Command": "javac", "Arguments": [ "-encoding", "UTF-8", "Polish.java" ] } ],
       "Clean":  [ { "Command": "Remove-Item", "Arguments": [ "-Force", "*.class" ], "UseInvokeExpression": true } ],
       "Run":    { "Command": "java", "Arguments": [ "Polish" ] },
     }
