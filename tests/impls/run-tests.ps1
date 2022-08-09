@@ -151,7 +151,7 @@ function Run-TestCase {
     #
     if ($testcase.ExpectedCalculationResult) {
       if ($result_stdout -match "(?m)^calculated result: (?<result>.+)$") {
-        $actual_calculation_result = $Matches["result"]
+        $actual_calculation_result = $Matches["result"].TrimEnd("`n", "`r") # trim CRLF
       }
 
       if ($testcase.ExpectedCalculationResult -ne $actual_calculation_result) {
@@ -161,7 +161,7 @@ function Run-TestCase {
 
     if ($testcase.ExpectAsCalculatedExpression) {
       if ($result_stdout -match "(?m)^calculated expression: (?<exp>.+)$") {
-        $actual_calculated_expression = $Matches["exp"]
+        $actual_calculated_expression = $Matches["exp"].TrimEnd("`n", "`r") # trim CRLF
       }
 
       if ($testcase.ExpectAsCalculatedExpression -ne $actual_calculated_expression) {
@@ -188,7 +188,7 @@ function Run-TestCase {
     )) {
       if ($test.ExpectedExpression) {
         if ($result_stdout -match "(?m)^$($test.Notation): (?<exp>.+)$") {
-          $actual_expression = $Matches["exp"]
+          $actual_expression = $Matches["exp"].TrimEnd("`n", "`r") # trim CRLF
         }
 
         if ($test.ExpectedExpression -ne $actual_expression) {
