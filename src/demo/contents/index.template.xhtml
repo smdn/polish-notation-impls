@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+ <head xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <meta charset="utf-8" />
+  <title>ポーランド記法化・逆ポーランド記法化と数式計算のデモ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/polish-expressiontree.css" media="all" />
+  <script src="/polish.js" type="text/javascript"></script>
+  <script src="/polish-demo.js" type="text/javascript"></script>
+  <script src="/polish-expressiontree.js" type="text/javascript"></script>
+  <style>/*<![CDATA[*/
+:root {
+ color: #222;
+ background-color: #fff;
+}
+
+@media screen and (prefers-color-scheme: dark){
+ :root {
+  color: #fff;
+  background-color: #222;
+ }
+}
+/*]]>*/</style>
+ </head>
+ <body>
+  <main>
+   <h1>ポーランド記法化・逆ポーランド記法化と数式計算のデモ</h1>
+   <x:placeholder xmlns:x="https://github.com/smdn/polish-notation-impls" />
+
+   <h2>二分木化した数式と記法の変換過程 ポーランド記法・前置記法</h2>
+   <svg id="polish-demo-expressiontree-traverse-preorder" xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" height="0">
+    <title>placeholder</title>
+    <animate/>
+   </svg>
+
+   <h2>二分木化した数式と記法の変換過程 逆ポーランド記法・後置記法</h2>
+   <svg id="polish-demo-expressiontree-traverse-postorder" xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" height="0">
+    <title>placeholder</title>
+    <animate/>
+   </svg>
+
+   <h2>二分木化した数式と記法の変換過程 中置記法</h2>
+   <svg id="polish-demo-expressiontree-traverse-inorder" xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" height="0">
+    <title>placeholder</title>
+    <animate/>
+   </svg>
+
+   <h2>二分木化した数式と数式の計算過程</h2>
+   <svg id="polish-demo-expressiontree-calculation" xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" height="0">
+    <title>placeholder</title>
+    <animate/>
+   </svg>
+  </main>
+ </body>
+</html>
