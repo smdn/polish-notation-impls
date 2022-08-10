@@ -154,6 +154,7 @@ function polish_demo_run(e)
     }
     catch(e) {
       polish_demo_set_message(e.toString(), "red");
+      throw e;
     }
   }
   finally {
