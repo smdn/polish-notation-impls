@@ -24,8 +24,9 @@ class DemoServer {
 
     for (var index = 0; index < args.Length; index++) {
       switch (args[index]) {
-        case "--port": localPortNumber = int.Parse(args[++index]);
-        break;
+        case "--port":
+          localPortNumber = int.Parse(args[++index]);
+          break;
       }
     }
 
@@ -46,7 +47,7 @@ class DemoServer {
     }
 
     try {
-      for (;;) {
+      for (; ; ) {
         await ProcessRequestAsync(await listener.GetContextAsync());
       }
     }
