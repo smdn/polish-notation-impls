@@ -152,9 +152,9 @@ function polish_demo_run(e)
       if (document.getElementById("polish-demo-visualize").checked)
         polish_demo_visualize(expression);
     }
-    catch(e) {
-      polish_demo_set_message(e.toString(), "red");
-      throw e;
+    catch(err) {
+      polish_demo_set_message(err.toString(), "red");
+      throw err;
     }
   }
   finally {
