@@ -82,37 +82,36 @@ class DemoServer {
         response.ContentEncoding = utf8nobom;
         response.KeepAlive = false;
 
-        using (var s = new MemoryStream()) {
-          using (var writer = new StreamWriter(s, response.ContentEncoding, 1024, true)) {
-            if (responseContent is null || responseContent.Content is null) {
-              // set default content body
-              response.ContentType = "text/plain";
+        using var s = new MemoryStream();
+        using (var writer = new StreamWriter(s, response.ContentEncoding, 1024, true)) {
+          if (responseContent is null || responseContent.Content is null) {
+            // set default content body
+            response.ContentType = "text/plain";
 
-              writer.WriteLine($"{response.StatusCode:D3} {(HttpStatusCode)response.StatusCode}");
-            }
-            else {
-              response.ContentType = responseContent.ContentType;
+            writer.WriteLine($"{response.StatusCode:D3} {(HttpStatusCode)response.StatusCode}");
+          }
+          else {
+            response.ContentType = responseContent.ContentType;
 
-              writer.WriteLine(responseContent.Content);
-            }
-
-            writer.Flush();
+            writer.WriteLine(responseContent.Content);
           }
 
-          response.ContentLength64 = s.Length;
-
-          s.Position = 0L;
-
-          Console.WriteLine(
-            "{0:D3} {1} \"{2}\" \"{3}\"",
-            response.StatusCode,
-            s.Length,
-            request.UrlReferrer,
-            request.UserAgent
-          );
-
-          s.CopyTo(response.OutputStream);
+          writer.Flush();
         }
+
+        response.ContentLength64 = s.Length;
+
+        s.Position = 0L;
+
+        Console.WriteLine(
+          "{0:D3} {1} \"{2}\" \"{3}\"",
+          response.StatusCode,
+          s.Length,
+          request.UrlReferrer,
+          request.UserAgent
+        );
+
+        s.CopyTo(response.OutputStream);
       }
       catch {
         throw;
