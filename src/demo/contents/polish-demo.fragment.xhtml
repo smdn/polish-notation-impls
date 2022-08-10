@@ -13,7 +13,7 @@
       <option value="1.0+2/.3/(0-1)" />
       <option value="1 + 2 + X = Y + 3 + 4" />
      </datalist>
-     <input type="button" value="変換" onclick="polish_demo_run(this);" />
+     <input type="submit" value="変換" onclick="event.preventDefault(); polish_demo_run(this);" />
      <input type="button" value="クリア" onclick="polish_demo_clear(true);" />
      <input type="checkbox" id="polish-demo-visualize" checked="checked" title="項の数が多い場合や式の形態によっては作図に時間がかかることがあります" />
      <label for="polish-demo-visualize">作図する</label>
