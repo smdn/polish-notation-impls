@@ -364,7 +364,9 @@ int main()
 
     // 標準入力から二分木に分割したい式を入力して、式全体をroot->expに格納する
     printf("input expression: ");
-    scanf("%[^\n]", root->exp);
+
+    if (1 != scanf("%[^\n]", root->exp))
+        return -1;
 
     // 入力された式から空白を除去する
     remove_space(root->exp);
