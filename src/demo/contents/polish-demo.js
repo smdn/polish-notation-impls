@@ -91,7 +91,9 @@ function polish_demo_visualize(expression)
   visualizations.forEach(function(v) {
     let target = VisualTreeNode.initializeSvgElement(document.getElementById(v.targetId));
 
-    smdn.tabs.selectByTabContent(target);
+    if (typeof smdn !== 'undefined')
+      // this is required on https://smdn.jp/programming/tips/polish/
+      smdn.tabs.selectByTabContent(target);
 
     v.action(root.createVisualTree(), target);
 
