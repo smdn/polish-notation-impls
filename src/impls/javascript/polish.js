@@ -305,7 +305,7 @@ class Node {
 if (typeof require == "function") {
   let rl = require('readline').createInterface({
     input: process.stdin,
-    terminal: true,
+    terminal: false,
   });
 
   if (rl) {
