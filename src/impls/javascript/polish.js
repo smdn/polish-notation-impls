@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 "use strict"
