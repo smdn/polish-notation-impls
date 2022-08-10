@@ -1,59 +1,71 @@
 <form action="">
-  <table>
-    <caption>数式のポーランド記法化・逆ポーランド記法化と数式計算のデモ</caption>
-    <tr>
-      <th>変換する数式</th>
-      <td>
-        <div id="polish-demo-input">
-          <input type="text" id="polish-demo-input-expression" value="x = 1 - 2 + 3" size="40" list="polish-demo-input-expressions-list" style="font-family:monospace;" />
-          <datalist id="polish-demo-input-expressions-list">
-            <option value="x = 1 - 2 + 3" />
-            <option value="x = a * (b + c)" />
-            <option value="2 + 5 * 3 - 4" />
-            <option value="1.0+2/.3/(0-1)" />
-            <option value="1 + 2 + X = Y + 3 + 4" />
-          </datalist>
-          <input type="button" value="変換" onclick="polish_demo_run(this);"/>
-          <input type="button" value="クリア" onclick="polish_demo_clear(true);"/>
-          <input type="checkbox" id="polish-demo-visualize" checked="checked" title="項の数が多い場合や式の形態によっては作図に時間がかかることがあります"/>
-          <label for="polish-demo-visualize">作図する</label>
-        </div>
-        <div><pre id="polish-demo-message"></pre></div>
-        <div>
-          <span>記入例</span>
-          <ul>
-            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">x = 1 - 2 + 3</code></li>
-            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">x = a * (b + c)</code></li>
-            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">2 + 5 * 3 - 4</code></li>
-            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">1.0+2/.3/(0-1)</code></li>
-            <li><code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">1 + 2 + X = Y + 3 + 4</code></li>
-          </ul>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th>ポーランド記法<br/>(前置記法化した数式)</th>
-      <td>
-        <output id="polish-demo-conversionresult-expression-preorder" style="font-family:monospace;" />
-      </td>
-    </tr>
-    <tr>
-      <th>逆ポーランド記法<br/>(後置記法化した数式)</th>
-      <td>
-        <output id="polish-demo-conversionresult-expression-postorder" style="font-family:monospace;" />
-      </td>
-    </tr>
-    <tr>
-      <th>元の数式から再構成した数式<br/>(中置記法の数式)</th>
-      <td>
-        <output id="polish-demo-conversionresult-expression-inorder" style="font-family:monospace;" />
-      </td>
-    </tr>
-    <tr>
-      <th>数式の計算結果</th>
-      <td>
-        <output id="polish-demo-conversionresult-calculation" style="font-family:monospace;" />
-      </td>
-    </tr>
-  </table>
+ <table>
+  <caption>数式のポーランド記法化・逆ポーランド記法化と数式計算のデモ</caption>
+  <tr>
+   <th>変換する数式</th>
+   <td>
+    <div id="polish-demo-input">
+     <input type="text" id="polish-demo-input-expression" value="x = 1 - 2 + 3" size="40" list="polish-demo-input-expressions-list" style="font-family:monospace;" />
+     <datalist id="polish-demo-input-expressions-list">
+      <option value="x = 1 - 2 + 3" />
+      <option value="x = a * (b + c)" />
+      <option value="2 + 5 * 3 - 4" />
+      <option value="1.0+2/.3/(0-1)" />
+      <option value="1 + 2 + X = Y + 3 + 4" />
+     </datalist>
+     <input type="button" value="変換" onclick="polish_demo_run(this);" />
+     <input type="button" value="クリア" onclick="polish_demo_clear(true);" />
+     <input type="checkbox" id="polish-demo-visualize" checked="checked" title="項の数が多い場合や式の形態によっては作図に時間がかかることがあります" />
+     <label for="polish-demo-visualize">作図する</label>
+    </div>
+    <div>
+     <pre id="polish-demo-message"></pre>
+    </div>
+    <div>
+     <span>記入例</span>
+     <ul>
+      <li>
+       <code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">x = 1 - 2 + 3</code>
+      </li>
+      <li>
+       <code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">x = a * (b + c)</code>
+      </li>
+      <li>
+       <code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">2 + 5 * 3 - 4</code>
+      </li>
+      <li>
+       <code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">1.0+2/.3/(0-1)</code>
+      </li>
+      <li>
+       <code class="inline" onclick="document.getElementById('polish-demo-input-expression').value = this.textContent;">1 + 2 + X = Y + 3 + 4</code>
+      </li>
+     </ul>
+    </div>
+   </td>
+  </tr>
+  <tr>
+   <th>ポーランド記法<br />(前置記法化した数式)</th>
+   <td>
+    <output id="polish-demo-conversionresult-expression-preorder" style="font-family:monospace;" />
+   </td>
+  </tr>
+  <tr>
+   <th>逆ポーランド記法<br />(後置記法化した数式)</th>
+   <td>
+    <output id="polish-demo-conversionresult-expression-postorder" style="font-family:monospace;" />
+   </td>
+  </tr>
+  <tr>
+   <th>元の数式から再構成した数式<br />(中置記法の数式)</th>
+   <td>
+    <output id="polish-demo-conversionresult-expression-inorder" style="font-family:monospace;" />
+   </td>
+  </tr>
+  <tr>
+   <th>数式の計算結果</th>
+   <td>
+    <output id="polish-demo-conversionresult-calculation" style="font-family:monospace;" />
+   </td>
+  </tr>
+ </table>
 </form>
