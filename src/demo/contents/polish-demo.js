@@ -54,8 +54,6 @@ function polish_demo_convert_notation(expression)
 
 function polish_demo_visualize(expression)
 {
-  if (smdn.ua.isMSEdgeOrIE) return;
-
   let root = new ExpressionTreeNode(expression);
 
   root.parse();
