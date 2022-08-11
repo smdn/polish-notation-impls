@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
+using Smdn.Xml.Xhtml;
+
 class DemoServer {
   private const string ServerName = "PolishNotationDemoServer/1.0";
   private const int DefaultLocalPortNumber = 48080;
@@ -242,12 +244,16 @@ class DemoServer {
 
     var sb = new StringBuilder(10 * 1024);
     var writerSettings = new XmlWriterSettings() {
-      Async = true,
+      Async = false, // async is not implemented
       CloseOutput = true,
+      Indent = true,
+      IndentChars = " ",
+      NewLineChars = "\n",
     };
 
-    using (var writer = XmlWriter.Create(sb, writerSettings)) {
-      await templateIndex.WriteToAsync(writer, cancellationToken: default);
+    using (var writer = new PolyglotHtml5Writer(sb, writerSettings)) {
+      // await templateIndex.SaveAsync(writer, cancellationToken: default); // async is not implemented
+      templateIndex.Save(writer);
     }
 
     return sb.ToString();
