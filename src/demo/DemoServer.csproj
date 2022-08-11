@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <NoWarn>CS2002;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,5 +15,27 @@
   <ItemGroup>
     <PackageReference Include="Smdn.Fundamental.Xml.Xhtml" Version="3.*" />
   </ItemGroup>
+
+  <Target Name="GeneratePathConstantsFile" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <!-- <SourceLines Include="namespace $(RootNamespace)$([MSBuild]::Escape(';'))" /> -->
+      <SourceLines Include="public static class Paths {" />
+      <SourceLines Include="public const string ContentsBasePath = @&quot;$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)contents'))&quot;$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="public const string ImplementationsBasePath = @&quot;$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\impls\'))&quot;$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="}" />
+    </ItemGroup>
+    <PropertyGroup>
+      <PathConstantsFilePath>$(IntermediateOutputPath)$(AssemblyName).Paths.g.cs</PathConstantsFilePath>
+    </PropertyGroup>
+    <WriteLinesToFile
+      File="$(IntermediateOutputPath)$(AssemblyName).Paths.g.cs"
+      Overwrite="true"
+      Lines="@(SourceLines)"
+    />
+    <ItemGroup>
+      <!-- XXX: This causes compiler warning CS2002. -->
+      <Compile Include="$(PathConstantsFilePath)" />
+    </ItemGroup>
+  </Target>
 
 </Project>

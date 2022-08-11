@@ -152,28 +152,28 @@ class DemoServer {
       {
         "/polish-expressiontree.css",
         static async () => new(
-          content: await File.ReadAllTextAsync("./contents/polish-expressiontree.css"),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.css")),
           contentType: ContentTypeCascadingStyleSheets
         )
       },
       {
         "/polish.js",
         static async () => new(
-          content: await File.ReadAllTextAsync("../impls/javascript/polish.js"),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ImplementationsBasePath, "javascript/polish.js")),
           contentType: ContentTypeJavaScript
         )
       },
       {
         "/polish-demo.js",
         static async () => new(
-          content: await File.ReadAllTextAsync("./contents/polish-demo.js"),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.js")),
           contentType: ContentTypeJavaScript
         )
       },
       {
         "/polish-expressiontree.js",
         static async () => new(
-          content: await File.ReadAllTextAsync("./contents/polish-expressiontree.js"),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.js")),
           contentType: ContentTypeJavaScript
         )
       },
@@ -225,11 +225,11 @@ class DemoServer {
     XDocument templateIndex;
     XDocument fragmentPolishDemo;
 
-    using (var stream = File.OpenRead("./contents/index.template.xhtml")) {
+    using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "index.template.xhtml"))) {
       templateIndex = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken: default);
     }
 
-    using (var stream = File.OpenRead("./contents/polish-demo.fragment.xhtml")) {
+    using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "polish-demo.fragment.xhtml"))) {
       fragmentPolishDemo = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken: default);
     }
 
