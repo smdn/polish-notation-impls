@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <string.h>
 #include <limits.h>
 
@@ -269,6 +270,7 @@ void traverse_preorder(Node* node)
 int calculate(Node* node)
 {
     double left_operand, right_operand;
+    char* endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
 
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
     // それ以上計算できないので0(成功)を返す
@@ -280,12 +282,19 @@ int calculate(Node* node)
     calculate(node->right);
 
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
-    if (1 != sscanf(node->left->exp,  "%lf", &left_operand) ||
-        1 != sscanf(node->right->exp, "%lf", &right_operand)) {
-        // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-        // ノードの値が計算できないものとして、-1(失敗)を返す
+    // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
+    // ノードの値が計算できないものとして、-1(失敗)を返す
+    errno = 0;
+    left_operand = strtod(node->left->exp, &endptr_value);
+
+    if (ERANGE == errno || endptr_value != (node->left->exp + strlen(node->left->exp)))
         return -1;
-    }
+
+    errno = 0;
+    right_operand = strtod(node->right->exp, &endptr_value);
+
+    if (ERANGE == errno || endptr_value != (node->right->exp + strlen(node->right->exp)))
+        return -1;
 
     // ノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度node->expに代入することで現在のノードの値とする
