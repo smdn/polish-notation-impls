@@ -5,7 +5,7 @@
   --expressiontree-node-text-color: var(--expressiontree-text-color);
 }
 
-@media screen and (prefers-color-scheme: dark){
+@media screen and (prefers-color-scheme: dark) {
   :root {
     --expressiontree-text-color: rgb(224, 224, 224);
     --expressiontree-node-border-color: rgb(160, 160, 160);
@@ -62,7 +62,7 @@
   opacity: 0.4;
 }
 
-.expressiontree-subtree-bound:hover ~ .expressiontree-subtree-label,
+.expressiontree-subtree-bound:hover~.expressiontree-subtree-label,
 .expressiontree-subtree-label-static {
   fill: var(--expressiontree-text-color);
 }

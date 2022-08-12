@@ -127,7 +127,7 @@ class Svg {
     let viewBox = {
       x: l - padding,
       y: t - padding,
-      width:  (r - l) + padding * 2.0,
+      width: (r - l) + padding * 2.0,
       height: (b - t) + padding * 2.0,
     };
     let viewportWidth = viewBox.width;
@@ -216,9 +216,11 @@ class ExpressionTreeNode extends Node {
 
   static _createVisualTree(node)
   {
-    return new VisualTreeNode(node,
-                              node.left  ? ExpressionTreeNode._createVisualTree(node.left)  : null,
-                              node.right ? ExpressionTreeNode._createVisualTree(node.right) : null);
+    return new VisualTreeNode(
+      node,
+      node.left ? ExpressionTreeNode._createVisualTree(node.left) : null,
+      node.right ? ExpressionTreeNode._createVisualTree(node.right) : null
+    );
   }
 }
 
@@ -327,51 +329,61 @@ class VisualTreeNode {
 
   _render(target, renderInformationalElements)
   {
-    let groupSubtree = target.appendChild(Svg.createElement("g", {"class": "expressiontree-subtree"}));
+    let groupSubtree = target.appendChild(Svg.createElement("g", { "class": "expressiontree-subtree" }));
 
     groupSubtree.appendChild(Svg.createElement("desc", null, "subtree of '" + this.description + "'"));
 
     [
-      {tree: this.left,  className: "expressiontree-subtree expressiontree-subtree-left"},
-      {tree: this.right, className: "expressiontree-subtree expressiontree-subtree-right"},
+      { tree: this.left, className: "expressiontree-subtree expressiontree-subtree-left" },
+      { tree: this.right, className: "expressiontree-subtree expressiontree-subtree-right" },
     ]
-    .forEach((subtree) => {
-      if (!subtree.tree)
-        return;
+      .forEach((subtree) => {
+        if (!subtree.tree)
+          return;
 
-      groupSubtree.appendChild(Svg.createElement("line", {
-        "class": "expressiontree-branch",
-        "x1": this.x, "x2": subtree.tree.x,
-        "y1": this.y, "y2": subtree.tree.y,
-      }));
+        groupSubtree.appendChild(Svg.createElement("line", {
+          "class": "expressiontree-branch",
+          "x1": this.x, "x2": subtree.tree.x,
+          "y1": this.y, "y2": subtree.tree.y,
+        }));
 
-      let t = subtree.tree._render(groupSubtree, renderInformationalElements);
+        let t = subtree.tree._render(groupSubtree, renderInformationalElements);
 
-      t.setAttribute("class", subtree.className);
-    });
+        t.setAttribute("class", subtree.className);
+      });
 
-    let groupNode = groupSubtree.appendChild(Svg.createElement("g", {"class": "expressiontree-node"}));
+    let groupNode = groupSubtree.appendChild(Svg.createElement("g", { "class": "expressiontree-node" }));
 
-    let label = groupNode.appendChild(Svg.createTextElement({
-      "class": "expressiontree-node-label",
-      "x": this.x,
-      "y": this.y,
-      "text-anchor": "middle",
-      "dominant-baseline": "middle",
-    }, this.value));
+    let label = groupNode.appendChild(
+      Svg.createTextElement(
+        {
+          "class": "expressiontree-node-label",
+          "x": this.x,
+          "y": this.y,
+          "text-anchor": "middle",
+          "dominant-baseline": "middle",
+        },
+        this.value
+      )
+    );
 
-    const nodeBodyWidth  = Math.max(VisualTreeNode.RADIUS * 2.0, label.getBBox().width * 1.25);
+    const nodeBodyWidth = Math.max(VisualTreeNode.RADIUS * 2.0, label.getBBox().width * 1.25);
     const nodeBodyHeight = VisualTreeNode.RADIUS * 2.0;
 
-    let nodeBody = groupNode.appendChild(Svg.createElement("rect", {
-      "class": "expressiontree-node-body",
-      "x": this.x - nodeBodyWidth / 2.0,
-      "y": this.y - nodeBodyHeight / 2.0,
-      "width": nodeBodyWidth,
-      "height": nodeBodyHeight,
-      "rx": VisualTreeNode.RADIUS,
-      "ry": VisualTreeNode.RADIUS,
-    }));
+    let nodeBody = groupNode.appendChild(
+      Svg.createElement(
+        "rect",
+        {
+          "class": "expressiontree-node-body",
+          "x": this.x - nodeBodyWidth / 2.0,
+          "y": this.y - nodeBodyHeight / 2.0,
+          "width": nodeBodyWidth,
+          "height": nodeBodyHeight,
+          "rx": VisualTreeNode.RADIUS,
+          "ry": VisualTreeNode.RADIUS,
+        }
+      )
+    );
 
     groupNode.insertBefore(label, nodeBody.nextSibling); // move label to front
 
@@ -389,29 +401,42 @@ class VisualTreeNode {
     let ex = VisualTreeNode.RADIUS * 0.8;
     let ey = VisualTreeNode.RADIUS * 0.5;
 
-    let r = target.insertBefore(Svg.createElement("rect", {
-      "class": "expressiontree-subtree-bound",
-      "x": bound.x - ex,
-      "y": bound.y - ey,
-      "width":  bound.width  + ex * 2,
-      "height": bound.height + ey * 2,
-      "rx": VisualTreeNode.RADIUS,
-      "ry": VisualTreeNode.RADIUS,
-    }), refNode.nextSibling);
+    let r = target.insertBefore(
+      Svg.createElement(
+        "rect",
+        {
+          "class": "expressiontree-subtree-bound",
+          "x": bound.x - ex,
+          "y": bound.y - ey,
+          "width": bound.width + ex * 2,
+          "height": bound.height + ey * 2,
+          "rx": VisualTreeNode.RADIUS,
+          "ry": VisualTreeNode.RADIUS,
+        }
+      ),
+      refNode.nextSibling
+    );
 
-    target.insertBefore(Svg.createElement("text", {
-      "class": "expressiontree-subtree-label",
-      "x": this.x,
-      "y": this.y - VisualTreeNode.RADIUS * 2.0,
-      "text-anchor": "middle",
-      "dominant-baseline": "text-after-edge",
-    }, informationalText), r.nextSibling);
+    target.insertBefore(
+      Svg.createElement(
+        "text",
+        {
+          "class": "expressiontree-subtree-label",
+          "x": this.x,
+          "y": this.y - VisualTreeNode.RADIUS * 2.0,
+          "text-anchor": "middle",
+          "dominant-baseline": "text-after-edge",
+        },
+        informationalText
+      ),
+      r.nextSibling
+    );
   }
 
   getNodeAnchorPoint(scale, radian)
   {
     return {
-      x: this.x + (this.nodeBound.width  / 2.0) * scale * Math.cos(radian),
+      x: this.x + (this.nodeBound.width / 2.0) * scale * Math.cos(radian),
       y: this.y + (this.nodeBound.height / 2.0) * scale * Math.sin(radian),
     };
   }
@@ -553,51 +578,51 @@ class VisualTreeNode {
 
     if (pathType == VisualTreeNode.PATH_THIS_TO_LEFT) {
       nodePointFrom = 1;
-      nodePointTo   = 0;
+      nodePointTo = 0;
     }
     else if (pathType == VisualTreeNode.PATH_LEFT_TO_THIS) {
       nodePointFrom = 4.5;
-      nodePointTo   = 2.5;
+      nodePointTo = 2.5;
     }
     else if (pathType == VisualTreeNode.PATH_LEFT_TO_RIGHT) {
       nodePointFrom = 4.5;
-      nodePointTo   = 1.5;
+      nodePointTo = 1.5;
       outwardArc = false;
     }
     else if (pathType == VisualTreeNode.PATH_THIS_TO_RIGHT) {
       nodePointFrom = 3.5;
-      nodePointTo   = 1.5;
+      nodePointTo = 1.5;
     }
     else if (pathType == VisualTreeNode.PATH_RIGHT_TO_THIS) {
       nodePointFrom = 0;
-      nodePointTo   = 5;
+      nodePointTo = 5;
     }
     else if (pathType == VisualTreeNode.PATH_SELF_PREORDER) {
       nodePointFrom = 2;
-      nodePointTo   = 2;
+      nodePointTo = 2;
     }
     else if (pathType == VisualTreeNode.PATH_SELF_INORDER) {
       nodePointFrom = 3;
-      nodePointTo   = 3;
+      nodePointTo = 3;
     }
     else if (pathType == VisualTreeNode.PATH_SELF_POSTORDER) {
       nodePointFrom = 4;
-      nodePointTo   = 4;
+      nodePointTo = 4;
     }
 
     const radNodePointFrom = -Math.PI * ((nodePointFrom / 3.0) + 0.5);
-    const radNodePointTo   = -Math.PI * ((nodePointTo   / 3.0) + 0.5);
+    const radNodePointTo = -Math.PI * ((nodePointTo / 3.0) + 0.5);
     const posFrom = nodeFrom.getNodeAnchorPoint(1.1, radNodePointFrom);
-    const posTo   = nodeTo  .getNodeAnchorPoint(1.1, radNodePointTo);
+    const posTo = nodeTo.getNodeAnchorPoint(1.1, radNodePointTo);
 
     let d = "";
 
     if (nodePointFrom === nodePointTo) {
       const r = VisualTreeNode.RADIUS / 2.0;
       const rc = nodeFrom.getNodeAnchorPoint(1.0, radNodePointFrom);
-      const radPath  = radNodePointFrom;
+      const radPath = radNodePointFrom;
       const radStart = radPath + Math.PI * (+1 / 6);
-      const radEnd   = radPath + Math.PI * (-1 / 6);
+      const radEnd = radPath + Math.PI * (-1 / 6);
 
       d = "M ";
       d += (rc.x + r * Math.cos(radStart)) + " ";
@@ -678,7 +703,7 @@ class VisualTreeNode {
 
     if (!subTree.node.calculate()) {
       subTree.node.expression = subTree.inorderNotation;
-      subTree.node.left  = null;
+      subTree.node.left = null;
       subTree.node.right = null;
     }
 
@@ -690,9 +715,11 @@ class VisualTreeNode {
 
   static _cloneTree(n)
   {
-    let clone = new VisualTreeNode(new Node(n.node.expression),
-                                   n.left  ? VisualTreeNode._cloneTree(n.left)  : null,
-                                   n.right ? VisualTreeNode._cloneTree(n.right) : null);
+    let clone = new VisualTreeNode(
+      new Node(n.node.expression),
+      n.left ? VisualTreeNode._cloneTree(n.left) : null,
+      n.right ? VisualTreeNode._cloneTree(n.right) : null
+    );
 
     clone.x = n.x;
     clone.y = n.y;
@@ -708,8 +735,8 @@ class VisualTreeNode {
 }
 
 class TreeTraverser {
-  appendPath(nodeFrom, nodeTo, d) {}
-  closePath() {}
+  appendPath(nodeFrom, nodeTo, d) { }
+  closePath() { }
 }
 
 class TraversalPathRenderer extends TreeTraverser {
@@ -732,32 +759,44 @@ class TraversalPathRenderer extends TreeTraverser {
 
     let defs = Svg.findOrCreateElement(target, "defs");
 
-    let m = defs.appendChild(Svg.createElement("marker", {
-      "class": "polish-path-marker",
-      "id": markerId,
-      "markerUnits": "strokeWidth",
-      "markerWidth": "5",
-      "markerHeight": "5",
-      "viewBox": "-5 -5 10 10",
-      "refX": "5",
-      "refY": "0",
-      "orient": "auto",
-    }));
+    let m = defs.appendChild(
+      Svg.createElement(
+        "marker",
+        {
+          "class": "polish-path-marker",
+          "id": markerId,
+          "markerUnits": "strokeWidth",
+          "markerWidth": "5",
+          "markerHeight": "5",
+          "viewBox": "-5 -5 10 10",
+          "refX": "5",
+          "refY": "0",
+          "orient": "auto",
+        }
+      )
+    );
 
-    m.appendChild(Svg.createElement("polygon", {
-      "points": "+5,0 -5,-5, -2,0 -5,+5",
-    }));
+    m.appendChild(
+      Svg.createElement(
+        "polygon",
+        {
+          "points": "+5,0 -5,-5, -2,0 -5,+5",
+        }
+      )
+    );
 
     return m;
   }
 
-  appendPath(nodeFrom, nodeTo, d)
-  {
-    let p = Svg.createElement("path", {
-      "class": "polish-path",
-      "d": d,
-      "marker-end": "url(#polish-path-marker-arrow)"
-    });
+  appendPath(nodeFrom, nodeTo, d) {
+    let p = Svg.createElement(
+      "path",
+      {
+        "class": "polish-path",
+        "d": d,
+        "marker-end": "url(#polish-path-marker-arrow)"
+      }
+    );
 
     this.target.appendChild(p);
   }
@@ -776,7 +815,7 @@ class TraversalOrderRenderer extends TreeTraverser {
   static get T_OFFSET() { return 0.0; }
   static get T_OFFSET_STATUSREAD() { return TraversalOrderRenderer.DURATION_IN_SECS * 0.6; }
 
-  static get _ID_PATH_MARKER() { return "expressiontree-traversalorder-path-marker-arrow";}
+  static get _ID_PATH_MARKER() { return "expressiontree-traversalorder-path-marker-arrow"; }
 
   get totalDurationInSeconds() { return this.t; }
 
@@ -804,15 +843,25 @@ class TraversalOrderRenderer extends TreeTraverser {
 
     let defs = Svg.findOrCreateElement(target, "defs");
 
-    let s = defs.appendChild(Svg.createElement("symbol", {
-      "class": "expressiontree-traversalorder-path-marker",
-      "id": TraversalOrderRenderer._ID_PATH_MARKER,
-      "viewBox": "-5 -5 10 10",
-    }));
+    let s = defs.appendChild(
+      Svg.createElement(
+        "symbol",
+        {
+          "class": "expressiontree-traversalorder-path-marker",
+          "id": TraversalOrderRenderer._ID_PATH_MARKER,
+          "viewBox": "-5 -5 10 10",
+        }
+      )
+    );
 
-    s.appendChild(Svg.createElement("polygon", {
-      "points": "+5,0 -5,-5, -2,0 -5,+5",
-    }));
+    s.appendChild(
+      Svg.createElement(
+        "polygon",
+        {
+          "points": "+5,0 -5,-5, -2,0 -5,+5",
+        }
+      )
+    );
 
     return s;
   }
@@ -822,7 +871,7 @@ class TraversalOrderRenderer extends TreeTraverser {
     if (!this.groupRoot) {
       let nodeRoot = nodeFrom;
 
-      this.groupRoot = this.target.appendChild(Svg.createElement("g", {"class": "expressiontree-traversalorder"}));
+      this.groupRoot = this.target.appendChild(Svg.createElement("g", { "class": "expressiontree-traversalorder" }));
       this.groupRoot.appendChild(Svg.createElement("desc", null, "traversal order of " + nodeFrom.description));
 
       this.groupOrder = this.groupRoot.appendChild(Svg.createElement("g"));
@@ -831,7 +880,7 @@ class TraversalOrderRenderer extends TreeTraverser {
       this.initializeNodeStatus(nodeRoot, this.t);
     }
 
-    this.paths.push({t: this.t, d: d, order: this.order});
+    this.paths.push({ t: this.t, d: d, order: this.order });
 
     this.initializeNodeStatus(nodeFrom);
     this.initializeNodeStatus(nodeTo, this.t);
@@ -841,7 +890,7 @@ class TraversalOrderRenderer extends TreeTraverser {
 
       this.getNodeStatus(nodeFrom).readAt = this.t;
 
-      this.orderedNodes.push({t: this.t, order: this.order, node: nodeFrom});
+      this.orderedNodes.push({ t: this.t, order: this.order, node: nodeFrom });
     }
 
     this.t += TraversalOrderRenderer.DURATION_IN_SECS;
@@ -862,29 +911,35 @@ class TraversalOrderRenderer extends TreeTraverser {
     this.orderedNodes.forEach((orderedNode) => {
       let pointOrder = orderedNode.node.getNodeAnchorPoint(2.5, Math.PI / 2);
 
-      TraversalOrderRenderer.renderOrder(this.groupRoot,
-                                         orderedNode.t,
-                                         dur,
-                                         orderedNode.order,
-                                         pointOrder.x,
-                                         pointOrder.y,
-                                         orderedNode.node.value,
-                                         true);
+      TraversalOrderRenderer.renderOrder(
+        this.groupRoot,
+        orderedNode.t,
+        dur,
+        orderedNode.order,
+        pointOrder.x,
+        pointOrder.y,
+        orderedNode.node.value,
+        true
+      );
 
-      TraversalOrderRenderer.renderOrder(this.groupOrder,
-                                         orderedNode.t,
-                                         dur,
-                                         orderedNode.order,
-                                         0,
-                                         this.groupOrder.getBBox().height,
-                                         orderedNode.node.value,
-                                         false);
+      TraversalOrderRenderer.renderOrder(
+        this.groupOrder,
+        orderedNode.t,
+        dur,
+        orderedNode.order,
+        0,
+        this.groupOrder.getBBox().height,
+        orderedNode.node.value,
+        false
+      );
 
       right = Math.max(right, orderedNode.node.x);
     });
 
-    this.groupOrder.setAttribute("transform",
-                                 "translate(" + (right + VisualTreeNode.RADIUS * 1.5 + this.groupOrder.getBBox().width) + ",0)");
+    this.groupOrder.setAttribute(
+      "transform",
+      "translate(" + (right + VisualTreeNode.RADIUS * 1.5 + this.groupOrder.getBBox().width) + ",0)"
+    );
 
     return this.groupRoot;
   }
@@ -898,101 +953,160 @@ class TraversalOrderRenderer extends TreeTraverser {
     const keyTimesSpline = [0, tr, (tr + 0.0001), 1].join(";");
     const keySplines = ["0.25 0.1 0.25 1.0", "0.0 0.0 1.0 1.0", "0.0 0.0 1.0 1.0"].join("; ");
 
-    let g = target.appendChild(Svg.createElement("g", {
-      "class": "expressiontree-traversalorder-path",
-      "visibility": "hidden",
-    }));
+    let g = target.appendChild(
+      Svg.createElement(
+        "g",
+        {
+          "class": "expressiontree-traversalorder-path",
+          "visibility": "hidden",
+        }
+      )
+    );
 
-    g.appendChild(Svg.createElement("desc", null, "path of #" + order));
+    g.appendChild(
+      Svg.createElement(
+        "desc",
+        null,
+        "path of #" + order
+      )
+    );
 
-    let pathPath = g.appendChild(Svg.createElement("path", {
-      "d": d,
-      "pathLength": "100", // % of total length
-      "stroke-dasharray": "100", // %
-      "stroke-dashoffset": "100", // %
-    }));
+    let pathPath = g.appendChild(
+      Svg.createElement(
+        "path",
+        {
+          "d": d,
+          "pathLength": "100", // % of total length
+          "stroke-dasharray": "100", // %
+          "stroke-dashoffset": "100", // %
+        }
+      )
+    );
 
-    pathPath.appendChild(Svg.createElement("animate", {
-      "attributeName": "stroke-dashoffset",
-      "begin": begin,
-      "dur": duration,
-      "fill": "remove",
-      "repeatCount": "indefinite",
-      // easing
-      "calcMode": "spline",
-      "keyTimes": keyTimesSpline,
-      "keySplines": keySplines,
-      "values": "100;0;100;100", // %
-    }));
+    pathPath.appendChild(
+      Svg.createElement(
+        "animate",
+        {
+          "attributeName": "stroke-dashoffset",
+          "begin": begin,
+          "dur": duration,
+          "fill": "remove",
+          "repeatCount": "indefinite",
+          // easing
+          "calcMode": "spline",
+          "keyTimes": keyTimesSpline,
+          "keySplines": keySplines,
+          "values": "100;0;100;100", // %
+        }
+      )
+    );
 
-    let pathMarker = g.appendChild(Svg.createElement("use", {
-      "xlink:href": {nsuri: "http://www.w3.org/1999/xlink", val: "#" + TraversalOrderRenderer._ID_PATH_MARKER},
-      "x": "-5",
-      "y": "-5",
-      "width": "10",
-      "height": "10",
-    }));
+    let pathMarker = g.appendChild(
+      Svg.createElement(
+        "use",
+        {
+          "xlink:href": {
+            nsuri: "http://www.w3.org/1999/xlink",
+            val: "#" + TraversalOrderRenderer._ID_PATH_MARKER
+          },
+          "x": "-5",
+          "y": "-5",
+          "width": "10",
+          "height": "10",
+        }
+      )
+    );
 
-    pathMarker.appendChild(Svg.createElement("animateMotion", {
-      "path": d,
-      "begin": begin,
-      "dur": duration,
-      "rotate": "auto",
-      "fill": "remove",
-      "repeatCount": "indefinite",
-      // easing
-      "calcMode": "spline",
-      "keyTimes": keyTimesSpline,
-      "keySplines": keySplines,
-      "keyPoints": "0;1;1;1",
-    }));
+    pathMarker.appendChild(
+      Svg.createElement(
+        "animateMotion",
+        {
+          "path": d,
+          "begin": begin,
+          "dur": duration,
+          "rotate": "auto",
+          "fill": "remove",
+          "repeatCount": "indefinite",
+          // easing
+          "calcMode": "spline",
+          "keyTimes": keyTimesSpline,
+          "keySplines": keySplines,
+          "keyPoints": "0;1;1;1",
+        }
+      )
+    );
 
     // append <animate>
-    g.appendChild(Svg.createElement("animate", {
-      "attributeName": "visibility",
-      "begin": begin,
-      "dur": duration,
-      "fill": "freeze",
-      "repeatCount": "indefinite",
-      // easing
-      "calcMode": "discrete",
-      "keyTimes": keyTimesDiscrete,
-      "values": "visible;hidden;hidden",
-    }));
+    g.appendChild(
+      Svg.createElement(
+        "animate",
+        {
+          "attributeName": "visibility",
+          "begin": begin,
+          "dur": duration,
+          "fill": "freeze",
+          "repeatCount": "indefinite",
+          // easing
+          "calcMode": "discrete",
+          "keyTimes": keyTimesDiscrete,
+          "values": "visible;hidden;hidden",
+        }
+      )
+    );
 
     return g;
   }
 
   static renderOrder(target, t, dur, order, x, y, contentText, centering)
   {
-    let g = target.appendChild(Svg.createElement("g", {
-      "class": "expressiontree-traversalorder-order",
-      "visibility": "hidden",
-    }));
+    let g = target.appendChild(
+      Svg.createElement(
+        "g",
+        {
+          "class": "expressiontree-traversalorder-order",
+          "visibility": "hidden",
+        }
+      )
+    );
 
-    g.appendChild(Svg.createElement("desc", null, "#" + order + ": '" + contentText + "'"));
+    g.appendChild(
+      Svg.createElement(
+        "desc",
+        null,
+        "#" + order + ": '" + contentText + "'"
+      )
+    );
 
-    let content = g.appendChild(Svg.createElement("text", {
-      "class": "expressiontree-traversalorder-order-content",
-      "x": x,
-      "y": y,
-      "text-anchor": centering ? "middle" : "start",
-      "dominant-baseline": "middle",
-    }, contentText));
+    let content = g.appendChild(
+      Svg.createElement(
+        "text",
+        {
+          "class": "expressiontree-traversalorder-order-content",
+          "x": x,
+          "y": y,
+          "text-anchor": centering ? "middle" : "start",
+          "dominant-baseline": "middle",
+        },
+        contentText
+      )
+    );
 
     let contentBound = content.getBBox();
     const contentPaddingX = 6;
     const contentPaddingY = 2;
-    let contentWidth  = Math.max(30, contentBound.width + contentPaddingX * 2);
+    let contentWidth = Math.max(30, contentBound.width + contentPaddingX * 2);
     let contentHeight = contentBound.height + contentPaddingY * 2.0;
 
-    let boxContent = Svg.createElement("rect", {
-      "class": "expressiontree-traversalorder-order-content-box",
-      "x": x + (centering ? -contentWidth / 2.0 : -contentPaddingX),
-      "y": y - contentHeight / 2.0,
-      "width": contentWidth,
-      "height": contentHeight,
-    });
+    let boxContent = Svg.createElement(
+      "rect",
+      {
+        "class": "expressiontree-traversalorder-order-content-box",
+        "x": x + (centering ? -contentWidth / 2.0 : -contentPaddingX),
+        "y": y - contentHeight / 2.0,
+        "width": contentWidth,
+        "height": contentHeight,
+      }
+    );
 
     g.appendChild(boxContent);
     g.insertBefore(content, boxContent.nextSibling);
@@ -1001,24 +1115,33 @@ class TraversalOrderRenderer extends TreeTraverser {
 
     const labelPadding = 2;
 
-    let label = g.appendChild(Svg.createElement("text", {
-      "class": "expressiontree-traversalorder-order-label",
-      "x": boxContentBound.x - 2,
-      "y": y,
-      "text-anchor": "end",
-      "dominant-baseline": "middle",
-    }, order.toString()));
+    let label = g.appendChild(
+      Svg.createElement(
+        "text",
+        {
+          "class": "expressiontree-traversalorder-order-label",
+          "x": boxContentBound.x - 2,
+          "y": y,
+          "text-anchor": "end",
+          "dominant-baseline": "middle",
+        },
+        order.toString()
+      )
+    );
 
     let labelBound = label.getBBox();
     let labelWidth = Math.max(20, labelBound.width + labelPadding * 2);
 
-    let boxLabel = Svg.createElement("rect", {
-      "class": "expressiontree-traversalorder-order-label-box",
-      "x": boxContentBound.x - labelWidth,
-      "y": boxContentBound.y,
-      "width": labelWidth,
-      "height": boxContentBound.height,
-    });
+    let boxLabel = Svg.createElement(
+      "rect",
+      {
+        "class": "expressiontree-traversalorder-order-label-box",
+        "x": boxContentBound.x - labelWidth,
+        "y": boxContentBound.y,
+        "width": labelWidth,
+        "height": boxContentBound.height,
+      }
+    );
 
     g.appendChild(boxLabel);
     g.insertBefore(label, boxLabel.nextSibling);
@@ -1031,17 +1154,22 @@ class TraversalOrderRenderer extends TreeTraverser {
     const startAt = TraversalOrderRenderer.T_OFFSET;
     let tt = t + TraversalOrderRenderer.T_OFFSET_STATUSREAD - startAt;
 
-    g.appendChild(Svg.createElement("animate", {
-      "attributeName": "visibility",
-      "begin": startAt + "s",
-      "dur": dur + "s",
-      "fill": "freeze",
-      "repeatCount": "indefinite",
-      // easing
-      "calcMode": "discrete",
-      "keyTimes": [0, (tt / dur), (dur - TraversalOrderRenderer.WAIT_IN_SECS) / dur, 1].join(";"),
-      "values": "hidden;visible;visible;hidden",
-    }));
+    g.appendChild(
+      Svg.createElement(
+        "animate",
+        {
+          "attributeName": "visibility",
+          "begin": startAt + "s",
+          "dur": dur + "s",
+          "fill": "freeze",
+          "repeatCount": "indefinite",
+          // easing
+          "calcMode": "discrete",
+          "keyTimes": [0, (tt / dur), (dur - TraversalOrderRenderer.WAIT_IN_SECS) / dur, 1].join(";"),
+          "values": "hidden;visible;visible;hidden",
+        }
+      )
+    );
 
     return g;
   }
@@ -1054,7 +1182,7 @@ class TraversalOrderRenderer extends TreeTraverser {
       return s;
     }
     else {
-      let ss = {node: n};
+      let ss = { node: n };
 
       if (reachedAt)
         ss.reachedAt = reachedAt;
@@ -1072,15 +1200,20 @@ class TraversalOrderRenderer extends TreeTraverser {
 
   static renderNodeStatus(target, status, dur)
   {
-    let e = target.appendChild(Svg.createElement("ellipse", {
-      "class": "expressiontree-traversalorder-nodemask",
-      "cx": status.node.x,
-      "cy": status.node.y,
-      "rx": status.node.nodeBound.width / 2.0,
-      "ry": status.node.nodeBound.height / 2.0,
-      "fill": "transparent",
-      "stroke": "none",
-    }));
+    let e = target.appendChild(
+      Svg.createElement(
+        "ellipse",
+        {
+          "class": "expressiontree-traversalorder-nodemask",
+          "cx": status.node.x,
+          "cy": status.node.y,
+          "rx": status.node.nodeBound.width / 2.0,
+          "ry": status.node.nodeBound.height / 2.0,
+          "fill": "transparent",
+          "stroke": "none",
+        }
+      )
+    );
 
     const colorInitial = "transparent";
     const colorReached = "#f007";
@@ -1103,27 +1236,32 @@ class TraversalOrderRenderer extends TreeTraverser {
     keyTimes.push((dur - TraversalOrderRenderer.WAIT_IN_SECS) / dur);
     values.push(colorInitial);
 
-    e.appendChild(Svg.createElement("animate", {
-      "attributeName": "fill",
-      "begin": startAt + "s",
-      "dur": dur + "s",
-      "fill": "freeze",
-      "repeatCount": "indefinite",
-      // easing
-      "calcMode": "discrete",
-      "keyTimes": keyTimes.join(";"),
-      "values": values.join(";"),
-    }));
+    e.appendChild(
+      Svg.createElement(
+        "animate",
+        {
+          "attributeName": "fill",
+          "begin": startAt + "s",
+          "dur": dur + "s",
+          "fill": "freeze",
+          "repeatCount": "indefinite",
+          // easing
+          "calcMode": "discrete",
+          "keyTimes": keyTimes.join(";"),
+          "values": values.join(";"),
+        }
+      )
+    );
   }
 }
 
 class TreeTransitionProcessor {
   constructor() {}
 
-  startTransition(tree) {}
-  setTreeBeforeTransition(tree, subTreeTransition) {}
-  setTreeAfterTransition(tree, subTreeTransition) {}
-  endTransition(tree) {}
+  startTransition(tree) { }
+  setTreeBeforeTransition(tree, subTreeTransition) { }
+  setTreeAfterTransition(tree, subTreeTransition) { }
+  endTransition(tree) { }
 }
 
 class CalculationTransitionRenderer extends TreeTransitionProcessor {
@@ -1140,13 +1278,27 @@ class CalculationTransitionRenderer extends TreeTransitionProcessor {
   startTransition(tree)
   {
     // render initial tree
-    this.rootContainer = this.target.appendChild(Svg.createElement("g", {
-      "class": "polosh-calculation",
-    }));
+    this.rootContainer = this.target.appendChild(
+      Svg.createElement(
+        "g",
+        {
+          "class": "polosh-calculation",
+        }
+      )
+    );
 
-    let g = this.rootContainer.insertBefore(Svg.createElement("g"), this.rootContainer.firstChild);
+    let g = this.rootContainer.insertBefore(
+      Svg.createElement("g"),
+      this.rootContainer.firstChild
+    );
 
-    g.appendChild(Svg.createElement("desc", null, "initial expression tree"));
+    g.appendChild(
+      Svg.createElement(
+        "desc",
+        null,
+        "initial expression tree"
+      )
+    );
 
     tree.locate();
 
@@ -1158,23 +1310,37 @@ class CalculationTransitionRenderer extends TreeTransitionProcessor {
 
   setTreeBeforeTransition(tree, subTreeTransition)
   {
-    let g = this.rootContainer.insertBefore(Svg.createElement("g"), this.rootContainer.firstChild);
+    let g = this.rootContainer.insertBefore(
+      Svg.createElement("g"),
+      this.rootContainer.firstChild
+    );
 
-    g.appendChild(Svg.createElement("desc", null, "expression tree after calculation step #" + this.frames.length));
+    g.appendChild(
+      Svg.createElement(
+        "desc",
+        null,
+        "expression tree after calculation step #" + this.frames.length
+      )
+    );
 
     let treeBound = subTreeTransition.treeBound;
     const padding = 10;
 
-    let bound = g.appendChild(Svg.createElement("rect", {
-      "class": "expressiontree-calculation-subtreebound",
-      "x": treeBound.x - padding,
-      "y": treeBound.y - padding,
-      "width":  treeBound.width  + padding * 2,
-      "height": treeBound.height + padding * 2,
-      "rx": VisualTreeNode.RADIUS,
-      "ry": VisualTreeNode.RADIUS,
-      "visibility": "hidden",
-    }));
+    let bound = g.appendChild(
+      Svg.createElement(
+        "rect",
+        {
+          "class": "expressiontree-calculation-subtreebound",
+          "x": treeBound.x - padding,
+          "y": treeBound.y - padding,
+          "width": treeBound.width + padding * 2,
+          "height": treeBound.height + padding * 2,
+          "rx": VisualTreeNode.RADIUS,
+          "ry": VisualTreeNode.RADIUS,
+          "visibility": "hidden",
+        }
+      )
+    );
 
     let subexpressionContentText =
       "= '" +
@@ -1185,14 +1351,20 @@ class CalculationTransitionRenderer extends TreeTransitionProcessor {
       subTreeTransition.right.inorderNotation +
       "'";
 
-    let subexpression = g.appendChild(Svg.createElement("text", {
-      "class": "expressiontree-calculation-subexpression",
-      "x": subTreeTransition.x,
-      "y": treeBound.y + treeBound.height + 10,
-      "text-anchor": "middle",
-      "dominant-baseline": "text-before-edge",
-      "visibility": "hidden",
-    }, subexpressionContentText));
+    let subexpression = g.appendChild(
+      Svg.createElement(
+        "text",
+        {
+          "class": "expressiontree-calculation-subexpression",
+          "x": subTreeTransition.x,
+          "y": treeBound.y + treeBound.height + 10,
+          "text-anchor": "middle",
+          "dominant-baseline": "text-before-edge",
+          "visibility": "hidden",
+        },
+        subexpressionContentText
+      )
+    );
 
     this.frames.push({
       container: g,
@@ -1228,7 +1400,7 @@ class CalculationTransitionRenderer extends TreeTransitionProcessor {
     const begin = "0s";
     const durationPerStep = 3.0;
     const waitStartInSeconds = 0.5;
-    const waitEndInSeconds   = 1.5;
+    const waitEndInSeconds = 1.5;
     const durationBoundOffset = -(4.0 * durationPerStep / 6.0);
     const durationSubExpressionOffset = -(2.0 * durationPerStep / 6.0);
     const totalDurationInSeconds = waitStartInSeconds + (stepCount * durationPerStep) + waitEndInSeconds;
@@ -1251,43 +1423,53 @@ class CalculationTransitionRenderer extends TreeTransitionProcessor {
       }
 
       if (frame.bound) {
-        const t0 = (t  + durationBoundOffset) / totalDurationInSeconds;
+        const t0 = (t + durationBoundOffset) / totalDurationInSeconds;
         const t1 = (tn + durationBoundOffset) / totalDurationInSeconds;
 
         // set animation for visibility of calculation bound
-        frame.bound.appendChild(Svg.createElement("animate", {
-          "attributeName": "visibility",
-          "begin": begin,
-          "dur": dur,
-          "fill": "freeze",
-          "repeatCount": "indefinite",
-          // easing
-          "calcMode": "discrete",
-          "keyTimes": [0, t0, t1, 1].join(";"),
-          "values": ["hidden", "visible", "hidden", "hidden"].join(";"),
-        }));
+        frame.bound.appendChild(
+          Svg.createElement(
+            "animate",
+            {
+              "attributeName": "visibility",
+              "begin": begin,
+              "dur": dur,
+              "fill": "freeze",
+              "repeatCount": "indefinite",
+              // easing
+              "calcMode": "discrete",
+              "keyTimes": [0, t0, t1, 1].join(";"),
+              "values": ["hidden", "visible", "hidden", "hidden"].join(";"),
+            }
+          )
+        );
       }
 
       if (frame.subexpression) {
-        const t0 = (t  + durationSubExpressionOffset) / totalDurationInSeconds;
-        const t1 = (tn + durationBoundOffset)         / totalDurationInSeconds;
+        const t0 = (t + durationSubExpressionOffset) / totalDurationInSeconds;
+        const t1 = (tn + durationBoundOffset) / totalDurationInSeconds;
 
         // set animation for visibility of subexpression
-        frame.subexpression.appendChild(Svg.createElement("animate", {
-          "attributeName": "visibility",
-          "begin": begin,
-          "dur": dur,
-          "fill": "freeze",
-          "repeatCount": "indefinite",
-          // easing
-          "calcMode": "discrete",
-          "keyTimes": [0, t0, t1, 1].join(";"),
-          "values": ["hidden", "visible", "hidden", "hidden"].join(";"),
-        }));
+        frame.subexpression.appendChild(
+          Svg.createElement(
+            "animate",
+            {
+              "attributeName": "visibility",
+              "begin": begin,
+              "dur": dur,
+              "fill": "freeze",
+              "repeatCount": "indefinite",
+              // easing
+              "calcMode": "discrete",
+              "keyTimes": [0, t0, t1, 1].join(";"),
+              "values": ["hidden", "visible", "hidden", "hidden"].join(";"),
+            }
+          )
+        );
       }
 
       if (frame.tree) {
-        const t0 = t  / totalDurationInSeconds;
+        const t0 = t / totalDurationInSeconds;
         const t1 = tn / totalDurationInSeconds;
         const keyTimes = [0, t0, t1, /*(t1 + 0.0001),*/ 1].join(";");
         //const keySplines = ["0.0 0.0 1.0 1.0", "0.25 0.1 0.25 1.0", "0.0 0.0 1.0 1.0", "0.0 0.0 1.0 1.0"].join("; ");
@@ -1296,21 +1478,25 @@ class CalculationTransitionRenderer extends TreeTransitionProcessor {
         const visibilityInitial = (step === 0) ? "visible" : "hidden";
         const visibilityTransit = (step === stepCount - 1) ? "visible" : "hidden"
 
-        frame.tree.appendChild(Svg.createElement("animate", {
-          "attributeName": "visibility",
-          "begin": begin,
-          "dur": dur,
-          "fill": "freeze",
-          "repeatCount": "indefinite",
-          // easing
-          "calcMode": "discrete",
-          "keyTimes": keyTimes,
-          "values": [visibilityInitial, "visible", visibilityTransit, /*visibilityTransit,*/ visibilityTransit].join(";"),
-        }));
+        frame.tree.appendChild(
+          Svg.createElement(
+            "animate",
+            {
+              "attributeName": "visibility",
+              "begin": begin,
+              "dur": dur,
+              "fill": "freeze",
+              "repeatCount": "indefinite",
+              // easing
+              "calcMode": "discrete",
+              "keyTimes": keyTimes,
+              "values": [visibilityInitial, "visible", visibilityTransit, /*visibilityTransit,*/ visibilityTransit].join(";"),
+            }
+          )
+        );
       }
 
       t = tn;
     });
   }
 }
-

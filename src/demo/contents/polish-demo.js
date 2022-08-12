@@ -38,8 +38,8 @@ function polish_demo_convert_notation(expression)
 
   root.parse();
 
-  document.getElementById("polish-demo-conversionresult-expression-preorder").value  = root.preorderNotation;
-  document.getElementById("polish-demo-conversionresult-expression-inorder").value   = root.inorderNotation;
+  document.getElementById("polish-demo-conversionresult-expression-preorder").value = root.preorderNotation;
+  document.getElementById("polish-demo-conversionresult-expression-inorder").value = root.inorderNotation;
   document.getElementById("polish-demo-conversionresult-expression-postorder").value = root.postorderNotation;
 
   if (root.calculate()) {
@@ -115,8 +115,9 @@ function polish_demo_visualize(expression)
     let v = visualizations[i++];
 
     try {
-      let target = document.getElementById(v.targetId)
-                           .appendChild(VisualTreeNode.createSvgElement());
+      let target = document
+        .getElementById(v.targetId)
+        .appendChild(VisualTreeNode.createSvgElement());
 
       selectTabOfContent(target); // XXX
 
@@ -152,7 +153,7 @@ function polish_demo_run(e)
       if (document.getElementById("polish-demo-visualize").checked)
         polish_demo_visualize(expression);
     }
-    catch(err) {
+    catch (err) {
       polish_demo_set_message(err.toString(), "red");
       throw err;
     }
