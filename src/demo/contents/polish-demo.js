@@ -61,34 +61,34 @@ function polish_demo_visualize(expression)
   let visualizations = [
     {
       targetId: "polish-demo-expressiontree-traverse-preorder",
-      action: function(tree, target) {
+      action: (tree, target) => {
         tree.render(target, true);
         tree.traversePathPreorder(new TraversalOrderRenderer(target, null));
       },
     },
     {
       targetId: "polish-demo-expressiontree-traverse-postorder",
-      action: function(tree, target) {
+      action: (tree, target) => {
         tree.render(target, true);
         tree.traversePathPostorder(new TraversalOrderRenderer(target, null));
       },
     },
     {
       targetId: "polish-demo-expressiontree-traverse-inorder",
-      action: function(tree, target) {
+      action: (tree, target) => {
         tree.render(target, true);
         tree.traversePathInorder(new TraversalOrderRenderer(target, null));
       },
     },
     {
       targetId: "polish-demo-expressiontree-calculation",
-      action: function(tree, target) {
+      action: (tree, target) => {
         tree.calculate(new CalculationTransitionRenderer(target));
       },
     },
   ];
 
-  visualizations.forEach(function(v) {
+  visualizations.forEach(v => {
     let target = VisualTreeNode.initializeSvgElement(document.getElementById(v.targetId));
 
     if (typeof smdn !== 'undefined')

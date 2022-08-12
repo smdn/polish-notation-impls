@@ -312,7 +312,7 @@ if (typeof require == "function") {
     process.stdout.write("input expression: ");
 
     // 標準入力から二分木に分割したい式を入力する
-    rl.on("line", function(expression) {
+    rl.on("line", expression => {
       polish_main(expression);
       rl.close();
     });

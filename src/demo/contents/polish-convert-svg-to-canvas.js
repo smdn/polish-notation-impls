@@ -1,6 +1,6 @@
 "use strict";
 
-let getComputedCSSText = function (node) {
+let getComputedCSSText = node => {
   let style = window.getComputedStyle(node, "");
 
   if (!style.cssText || style.cssText === '') {
@@ -91,7 +91,7 @@ function emitCanvasFramesFromSvg(svg, svgDefs, autoDownload)
     let ctx = canvas.getContext("2d");
     let image = new Image;
 
-    image.onload = function(){
+    image.onload = () => {
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, w, h);
       ctx.drawImage(image, 0, 0);
