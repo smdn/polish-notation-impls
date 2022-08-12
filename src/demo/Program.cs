@@ -171,6 +171,13 @@ class DemoServer {
         )
       },
       {
+        "/polish-demo.css",
+        static async () => new(
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.css")),
+          contentType: ContentTypeCascadingStyleSheets
+        )
+      },
+      {
         "/polish-expressiontree.js",
         static async () => new(
           content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.js")),
