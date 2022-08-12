@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
+
 function polish_demo_remove_children(e)
 {
   while (e.firstChild)
