@@ -133,9 +133,9 @@
 .expressiontree-traversalorder-order-content,
 .expressiontree-traversalorder-order-label,
 .expressiontree-calculation-subexpression {
-  user-select: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
 }
