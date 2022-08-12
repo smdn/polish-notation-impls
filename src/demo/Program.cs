@@ -150,17 +150,17 @@ class DemoServer {
         )
       },
       {
-        "/polish-expressiontree.css",
-        static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.css")),
-          contentType: ContentTypeCascadingStyleSheets
-        )
-      },
-      {
         "/polish.js",
         static async () => new(
           content: await File.ReadAllTextAsync(Path.Join(Paths.ImplementationsBasePath, "javascript/polish.js")),
           contentType: ContentTypeJavaScript
+        )
+      },
+      {
+        "/polish-demo.css",
+        static async () => new(
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.css")),
+          contentType: ContentTypeCascadingStyleSheets
         )
       },
       {
@@ -171,9 +171,9 @@ class DemoServer {
         )
       },
       {
-        "/polish-demo.css",
+        "/polish-expressiontree.css",
         static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.css")),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.css")),
           contentType: ContentTypeCascadingStyleSheets
         )
       },
