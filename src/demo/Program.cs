@@ -237,7 +237,23 @@ class DemoServer {
     }
 
     using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "polish-demo.fragment.xhtml"))) {
-      fragmentPolishDemo = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken: default);
+      var nsmgr = new XmlNamespaceManager(new NameTable());
+
+      nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
+
+      var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
+      var settings = new XmlReaderSettings() {
+        Async = true,
+        DtdProcessing = DtdProcessing.Ignore,
+        CloseInput = true,
+        ConformanceLevel = ConformanceLevel.Fragment,
+        IgnoreComments = true,
+        IgnoreWhitespace = true,
+      };
+
+      var reader = XmlReader.Create(stream, settings, context);
+
+      fragmentPolishDemo = await XDocument.LoadAsync(reader, LoadOptions.None, cancellationToken: default);
     }
 
     var nsPlaceholder = (XNamespace)"https://github.com/smdn/polish-notation-impls";
