@@ -253,13 +253,13 @@ class Node:
     # 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     # 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
     if self.expression[0] == "+":
-      self.expression = "{:.15g}".format(left_operand + right_operand)
+      self.expression = "{:.17g}".format(left_operand + right_operand)
     elif self.expression[0] == "-":
-      self.expression = "{:.15g}".format(left_operand - right_operand)
+      self.expression = "{:.17g}".format(left_operand - right_operand)
     elif self.expression[0] == "*":
-      self.expression = "{:.15g}".format(left_operand * right_operand)
+      self.expression = "{:.17g}".format(left_operand * right_operand)
     elif self.expression[0] == "/":
-      self.expression = "{:.15g}".format(left_operand / right_operand)
+      self.expression = "{:.17g}".format(left_operand / right_operand)
     else:
       # 上記以外の演算子の場合は計算できないものとして、Falseを返す
       return False

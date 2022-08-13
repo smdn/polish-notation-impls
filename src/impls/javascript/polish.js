@@ -294,7 +294,7 @@ class Node {
     let nf = new Intl.NumberFormat("en", {
       style: "decimal",
       minimumSignificantDigits: 1,
-      maximumSignificantDigits: 15,
+      maximumSignificantDigits: 17,
       useGrouping: false,
     });
 

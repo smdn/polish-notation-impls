@@ -271,10 +271,10 @@ class Node {
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする
     switch (Expression[0]) {
-      case '+': Expression = (leftOperand + rightOperand).ToString("g15"); break;
-      case '-': Expression = (leftOperand - rightOperand).ToString("g15"); break;
-      case '*': Expression = (leftOperand * rightOperand).ToString("g15"); break;
-      case '/': Expression = (leftOperand / rightOperand).ToString("g15"); break;
+      case '+': Expression = (leftOperand + rightOperand).ToString("g17"); break;
+      case '-': Expression = (leftOperand - rightOperand).ToString("g17"); break;
+      case '*': Expression = (leftOperand * rightOperand).ToString("g17"); break;
+      case '/': Expression = (leftOperand / rightOperand).ToString("g17"); break;
       // 上記以外の演算子の場合は計算できないものとして、falseを返す
       default: return false;
     }

@@ -251,10 +251,10 @@ Class Node
     ' 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     ' 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする
     Select Case Expression(0)
-      Case "+"c: Expression = (leftOperand + rightOperand).ToString("g15")
-      Case "-"c: Expression = (leftOperand - rightOperand).ToString("g15")
-      Case "*"c: Expression = (leftOperand * rightOperand).ToString("g15")
-      Case "/"c: Expression = (leftOperand / rightOperand).ToString("g15")
+      Case "+"c: Expression = (leftOperand + rightOperand).ToString("g17")
+      Case "-"c: Expression = (leftOperand - rightOperand).ToString("g17")
+      Case "*"c: Expression = (leftOperand * rightOperand).ToString("g17")
+      Case "/"c: Expression = (leftOperand / rightOperand).ToString("g17")
       ' 上記以外の演算子の場合は計算できないものとして、Falseを返す
       Case Else: Return False
     End Select

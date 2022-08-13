@@ -303,7 +303,7 @@ class Node {
     // 演算結果の数値を文字列化するためのメソッド
     private String formatNumber(double number)
     {
-        return (new DecimalFormat("#.###############")).format(number);
+        return (new DecimalFormat("#.#################")).format(number);
     }
 }
 

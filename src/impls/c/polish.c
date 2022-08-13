@@ -299,10 +299,10 @@ int calculate(Node* node)
     // ノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度node->expに代入することで現在のノードの値とする
     switch (node->exp[0]) {
-      case '+': snprintf(node->exp, MAX_EXP_LEN, "%.15lg", left_operand + right_operand); break;
-      case '-': snprintf(node->exp, MAX_EXP_LEN, "%.15lg", left_operand - right_operand); break;
-      case '*': snprintf(node->exp, MAX_EXP_LEN, "%.15lg", left_operand * right_operand); break;
-      case '/': snprintf(node->exp, MAX_EXP_LEN, "%.15lg", left_operand / right_operand); break;
+      case '+': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand + right_operand); break;
+      case '-': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand - right_operand); break;
+      case '*': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand * right_operand); break;
+      case '/': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand / right_operand); break;
       // 上記以外の演算子の場合は計算できないものとして、-1(失敗)を返す
       default: return -1;
     }
