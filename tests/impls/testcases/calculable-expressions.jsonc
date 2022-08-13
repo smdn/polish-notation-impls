@@ -32,16 +32,31 @@
     /*
      * numeric formatting
      */
-    { "Input": "1*1.5",             "ExpectedCalculationResult": "1.5" },
-    { "Input": "3/2",               "ExpectedCalculationResult": "1.5" },
-    { "Input": "1/2",               "ExpectedCalculationResult": "0.5" },
-    { "Input": "1/4",               "ExpectedCalculationResult": "0.25" },
-    { "Input": "1/8",               "ExpectedCalculationResult": "0.125" },
-    { "Input": "1/3",               "ExpectedCalculationResult": "0.333333333333333" },
-    { "Input": "2/3",               "ExpectedCalculationResult": "0.666666666666667" },
-    { "Input": "10000000000000000/1",           "ExpectedCalculationResult": "1e+16" },
-    { "Input": "1/10000000000000000",           "ExpectedCalculationResult": "1e-16" },
-    { "Input": "(3/2)*(10000000000000000/1)",   "ExpectedCalculationResult": "1.5e+16" },
+    { "Input": "1*1.5", "ExpectedCalculationResult": "1.5" },
+    { "Input": "3/2",   "ExpectedCalculationResult": "1.5" },
+    { "Input": "1/2",   "ExpectedCalculationResult": "0.5" },
+    { "Input": "1/4",   "ExpectedCalculationResult": "0.25" },
+    { "Input": "1/8",   "ExpectedCalculationResult": "0.125" },
+
+    // test cases for floating point formatting equivalent to '%.15g' of C printf
+    { "Input": "1/3",   "ExpectedCalculationResult": "0.333333333333333", "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+    { "Input": "2/3",   "ExpectedCalculationResult": "0.666666666666667", "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+    { "Input": "10000000000000000/1",           "ExpectedCalculationResult": "1e+16",   "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+    { "Input": "1/10000000000000000",           "ExpectedCalculationResult": "1e-16",   "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+    { "Input": "99999999999999999/1",           "ExpectedCalculationResult": "1e+17",   "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+    { "Input": "(3/2)*(10000000000000000/1)",   "ExpectedCalculationResult": "1.5e+16", "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+    { "Input": "(3/2)/(10000000000000000/1)",   "ExpectedCalculationResult": "1.5e-16", "TargetImplementations": [ "c", "csharp", "python", "visualbasic" ] },
+
+    // test cases for floating point formatting specific to Intl.NumberFormat and/or java.text.NumberFormat
+    { "Input": "1/3",   "ExpectedCalculationResult": "0.333333333333333", "TargetImplementations": [ "java", "javascript" ] },
+    { "Input": "2/3",   "ExpectedCalculationResult": "0.666666666666667", "TargetImplementations": [ "java", "javascript" ] },
+    { "Input": "10000000000000000/1",           "ExpectedCalculationResult": "10000000000000000",   "TargetImplementations": [ "java", "javascript" ] },
+    { "Input": "1/10000000000000000",           "ExpectedCalculationResult": "0",                   "TargetImplementations": [ "java" ] },
+    { "Input": "99999999999999999/1",           "ExpectedCalculationResult": "100000000000000000",  "TargetImplementations": [ "java", "javascript" ] },
+    { "Input": "1/10000000000000000",           "ExpectedCalculationResult": "0.0000000000000001",  "TargetImplementations": [ "javascript" ] },
+    { "Input": "(3/2)*(10000000000000000/1)",   "ExpectedCalculationResult": "15000000000000000",   "TargetImplementations": [ "java", "javascript" ] },
+    { "Input": "(3/2)/(10000000000000000/1)",   "ExpectedCalculationResult": "0",                   "TargetImplementations": [ "java" ] },
+    { "Input": "(3/2)/(10000000000000000/1)",   "ExpectedCalculationResult": "0.00000000000000015", "TargetImplementations": [ "javascript" ] },
 
     /*
      * expression which contains space

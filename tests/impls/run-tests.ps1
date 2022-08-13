@@ -94,7 +94,7 @@ function Run-Tests {
     Write-Host "$($impl.Commands.Run.Command) $($impl.Commands.Run.Arguments -join ' ')"
   }
 
-  $ret = Run-TestCases $psi $testsuites $verbose
+  $ret = Run-TestCases $impl $psi $testsuites $verbose
 
   if ($ret) {
     Write-Host -ForegroundColor Green "✔ All tests passed"
@@ -230,6 +230,7 @@ function Run-TestCase {
 
 function Run-TestCases {
   param (
+    $impl,
     $psi,
     $testsuites,
     $verbose
@@ -239,8 +240,15 @@ function Run-TestCases {
 
   foreach ($testsuite in $testsuites) {
     $number_of_failure = 0
+    $number_of_ignored = 0
 
     foreach ($testcase in $testsuite.TestCases) {
+      if (($testcase.TargetImplementations -ne $null) -and !$testcase.TargetImplementations.Contains($impl.ID)) {
+        Write-Host -ForegroundColor Yellow "⛔ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
+        $number_of_ignored++
+        continue
+      }
+
       $ret = Run-TestCase $psi $testcase $verbose
 
       if (!$ret) {
@@ -249,8 +257,11 @@ function Run-TestCases {
       }
     }
 
-    if (0 -eq $number_of_failure) {
+    if ((0 -eq $number_of_ignored) -and (0 -eq $number_of_failure)) {
       Write-Host -ForegroundColor Green "✔ $($testsuite.TestCases.Length) test cases passed: '$($testsuite.Name)'"
+    }
+    elseif (0 -eq $number_of_failure) {
+      Write-Host -ForegroundColor Green "✔ $($testsuite.TestCases.Length - $number_of_ignored) test cases passed, $number_of_ignored test cases ignored: '$($testsuite.Name)'"
     }
     else {
       Write-Host -ForegroundColor Red "❌ Failed $number_of_failure of $($testsuite.TestCases.Length) test cases: '$($testsuite.Name)'"
