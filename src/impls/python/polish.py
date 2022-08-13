@@ -41,7 +41,7 @@ class Node:
   # 式expressionを二分木へと分割するメソッド
   def parse(self):
     # 式expressionから最も外側にある丸括弧を取り除く
-    self.expression = Node.__remove_outer_most_bracket(self.expression)
+    self.expression = Node.__remove_outermost_bracket(self.expression)
 
     # 式expressionから演算子を探して位置を取得する
     pos_operator = Node.__get_operator_position(self.expression)
@@ -74,13 +74,13 @@ class Node:
 
   # 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
   @staticmethod
-  def __remove_outer_most_bracket(expression):
-    has_outer_most_bracket = False # 最も外側に括弧を持つかどうか
+  def __remove_outermost_bracket(expression):
+    has_outermost_bracket = False # 最も外側に括弧を持つかどうか
     nest = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if expression[0] == "(":
       # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-      has_outer_most_bracket = True
+      has_outermost_bracket = True
       nest = 1
 
     # 1文字目以降を1文字ずつ検証
@@ -91,7 +91,7 @@ class Node:
 
         # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
         if i == 0:
-          has_outer_most_bracket = True
+          has_outermost_bracket = True
 
       elif expression[i] == ")":
         # 閉じ丸括弧なので深度を1減らす
@@ -100,11 +100,11 @@ class Node:
         # 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         # 例:"(1+2)+(3+4)"などの場合
         if nest == 0 and i < len(expression) - 1:
-          has_outer_most_bracket = False
+          has_outermost_bracket = False
           break
 
     # 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
-    if not has_outer_most_bracket:
+    if not has_outermost_bracket:
       return expression
 
     # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
@@ -118,7 +118,7 @@ class Node:
     # 例:"((1+2))"などの場合
     if expression[:1] == "(" and expression[-1:] == ")":
       # 再帰的に呼び出して取り除く
-      expression = Node.__remove_outer_most_bracket(expression)
+      expression = Node.__remove_outermost_bracket(expression)
 
     # 取り除いた結果を返す
     return expression

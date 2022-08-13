@@ -33,16 +33,16 @@ Node* create_node()
 
 // 式expから最も外側にある丸括弧を取り除く関数
 // (成功した場合は0、エラーの場合は-1を返す)
-int remove_outer_most_bracket(char *exp)
+int remove_outermost_bracket(char *exp)
 {
     int i;
     size_t len;
-    int has_outer_most_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
+    int has_outermost_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
     int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if ('(' == exp[0]) {
         // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        has_outer_most_bracket = 1;
+        has_outermost_bracket = 1;
         nest = 1;
     }
 
@@ -59,14 +59,14 @@ int remove_outer_most_bracket(char *exp)
             // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
             // 例:"(1+2)+(3+4)"などの場合
             if (0 == nest && exp[i + 1]) {
-                has_outer_most_bracket = 0;
+                has_outermost_bracket = 0;
                 break;
             }
         }
     }
 
     // 最も外側に丸括弧がない場合は、何もしない
-    if (0 == has_outer_most_bracket)
+    if (0 == has_outermost_bracket)
         return 0;
 
     // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
@@ -85,7 +85,7 @@ int remove_outer_most_bracket(char *exp)
     // 例:"((1+2))"などの場合
     if ('(' == exp[0] && ')' == exp[i - 1])
         // 再帰的に呼び出して取り除く
-        return remove_outer_most_bracket(exp);
+        return remove_outermost_bracket(exp);
     else
         // そうでない場合は処理を終える
         return 0;
@@ -145,7 +145,7 @@ int parse_expression(Node* node)
         return -1;
 
     // 式expから最も外側にある丸括弧を取り除く
-    if (remove_outer_most_bracket(node->exp) < 0)
+    if (remove_outermost_bracket(node->exp) < 0)
         return -1;
 
     // 式expから演算子を探して位置を取得する

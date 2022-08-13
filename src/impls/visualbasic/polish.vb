@@ -43,7 +43,7 @@ Class Node
   ' 式Expressionを二分木へと分割するメソッド
   Public Sub Parse()
     ' 式Expressionから最も外側にある丸括弧を取り除く
-    Expression = RemoveOuterMostBracket(Expression)
+    Expression = RemoveOutermostBracket(Expression)
 
     ' 式Expressionから演算子を探して位置を取得する
     Dim posOperator As Integer = GetOperatorPosition(Expression)
@@ -78,13 +78,13 @@ Class Node
   End Sub
 
   ' 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
-  Private Shared Function RemoveOuterMostBracket(ByVal expression As String) As String
-    Dim hasOuterMostBracket As Boolean = False ' 最も外側に括弧を持つかどうか
+  Private Shared Function RemoveOutermostBracket(ByVal expression As String) As String
+    Dim hasOutermostBracket As Boolean = False ' 最も外側に括弧を持つかどうか
     Dim nest As Integer = 0 ' 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     If expression(0) = "("c Then
       ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-      hasOuterMostBracket = True
+      hasOutermostBracket = True
       nest = 1
     End If
 
@@ -95,7 +95,7 @@ Class Node
         nest += 1
 
         ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        If i = 0 Then hasOuterMostBracket = True
+        If i = 0 Then hasOutermostBracket = True
       Else If expression(i) = ")"c Then
         ' 閉じ丸括弧なので深度を1減らす
         nest -= 1
@@ -103,14 +103,14 @@ Class Node
         ' 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         ' 例:"(1+2)+(3+4)"などの場合
         If nest = 0 AndAlso i < expression.Length - 1 Then
-          hasOuterMostBracket = False
+          hasOutermostBracket = False
           Exit For
         End If
       End If
     Next
 
     ' 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
-    If Not hasOuterMostBracket Then Return expression
+    If Not hasOutermostBracket Then Return expression
 
     ' 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
     If expression.Length <= 2 Then Throw New Exception("empty bracket: " + expression)
@@ -122,7 +122,7 @@ Class Node
     ' 例:"((1+2))"などの場合
     If expression(0) = "("c AndAlso expression(expression.Length - 1) = ")"c Then
       ' 再帰的に呼び出して取り除く
-      expression = RemoveOuterMostBracket(expression)
+      expression = RemoveOutermostBracket(expression)
     End If
 
     ' 取り除いた結果を返す

@@ -49,7 +49,7 @@ class Node {
   parse()
   {
     // 式expressionから最も外側にある丸括弧を取り除く
-    this.expression = Node.removeOuterMostBracket(this.expression);
+    this.expression = Node.removeOutermostBracket(this.expression);
 
     // 式expressionから演算子を探して位置を取得する
     let posOperator = Node.getOperatorPosition(this.expression);
@@ -83,14 +83,14 @@ class Node {
   }
 
   // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
-  static removeOuterMostBracket(expression)
+  static removeOutermostBracket(expression)
   {
-    let hasOuterMostBracket = false; // 最も外側に括弧を持つかどうか
+    let hasOutermostBracket = false; // 最も外側に括弧を持つかどうか
     let nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if (expression[0] === "(") {
       // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-      hasOuterMostBracket = true;
+      hasOutermostBracket = true;
       nest = 1;
     }
 
@@ -102,7 +102,7 @@ class Node {
 
         // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
         if (i === 0)
-          hasOuterMostBracket = true;
+          hasOutermostBracket = true;
       }
       else if (expression[i] === ")") {
         // 閉じ丸括弧なので深度を1減らす
@@ -111,14 +111,14 @@ class Node {
         // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         // 例:"(1+2)+(3+4)"などの場合
         if (nest === 0 && i < expression.length - 1) {
-          hasOuterMostBracket = false;
+          hasOutermostBracket = false;
           break;
         }
       }
     }
 
     // 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
-    if (!hasOuterMostBracket)
+    if (!hasOutermostBracket)
       return expression;
 
     // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
@@ -132,7 +132,7 @@ class Node {
     // 例:"((1+2))"などの場合
     if (expression[0] === '(' && expression[expression.length - 1] === ')')
       // 再帰的に呼び出して取り除く
-      expression = Node.removeOuterMostBracket(expression);
+      expression = Node.removeOutermostBracket(expression);
 
     // 取り除いた結果を返す
     return expression;
