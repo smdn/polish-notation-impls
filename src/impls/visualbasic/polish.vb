@@ -235,18 +235,15 @@ Class Node
     Right.Calculate()
 
     ' 計算した左右の子ノードの値を数値型(double)に変換する
+    ' 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
+    ' ノードの値が計算できないものとして、Falseを返す
     Dim leftOperand, rightOperand As Double
 
-    Try
-      ' 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-      leftOperand  = Double.Parse( Left.Expression)
-      ' 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-      rightOperand = Double.Parse(Right.Expression)
-    Catch
-      ' 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-      ' ノードの値が計算できないものとして、falseを返す
-      Return False
-    End Try
+    ' 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
+    If Not Double.TryParse(Left.Expression, leftOperand) Then Return False
+
+    ' 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
+    If Not Double.TryParse(Right.Expression, rightOperand) Then Return False
 
     ' 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     ' 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする

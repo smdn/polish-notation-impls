@@ -254,19 +254,16 @@ class Node {
     Right.Calculate();
 
     // 計算した左右の子ノードの値を数値型(double)に変換する
-    double leftOperand, rightOperand;
+    // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
+    // ノードの値が計算できないものとして、falseを返す
 
-    try {
-      // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-      leftOperand  = double.Parse( Left.Expression);
-      // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-      rightOperand = double.Parse(Right.Expression);
-    }
-    catch {
-      // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-      // ノードの値が計算できないものとして、falseを返す
+    // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
+    if (!double.TryParse(Left.Expression, out var leftOperand))
       return false;
-    }
+
+    // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
+    if (!double.TryParse(Right.Expression, out var rightOperand))
+      return false;
 
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする
