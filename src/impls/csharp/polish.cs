@@ -287,12 +287,21 @@ class Node {
 }
 
 class Polish {
-  static void Main()
+  // Mainメソッド。　結果によって次の値を返す。
+  //   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
+  //   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
+  //   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
+  static int Main()
   {
     Console.Write("input expression: ");
 
     // 標準入力から二分木に分割したい式を入力する
     var expression = Console.ReadLine();
+
+    if (string.IsNullOrEmpty(expression))
+      return 1;
+
+    Node root;
 
     try {
       // 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -302,7 +311,7 @@ class Polish {
       Node.ValidateBracketBalance(expression);
 
       // 二分木の根(root)ノードを作成し、式全体を格納する
-      var root = new Node(expression);
+      root = new Node(expression);
 
       Console.WriteLine("expression: {0}", root.Expression);
 
@@ -323,22 +332,24 @@ class Polish {
       Console.Write("polish notation: ");
       root.TraversePreorder();
       Console.WriteLine();
-
-      // 分割した二分木から式全体の値を計算する
-      if (root.Calculate()) {
-        // 計算できた場合はその値を表示する
-        Console.WriteLine("calculated result: {0}", root.Expression);
-      }
-      else {
-        // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-        Console.Write("calculated expression: ");
-        root.TraverseInorder();
-        Console.WriteLine();
-      }
     }
     catch (Exception ex) {
       Console.Error.WriteLine(ex.Message);
-      return;
+      return 1;
+    }
+
+    // 分割した二分木から式全体の値を計算する
+    if (root.Calculate()) {
+      // 計算できた場合はその値を表示する
+      Console.WriteLine("calculated result: {0}", root.Expression);
+      return 0;
+    }
+    else {
+      // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+      Console.Write("calculated expression: ");
+      root.TraverseInorder();
+      Console.WriteLine();
+      return 2;
     }
   }
 }

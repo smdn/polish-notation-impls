@@ -272,9 +272,18 @@ class Node:
     # 計算できたため、Trueを返す
     return True
 
+# Mainメソッド。　結果によって次の値を返す。
+#   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
+#   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
+#   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
 def main():
   # 標準入力から二分木に分割したい式を入力する
   expression = input("input expression: ")
+
+  if len(expression) == 0:
+    return 1
+
+  root = None
 
   try:
     # 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -306,20 +315,21 @@ def main():
     root.traverse_preorder()
     print()
 
-    # 分割した二分木から式全体の値を計算する
-    if root.calculate():
-      # 計算できた場合はその値を表示する
-      print("calculated result: {}".format(root.expression))
-    else:
-      # (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-      print("calculated expression: ", end = "")
-      root.traverse_inorder()
-      print()
-
   except Exception as err:
     print(err, file = sys.stderr)
-    return
+    return 1
+
+  # 分割した二分木から式全体の値を計算する
+  if root.calculate():
+    # 計算できた場合はその値を表示する
+    print("calculated result: {}".format(root.expression))
+    return 0
+  else:
+    # (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+    print("calculated expression: ", end = "")
+    root.traverse_inorder()
+    print()
+    return 2
 
 if __name__ == "__main__":
-  main()
-
+  sys.exit(main())
