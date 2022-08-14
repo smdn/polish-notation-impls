@@ -90,6 +90,10 @@ function Run-Tests {
   $psi.RedirectStandardError = $true
   $psi.UseShellExecute = $false
 
+  if ($impl.Commands.Run.ResolveCommandPath) {
+    $psi.FileName = [System.IO.Path]::GetFullPath($psi.FileName, $(Get-Location))
+  }
+
   if ($verbose) {
     Write-Host "$($impl.Commands.Run.Command) $($impl.Commands.Run.Arguments -join ' ')"
   }
