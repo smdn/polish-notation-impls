@@ -101,7 +101,7 @@ function Run-Tests {
   $ret = Run-TestCases $impl $psi $testsuites $verbose
 
   if ($ret) {
-    Write-Host -ForegroundColor Green "✔ All tests passed"
+    Write-Host -ForegroundColor Green "🆗 All tests passed"
   }
 
   return $ret
@@ -216,7 +216,7 @@ function Run-TestCase {
     }
   }
   catch {
-    Write-Host -ForegroundColor Red "❌ $_"
+    Write-Host -ForegroundColor Red "🆖 $_"
     Write-Host -ForegroundColor Yellow $result_stdout
     Write-Host -ForegroundColor Red $result_stderr
     return $false
@@ -226,7 +226,7 @@ function Run-TestCase {
   # test case passed
   #
   if ($verbose) {
-    Write-Host -ForegroundColor Green "✔ '$($testcase.Input)'"
+    Write-Host -ForegroundColor Green "🆗 '$($testcase.Input)'"
   }
 
   return $true
@@ -248,7 +248,7 @@ function Run-TestCases {
 
     foreach ($testcase in $testsuite.TestCases) {
       if (($testcase.TargetImplementations -ne $null) -and !$testcase.TargetImplementations.Contains($impl.ID)) {
-        Write-Host -ForegroundColor Yellow "⛔ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
+        Write-Host -ForegroundColor Yellow "ℹ️ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
         $number_of_ignored++
         continue
       }
@@ -262,13 +262,13 @@ function Run-TestCases {
     }
 
     if ((0 -eq $number_of_ignored) -and (0 -eq $number_of_failure)) {
-      Write-Host -ForegroundColor Green "✔ $($testsuite.TestCases.Length) test cases passed: '$($testsuite.Name)'"
+      Write-Host -ForegroundColor Green "🆗 $($testsuite.TestCases.Length) test cases passed: '$($testsuite.Name)'"
     }
     elseif (0 -eq $number_of_failure) {
-      Write-Host -ForegroundColor Green "✔ $($testsuite.TestCases.Length - $number_of_ignored) test cases passed, $number_of_ignored test cases ignored: '$($testsuite.Name)'"
+      Write-Host -ForegroundColor Green "🆗 $($testsuite.TestCases.Length - $number_of_ignored) test cases passed, $number_of_ignored test cases ignored: '$($testsuite.Name)'"
     }
     else {
-      Write-Host -ForegroundColor Red "❌ Failed $number_of_failure of $($testsuite.TestCases.Length) test cases: '$($testsuite.Name)'"
+      Write-Host -ForegroundColor Red "🆖 Failed $number_of_failure of $($testsuite.TestCases.Length) test cases: '$($testsuite.Name)'"
     }
   }
 
