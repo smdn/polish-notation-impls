@@ -69,12 +69,12 @@ class Node {
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
     // 演算子の左側を左の部分式としてノードを作成する
-    Left = new Node(Expression.Substring(0, posOperator));
+    Left = new Node(Expression[..posOperator]);
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
     Left.Parse();
 
     // 演算子の右側を右の部分式としてノードを作成する
-    Right = new Node(Expression.Substring(posOperator + 1));
+    Right = new Node(Expression[(posOperator + 1)..]);
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
     Right.Parse();
 
@@ -122,11 +122,11 @@ class Node {
       throw new Exception("empty bracket: " + expression);
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
-    expression = expression.Substring(1, expression.Length - 2);
+    expression = expression[1..^1];
 
     // 取り除いた後の文字列の最も外側に括弧が残っている場合
     // 例:"((1+2))"などの場合
-    if (expression[0] == '(' && expression[expression.Length - 1] == ')')
+    if (expression[0] == '(' && expression[^1] == ')')
       // 再帰的に呼び出して取り除く
       expression = RemoveOutermostBracket(expression);
 
