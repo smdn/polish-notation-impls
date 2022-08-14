@@ -100,7 +100,7 @@ jobs:
           "::set-output name=target-impls::$($target_impls | ConvertTo-Json -Compress)"
 
   run-tests:
-    name: Test ${{ matrix.target-impl }} on ${{ matrix.os }}
+    name: Test '${{ matrix.target-impl }}' on ${{ matrix.os }}
     needs: [setup]
     runs-on: ${{ matrix.os }}
     strategy:
