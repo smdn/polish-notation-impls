@@ -6,7 +6,7 @@
     "Commands": {
       "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net6.0", "--nologo", "-v:quiet" ] } ],
       "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net6.0/polish", "ResolveCommandPath": true  },
+      "Run":    { "Command": "bin/Release/net6.0/polish", "ResolveCommandPath": true },
     }
   },
   {
@@ -56,7 +56,7 @@
     "Commands": {
       "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net6.0", "--nologo", "-v:quiet" ] } ],
       "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net6.0/polish", "ResolveCommandPath": true  },
+      "Run":    { "Command": "bin/Release/net6.0/polish", "ResolveCommandPath": true },
     }
   },
 ]
