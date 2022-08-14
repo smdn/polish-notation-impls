@@ -206,7 +206,12 @@ function Run-TestCase {
     #
     # exit code
     #
+    if (($testcase.ExpectedExitCode -ne $null) -and ($testcase.ExpectedExitCode -ne $result_exitcode)) {
+      throw "'$($testcase.Input)' is expected to be exited with exit code $($testcase.ExpectedExitCode), but was $result_exitcode"
+    }
+
     $expect_as_invalid =
+      [bool]$testcase.ExpectedExitCode -or
       [bool]$testcase.ExpectAsInvalidExpression -or
       [bool]$testcase.ExpectAsUnbalancedBracket -or
       [bool]$testcase.ExpectAsEmptyBracket
