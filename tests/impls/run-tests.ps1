@@ -120,7 +120,21 @@ function Run-TestCase {
   $p = New-Object System.Diagnostics.Process
   $p.StartInfo = $psi
 
-  [void]$p.Start()
+  try {
+    [void]$p.Start()
+  }
+  catch {
+    throw [System.InvalidOperationException]::new(
+      @(
+        "Failed to start test process.",
+        "  FileName: '$($psi.FileName)'",
+        "  Arguments: '$($psi.Arguments)'",
+        "  WorkingDirectory: '$($psi.WorkingDirectory))'"
+      ) -join [System.Environment]::NewLine,
+      $PSItem.Exception
+    )
+  }
+
   [void]$p.StandardInput.WriteLine($testcase.Input)
   [void]$p.StandardInput.Flush()
   [void]$p.StandardInput.Close()
