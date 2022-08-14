@@ -311,15 +311,27 @@ if (typeof require == "function") {
   if (rl) {
     process.stdout.write("input expression: ");
 
+    process.exitCode = 1; // 入力がなかった場合は終了コード1で終了させる
+
     // 標準入力から二分木に分割したい式を入力する
     rl.on("line", expression => {
+      process.exitCode = 0
       polish_main(expression);
       rl.close();
     });
   }
 }
 
+// メインの処理メソッド。　結果によって次の終了コードを設定する。
+//   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
+//   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
+//   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
 function polish_main(_expression) {
+  if (!_expression)
+    process.exit(1);
+
+  let root = null
+
   try {
     // 入力された式から空白を除去する(空白を空の文字列に置き換える)
     let expression = _expression.replace(/\s+/g, "");
@@ -328,7 +340,7 @@ function polish_main(_expression) {
     Node.validateBracketBalance(expression);
 
     // 二分木の根(root)ノードを作成し、式全体を格納する
-    let root = new Node(expression);
+    root = new Node(expression);
 
     console.log("expression: " + root.expression);
 
@@ -349,22 +361,23 @@ function polish_main(_expression) {
     process.stdout.write("polish notation: ");
     root.traversePreorder(process.stdout);
     process.stdout.write("\n");
-
-    // 分割した二分木から式全体の値を計算する
-    if (root.calculate()) {
-      // 計算できた場合はその値を表示する
-      console.log("calculated result: " + root.expression);
-    }
-    else {
-      // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-      process.stdout.write("calculated expression: ");
-      root.traverseInorder(process.stdout);
-      process.stdout.write("\n");
-    }
   }
   catch (e) {
     console.error(e);
-    return;
+    process.exit(1);
+  }
+
+  // 分割した二分木から式全体の値を計算する
+  if (root.calculate()) {
+    // 計算できた場合はその値を表示する
+    console.log("calculated result: " + root.expression);
+  }
+  else {
+    // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+    process.stdout.write("calculated expression: ");
+    root.traverseInorder(process.stdout);
+    process.stdout.write("\n");
+    process.exit(2);
   }
 }
 

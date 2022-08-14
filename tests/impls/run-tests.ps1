@@ -135,8 +135,11 @@ function Run-TestCase {
     )
   }
 
-  [void]$p.StandardInput.WriteLine($testcase.Input)
-  [void]$p.StandardInput.Flush()
+  if ($testcase.Input -ne $null) {
+    [void]$p.StandardInput.WriteLine($testcase.Input)
+    [void]$p.StandardInput.Flush()
+  }
+
   [void]$p.StandardInput.Close()
 
   $p.WaitForExit()

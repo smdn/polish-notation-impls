@@ -267,11 +267,19 @@ Class Node
 End Class
 
 Class Polish
-  Public Shared Sub Main()
+  ' Mainメソッド。　結果によって次の値を返す。
+  '   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
+  '   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
+  '   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
+  Public Shared Function Main() As Integer
     Console.Write("input expression: ")
 
     ' 標準入力から二分木に分割したい式を入力する
     Dim expression As String = Console.ReadLine()
+
+    If String.IsNullOrEmpty(expression) Then Return 1
+
+    Dim root As Node
 
     Try
       ' 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -281,7 +289,7 @@ Class Polish
       Node.ValidateBracketBalance(expression)
 
       ' 二分木の根(root)ノードを作成し、式全体を格納する
-      Dim root As New Node(expression)
+      root = New Node(expression)
 
       Console.WriteLine("expression: {0}", root.Expression)
 
@@ -302,21 +310,23 @@ Class Polish
       Console.Write("polish notation: ")
       root.TraversePreorder()
       Console.WriteLine()
-
-      ' 分割した二分木から式全体の値を計算する
-      If root.Calculate() Then
-        ' 計算できた場合はその値を表示する
-        Console.WriteLine("calculated result: {0}", root.Expression)
-      Else
-        ' (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-        Console.Write("calculated expression: ")
-        root.TraverseInorder()
-        Console.WriteLine()
-      End If
     Catch ex As Exception
       Console.Error.WriteLine(ex.Message)
-      Return
+      Return 1
     End Try
-  End Sub
+
+    ' 分割した二分木から式全体の値を計算する
+    If root.Calculate() Then
+      ' 計算できた場合はその値を表示する
+      Console.WriteLine("calculated result: {0}", root.Expression)
+      Return 0
+    Else
+      ' (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+      Console.Write("calculated expression: ")
+      root.TraverseInorder()
+      Console.WriteLine()
+      Return 2
+    End If
+  End Function
 End Class
 

@@ -4,39 +4,40 @@
     /*
     * unbalanced brackets
     */
-    { "ExpectAsUnbalancedBracket": true, "Input": "(" },
-    { "ExpectAsUnbalancedBracket": true, "Input": ")" },
-    { "ExpectAsUnbalancedBracket": true, "Input": ")(" },
-    { "ExpectAsUnbalancedBracket": true, "Input": ")1(" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "(1" },
-    { "ExpectAsUnbalancedBracket": true, "Input": ")1" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "1)" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "1(" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "(1+2" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "1+2)" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "((1+2)" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "(1+2))" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "1+(2+3))" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "1+((2+3)" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "((1)+(2)" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "(1)+(2))" },
-    { "ExpectAsUnbalancedBracket": true, "Input": ")1+2" },
-    { "ExpectAsUnbalancedBracket": true, "Input": "1+2(" },
-    { "ExpectAsUnbalancedBracket": true, "Input": ")1+2(" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "(" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")(" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")1(" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "(1" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")1" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "1)" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "1(" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "(1+2" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "1+2)" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "((1+2)" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "(1+2))" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "1+(2+3))" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "1+((2+3)" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "((1)+(2)" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "(1)+(2))" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")1+2" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "1+2(" },
+    { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")1+2(" },
 
     /*
     * empty brackets
     */
-    { "ExpectAsEmptyBracket": true, "Input": "()" },
-    { "ExpectAsEmptyBracket": true, "Input": "(())" },
-    { "ExpectAsEmptyBracket": true, "Input": "((()))" },
-    { "ExpectAsEmptyBracket": true, "Input": "1=()" },
-    { "ExpectAsEmptyBracket": true, "Input": "()=1" },
+    { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "()" },
+    { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "(())" },
+    { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "((()))" },
+    { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "1=()" },
+    { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "()=1" },
 
     /*
     * parsed as valid expression currently
     */
-    { "ExpectAsInvalidExpression": false, "Input": "x()" },
-    { "ExpectAsInvalidExpression": false, "Input": "(x())" },
+    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 0, "Input": "x()" },
+    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 0, "Input": "(x())" },
+    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "f=x()" },
   ]
 }

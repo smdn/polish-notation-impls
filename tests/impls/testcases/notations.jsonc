@@ -1,10 +1,10 @@
 {
   "Name": "Test cases of converted notations",
   "TestCases": [
-    { "Input": "1+2",      "ExpectedPreorderNotation": "+ 1 2 ",       "ExpectedPostorderNotation": "1 2 + ",       "ExpectedInorderNotation": "(1 + 2)" },
-    { "Input": "(1+2)",    "ExpectedPreorderNotation": "+ 1 2 ",       "ExpectedPostorderNotation": "1 2 + ",       "ExpectedInorderNotation": "(1 + 2)" },
-    { "Input": "1+2+3",    "ExpectedPreorderNotation": "+ + 1 2 3 ",   "ExpectedPostorderNotation": "1 2 + 3 + ",   "ExpectedInorderNotation": "((1 + 2) + 3)" },
-    { "Input": "1+(2+3)",  "ExpectedPreorderNotation": "+ 1 + 2 3 ",   "ExpectedPostorderNotation": "1 2 3 + + ",   "ExpectedInorderNotation": "(1 + (2 + 3))" },
-    { "Input": "1.0+2A",   "ExpectedPreorderNotation": "+ 1.0 2A ",    "ExpectedPostorderNotation": "1.0 2A + ",    "ExpectedInorderNotation": "(1.0 + 2A)" },
+    { "Input": "1+2",      "ExpectedPreorderNotation": "+ 1 2 ",       "ExpectedPostorderNotation": "1 2 + ",       "ExpectedInorderNotation": "(1 + 2)",       "ExpectedExitCode": 0 },
+    { "Input": "(1+2)",    "ExpectedPreorderNotation": "+ 1 2 ",       "ExpectedPostorderNotation": "1 2 + ",       "ExpectedInorderNotation": "(1 + 2)",       "ExpectedExitCode": 0 },
+    { "Input": "1+2+3",    "ExpectedPreorderNotation": "+ + 1 2 3 ",   "ExpectedPostorderNotation": "1 2 + 3 + ",   "ExpectedInorderNotation": "((1 + 2) + 3)", "ExpectedExitCode": 0 },
+    { "Input": "1+(2+3)",  "ExpectedPreorderNotation": "+ 1 + 2 3 ",   "ExpectedPostorderNotation": "1 2 3 + + ",   "ExpectedInorderNotation": "(1 + (2 + 3))", "ExpectedExitCode": 0 },
+    { "Input": "1.0+2A",   "ExpectedPreorderNotation": "+ 1.0 2A ",    "ExpectedPostorderNotation": "1.0 2A + ",    "ExpectedInorderNotation": "(1.0 + 2A)",    "ExpectedExitCode": 2 },
   ]
 }

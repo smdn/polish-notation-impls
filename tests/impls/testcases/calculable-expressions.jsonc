@@ -1,33 +1,33 @@
 {
   "Name": "Test cases of calculable expressions",
   "TestCases": [
-    { "Input": "1",                 "ExpectedCalculationResult": "1" },
-    { "Input": "(1)",               "ExpectedCalculationResult": "1" },
-    { "Input": "((1))",             "ExpectedCalculationResult": "1" },
-    { "Input": "1+2",               "ExpectedCalculationResult": "3" },
-    { "Input": "(1+2)",             "ExpectedCalculationResult": "3" },
-    { "Input": "((1+2))",           "ExpectedCalculationResult": "3" },
-    { "Input": "1+(2)",             "ExpectedCalculationResult": "3" },
-    { "Input": "(1)+2",             "ExpectedCalculationResult": "3" },
-    { "Input": "(1)+(2)",           "ExpectedCalculationResult": "3" },
-    { "Input": "((1)+(2))",         "ExpectedCalculationResult": "3" },
-    { "Input": "(((1)+(2)))",       "ExpectedCalculationResult": "3" },
-    { "Input": "((((1))+((2))))",   "ExpectedCalculationResult": "3" },
-    { "Input": "10-3+2",            "ExpectedCalculationResult": "9" }, // is treated as expression "(10-3)+2"
-    { "Input": "(10-3)+2",          "ExpectedCalculationResult": "9" },
-    { "Input": "10+3-2",            "ExpectedCalculationResult": "11" }, // is treated as expression "(10+3)-2"
-    { "Input": "(10-3)+2",          "ExpectedCalculationResult": "9" },
-    { "Input": "1-3+2",             "ExpectedCalculationResult": "0" }, // is treated as expression "(1-3)+2"
-    { "Input": "1-3+2-4",           "ExpectedCalculationResult": "-4" }, // is treated as expression "((1-3)+2)-4"
-    { "Input": "2+5*3-4",           "ExpectedCalculationResult": "13" },
-    { "Input": "(2+5)*3-4",         "ExpectedCalculationResult": "17" },
-    { "Input": "2+5*(3-4)",         "ExpectedCalculationResult": "-3" },
-    { "Input": "2+(5*3-4)",         "ExpectedCalculationResult": "13" },
-    { "Input": "(2+5*3)-4",         "ExpectedCalculationResult": "13" },
-    { "Input": "(2+5)*(3-4)",       "ExpectedCalculationResult": "-7" },
-    { "Input": "((2+(5*3))-4)",     "ExpectedCalculationResult": "13" },
-    { "Input": "1+4*2+(7-3)/2",     "ExpectedCalculationResult": "11" },
-    { "Input": "1+4*(2+(7-3))/2",   "ExpectedCalculationResult": "13" },
+    { "Input": "1",                 "ExpectedCalculationResult": "1",   "ExpectedExitCode": 0 },
+    { "Input": "(1)",               "ExpectedCalculationResult": "1",   "ExpectedExitCode": 0 },
+    { "Input": "((1))",             "ExpectedCalculationResult": "1",   "ExpectedExitCode": 0 },
+    { "Input": "1+2",               "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "(1+2)",             "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "((1+2))",           "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "1+(2)",             "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "(1)+2",             "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "(1)+(2)",           "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "((1)+(2))",         "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "(((1)+(2)))",       "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "((((1))+((2))))",   "ExpectedCalculationResult": "3",   "ExpectedExitCode": 0 },
+    { "Input": "10-3+2",            "ExpectedCalculationResult": "9",   "ExpectedExitCode": 0 }, // is treated as expression "(10-3)+2"
+    { "Input": "(10-3)+2",          "ExpectedCalculationResult": "9",   "ExpectedExitCode": 0 },
+    { "Input": "10+3-2",            "ExpectedCalculationResult": "11",  "ExpectedExitCode": 0 }, // is treated as expression "(10+3)-2"
+    { "Input": "(10-3)+2",          "ExpectedCalculationResult": "9",   "ExpectedExitCode": 0 },
+    { "Input": "1-3+2",             "ExpectedCalculationResult": "0",   "ExpectedExitCode": 0 }, // is treated as expression "(1-3)+2"
+    { "Input": "1-3+2-4",           "ExpectedCalculationResult": "-4",  "ExpectedExitCode": 0 }, // is treated as expression "((1-3)+2)-4"
+    { "Input": "2+5*3-4",           "ExpectedCalculationResult": "13",  "ExpectedExitCode": 0 },
+    { "Input": "(2+5)*3-4",         "ExpectedCalculationResult": "17",  "ExpectedExitCode": 0 },
+    { "Input": "2+5*(3-4)",         "ExpectedCalculationResult": "-3",  "ExpectedExitCode": 0 },
+    { "Input": "2+(5*3-4)",         "ExpectedCalculationResult": "13",  "ExpectedExitCode": 0 },
+    { "Input": "(2+5*3)-4",         "ExpectedCalculationResult": "13",  "ExpectedExitCode": 0 },
+    { "Input": "(2+5)*(3-4)",       "ExpectedCalculationResult": "-7",  "ExpectedExitCode": 0 },
+    { "Input": "((2+(5*3))-4)",     "ExpectedCalculationResult": "13",  "ExpectedExitCode": 0 },
+    { "Input": "1+4*2+(7-3)/2",     "ExpectedCalculationResult": "11",  "ExpectedExitCode": 0 },
+    { "Input": "1+4*(2+(7-3))/2",   "ExpectedCalculationResult": "13",  "ExpectedExitCode": 0 },
 
     /*
      * numeric formatting
@@ -73,6 +73,7 @@
     /*
      * implicit multiplication
      */
-    { "Input": "2(1+2)",      "ExpectedCalculationResult": "2(1+2)" },
+    { "Input": "2(1+2)",      "ExpectedCalculationResult": "2(1+2)", "ExpectedExitCode": 0 },
+    { "Input": "x=2(1+2)",    "ExpectedCalculationExpression": "x=2(1+2)", "ExpectedExitCode": 2 },
   ]
 }

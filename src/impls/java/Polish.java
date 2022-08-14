@@ -308,6 +308,10 @@ class Node {
 }
 
 public class Polish {
+    // Mainメソッド。　結果によって次の終了コードを設定する。
+    //   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
+    //   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
+    //   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
     public static void main(String[] args) throws IOException {
         var r = new BufferedReader(new InputStreamReader(System.in));
 
@@ -315,6 +319,11 @@ public class Polish {
 
         // 標準入力から二分木に分割したい式を入力する
         var expression = r.readLine();
+
+        if (expression == null || expression.length() == 0)
+            System.exit(1);
+
+        Node root = null;
 
         try {
             // 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -324,7 +333,7 @@ public class Polish {
             Node.ValidateBracketBalance(expression);
 
             // 二分木の根(root)ノードを作成し、式全体を格納する
-            var root = new Node(expression);
+            root = new Node(expression);
 
             System.out.println("expression: " + root.expression);
 
@@ -345,22 +354,23 @@ public class Polish {
             System.out.print("polish notation: ");
             root.traversePreorder();
             System.out.println();
-
-            // 分割した二分木から式全体の値を計算する
-            if (root.calculate()) {
-                // 計算できた場合はその値を表示する
-                System.out.println("calculated result: " + root.expression);
-            }
-            else {
-                // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-                System.out.print("calculated expression: ");
-                root.traverseInorder();
-                System.out.println();
-            }
         }
         catch (ExpressionParserException ex) {
             System.err.println(ex.getMessage());
-            return;
+            System.exit(1);
+        }
+
+        // 分割した二分木から式全体の値を計算する
+        if (root.calculate()) {
+            // 計算できた場合はその値を表示する
+            System.out.println("calculated result: " + root.expression);
+        }
+        else {
+            // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+            System.out.print("calculated expression: ");
+            root.traverseInorder();
+            System.out.println();
+            System.exit(2);
         }
     }
 }

@@ -366,6 +366,10 @@ int validate_bracket_balance(char *exp)
     return nest;
 }
 
+// main関数。　結果によって次の値を返す。
+//   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
+//   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
+//   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
 int main()
 {
     // 二分木の根(root)ノードを作成する
@@ -411,12 +415,12 @@ int main()
         printf("calculated expression: ");
         traverse_inorder(root);
         printf("\n");
+        return 2;
     }
     else {
         // 計算できた場合はその値を表示する
         printf("calculated result: %s\n", root->exp);
+        return 0;
     }
-
-    return 0;
 }
 
