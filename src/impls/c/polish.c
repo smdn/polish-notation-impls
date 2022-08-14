@@ -375,20 +375,20 @@ int main()
     printf("input expression: ");
 
     if (1 != scanf("%[^\n]", root->exp))
-        return -1;
+        return 1;
 
     // 入力された式から空白を除去する
     remove_space(root->exp);
 
     // 入力された式における括弧の対応数をチェックする
     if (0 != validate_bracket_balance(root->exp))
-        return -1;
+        return 1;
 
     printf("expression: %s\n", root->exp);
 
     // 根ノードに格納した式を二分木へと分割する
     if (parse_expression(root) < 0)
-        return -1;
+        return 1;
 
     // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
     printf("reverse polish notation: ");
