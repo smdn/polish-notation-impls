@@ -1,0 +1,7 @@
+{
+  "Name": "Test cases of empty expression input",
+  "TestCases": [
+    { "ExpectedExitCode": 1 }, // performs null input
+    { "ExpectedExitCode": 1, "Input": "" }, // performs empty input
+  ]
+}
