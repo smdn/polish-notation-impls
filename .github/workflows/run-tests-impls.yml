@@ -47,6 +47,7 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_SDK_MINIMUM_VERSION: "6.0.200"
   NODEJS_MINIMUM_VERSION: 18
+  JAVA_MINIMUM_VERSION: 11
 
 jobs:
   setup:
@@ -138,6 +139,13 @@ jobs:
         uses: actions/setup-dotnet@v2.0.0
         with:
           dotnet-version: "${{ steps.dotnet-sdk-version.outputs.install }}"
+
+      - name: Setup Java
+        if: ${{ matrix.target-impl == 'java' }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_MINIMUM_VERSION }}
 
       - name: Install Node.js
         if: ${{ matrix.target-impl == 'javascript' }}
