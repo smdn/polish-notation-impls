@@ -274,7 +274,7 @@ int calculate(Node* node)
 
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
     // それ以上計算できないので0(成功)を返す
-    if (!node->left && !node->right)
+    if (!node->left || !node->right)
         return 0;
 
     // 左右の子ノードについて、再帰的にノードの値を計算する

@@ -246,7 +246,7 @@ class Node {
   {
     // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     // それ以上計算できないのでtrueを返す
-    if (Left == null && Right == null)
+    if (Left == null || Right == null)
       return true;
 
     // 左右の子ノードについて、再帰的にノードの値を計算する

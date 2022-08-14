@@ -232,7 +232,7 @@ class Node:
   def calculate(self):
     # 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     # それ以上計算できないのでTrueを返す
-    if not self.left and not self.right:
+    if not self.left or not self.right:
       return True
 
     # 左右の子ノードについて、再帰的にノードの値を計算する

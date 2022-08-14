@@ -228,7 +228,7 @@ Class Node
   Public Function Calculate() As Boolean
     ' 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     ' それ以上計算できないのでtrueを返す
-    If Left Is Nothing AndAlso Right Is Nothing Then Return True
+    If Left Is Nothing OrElse Right Is Nothing Then Return True
 
     ' 左右の子ノードについて、再帰的にノードの値を計算する
     Left.Calculate()
