@@ -26,10 +26,10 @@ class Node {
     // 開き括弧と閉じ括弧が同数でない場合はエラーとする
     public static void ValidateBracketBalance(String expression) throws ExpressionParserException
     {
-        int nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+        var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
         // 1文字ずつ検証する
-        for (int i = 0; i < expression.length(); i++) {
+        for (var i = 0; i < expression.length(); i++) {
             if (expression.charAt(i) == '(') {
                 // 開き丸括弧なので深度を1増やす
                 nest++;
@@ -60,7 +60,7 @@ class Node {
         expression = removeOutermostBracket(expression);
 
         // 式expressionから演算子を探して位置を取得する
-        int posOperator = getOperatorPosition(expression);
+        var posOperator = getOperatorPosition(expression);
 
         if (posOperator < 0) {
             // 式expressionに演算子が含まれない場合、expressionは項であるとみなす
@@ -93,8 +93,8 @@ class Node {
     // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
     private static String removeOutermostBracket(String expression) throws ExpressionParserException
     {
-        boolean hasOutermostBracket = false; // 最も外側に括弧を持つかどうか
-        int nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
+        var hasOutermostBracket = false; // 最も外側に括弧を持つかどうか
+        var nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
         if (expression.charAt(0) == '(') {
             // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
@@ -103,7 +103,7 @@ class Node {
         }
 
         // 1文字目以降を1文字ずつ検証
-        for (int i = 1; i < expression.length(); i++) {
+        for (var i = 1; i < expression.length(); i++) {
             if (expression.charAt(i) == '(') {
                 // 開き丸括弧なので深度を1増やす
                 nest++;
@@ -153,13 +153,13 @@ class Node {
         if (expression == null || expression.length() == 0)
             return -1;
 
-        int posOperator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
-        int currentPriority = Integer.MAX_VALUE; // 現在見つかっている演算子の優先順位(初期値としてInteger.MAX_VALUEを設定)
-        int nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
+        var posOperator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
+        var currentPriority = Integer.MAX_VALUE; // 現在見つかっている演算子の優先順位(初期値としてInteger.MAX_VALUEを設定)
+        var nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
         // 与えられた文字列を先頭から1文字ずつ検証する
-        for (int i = 0; i < expression.length(); i++) {
-            int priority = 0; // 演算子の優先順位(値が低いほど優先順位が低いものとする)
+        for (var i = 0; i < expression.length(); i++) {
+            var priority = 0; // 演算子の優先順位(値が低いほど優先順位が低いものとする)
 
             switch (expression.charAt(i)) {
                 // 文字が演算子かどうか検証し、演算子の場合は演算子の優先順位を設定する
@@ -309,12 +309,12 @@ class Node {
 
 public class Polish {
     public static void main(String[] args) throws IOException {
-        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        var r = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.print("input expression: ");
 
         // 標準入力から二分木に分割したい式を入力する
-        String expression = r.readLine();
+        var expression = r.readLine();
 
         try {
             // 入力された式から空白を除去する(空白を空の文字列に置き換える)
@@ -324,7 +324,7 @@ public class Polish {
             Node.ValidateBracketBalance(expression);
 
             // 二分木の根(root)ノードを作成し、式全体を格納する
-            Node root = new Node(expression);
+            var root = new Node(expression);
 
             System.out.println("expression: " + root.expression);
 
