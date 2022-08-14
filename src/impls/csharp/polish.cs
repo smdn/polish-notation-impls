@@ -5,8 +5,8 @@ using System;
 // ノードを構成するデータ構造
 class Node {
   public string Expression; // このノードが表す式(二分木への分割後は演算子または項となる)
-  public Node Left = null;  // 左の子ノード
-  public Node Right = null; // 右の子ノード
+  public Node? Left = null;  // 左の子ノード
+  public Node? Right = null; // 右の子ノード
 
   // コンストラクタ(与えられた式expressionを持つノードを構成する)
   public Node(string expression)
