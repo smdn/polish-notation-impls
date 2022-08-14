@@ -11,6 +11,7 @@ on:
       - "!src/impls/**/.editorconfig"
       - "!src/impls/**/.gitignore"
       - "!src/impls/**/README.md"
+      - "tests/impls/**/*"
 
   pull_request:
     types:
@@ -22,6 +23,7 @@ on:
       - "!src/impls/**/.editorconfig"
       - "!src/impls/**/.gitignore"
       - "!src/impls/**/README.md"
+      - "tests/impls/**/*"
 
   workflow_dispatch:
     inputs:
