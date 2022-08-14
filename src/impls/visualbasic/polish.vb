@@ -140,7 +140,7 @@ Class Node
 
     ' 与えられた文字列を先頭から1文字ずつ検証する
     For i As Integer = 0 To expression.Length - 1
-      Dim priority As Integer = 0 ' 演算子の優先順位(値が低いほど優先順位が低いものとする)
+      Dim priority As Integer ' 演算子の優先順位(値が低いほど優先順位が低いものとする)
 
       Select Case expression(i)
         ' 文字が演算子かどうか検証し、演算子の場合は演算子の優先順位を設定する

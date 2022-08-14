@@ -147,7 +147,7 @@ class Node {
 
     // 与えられた文字列を先頭から1文字ずつ検証する
     for (var i = 0; i < expression.Length; i++) {
-      var priority = 0; // 演算子の優先順位(値が低いほど優先順位が低いものとする)
+      int priority; // 演算子の優先順位(値が低いほど優先順位が低いものとする)
 
       switch (expression[i]) {
         // 文字が演算子かどうか検証し、演算子の場合は演算子の優先順位を設定する
