@@ -284,12 +284,15 @@ int calculate(Node* node)
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
     // ノードの値が計算できないものとして、-1(失敗)を返す
+
+    // 左ノードの値を数値に変換して演算子の左項left_operandの値とする
     errno = 0;
     left_operand = strtod(node->left->exp, &endptr_value);
 
     if (ERANGE == errno || endptr_value != (node->left->exp + strlen(node->left->exp)))
         return -1;
 
+    // 右ノードの値を数値に変換して演算子の右項right_operandの値とする
     errno = 0;
     right_operand = strtod(node->right->exp, &endptr_value);
 
