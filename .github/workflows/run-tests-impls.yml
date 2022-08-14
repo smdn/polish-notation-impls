@@ -134,7 +134,7 @@ jobs:
             "::set-output name=install::${required_version}"
           }
 
-      - name: Install .NET SDK ${{ steps.dotnet-sdk-version.outputs.install }}
+      - name: Setup .NET SDK ${{ steps.dotnet-sdk-version.outputs.install }}
         if: ${{ steps.dotnet-sdk-version.outputs.install != '' }}
         uses: actions/setup-dotnet@v2.0.0
         with:
@@ -147,7 +147,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ env.JAVA_MINIMUM_VERSION }}
 
-      - name: Install Node.js
+      - name: Setup Node.js
         if: ${{ matrix.target-impl == 'javascript' }}
         uses: actions/setup-node@v3
         with:
