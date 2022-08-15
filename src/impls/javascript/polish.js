@@ -328,14 +328,19 @@ if (typeof require == "function") {
 //   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
 function polish_main(_expression) {
   if (!_expression)
+    // 入力が得られなかった場合は、処理を終了する
+    process.exit(1);
+
+  // 入力された式から空白を除去する(空白を空の文字列に置き換える)
+  let expression = _expression.replace(/\s+/g, "");
+
+  if (expression.length == 0)
+    // 空白を除去した結果、空の文字列となった場合は、処理を終了する
     process.exit(1);
 
   let root = null
 
   try {
-    // 入力された式から空白を除去する(空白を空の文字列に置き換える)
-    let expression = _expression.replace(/\s+/g, "");
-
     // 入力された式における括弧の対応数をチェックする
     Node.validateBracketBalance(expression);
 

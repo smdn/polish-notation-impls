@@ -280,15 +280,16 @@ def main():
   # 標準入力から二分木に分割したい式を入力する
   expression = input("input expression: ")
 
+  # 入力された式から空白を除去する(空白を空の文字列に置き換える)
+  expression = expression.replace(" ", "")
+
   if len(expression) == 0:
+    # 空白を除去した結果、空の文字列となった場合は、処理を終了する
     return 1
 
   root = None
 
   try:
-    # 入力された式から空白を除去する(空白を空の文字列に置き換える)
-    expression = expression.replace(" ", "")
-
     # 入力された式における括弧の対応数をチェックする
     Node.validate_bracket_balance(expression)
 

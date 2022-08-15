@@ -382,10 +382,15 @@ int main()
     printf("input expression: ");
 
     if (1 != scanf("%[^\n]", root->exp))
+        // 入力が得られなかった場合は、処理を終了する
         return 1;
 
     // 入力された式から空白を除去する
     remove_space(root->exp);
+
+    if (0 == strlen(root->exp))
+        // 空白を除去した結果、空の文字列となった場合は、処理を終了する
+        return 1;
 
     // 入力された式における括弧の対応数をチェックする
     if (0 != validate_bracket_balance(root->exp))
