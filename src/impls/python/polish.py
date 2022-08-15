@@ -280,12 +280,12 @@ def main():
   # 標準入力から二分木に分割したい式を入力する
   expression = input("input expression: ")
 
+  if not expression or expression.isspace():
+      # 入力が得られなかった場合、または入力が空白のみの場合は、処理を終了する
+      return 1
+
   # 入力された式から空白を除去する(空白を空の文字列に置き換える)
   expression = expression.replace(" ", "")
-
-  if len(expression) == 0:
-    # 空白を除去した結果、空の文字列となった場合は、処理を終了する
-    return 1
 
   root = None
 
