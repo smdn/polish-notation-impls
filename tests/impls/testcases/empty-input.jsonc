@@ -3,5 +3,6 @@
   "TestCases": [
     { "ExpectedExitCode": 1 }, // performs null input
     { "ExpectedExitCode": 1, "Input": "" }, // performs empty input
+    { "ExpectedExitCode": 1, "Input": " " }, // performs whitespace-only input
   ]
 }
