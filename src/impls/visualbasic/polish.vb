@@ -277,14 +277,11 @@ Class Polish
     ' 標準入力から二分木に分割したい式を入力する
     Dim expression As String = Console.ReadLine()
 
-    ' 入力が得られなかった場合は、処理を終了する
-    If expression Is Nothing Then Return 1
+    ' 入力が得られなかった場合、または入力が空白のみの場合は、処理を終了する
+    If String.IsNullOrWhiteSpace(expression) Then Return 1
 
     ' 入力された式から空白を除去する(空白を空の文字列に置き換える)
     expression = expression.Replace(" ", "")
-
-    ' 空白を除去した結果、空の文字列となった場合は、処理を終了する
-    If expression.Length = 0 Then Return 1
 
     Dim root As Node
 
