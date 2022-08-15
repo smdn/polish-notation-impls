@@ -298,15 +298,16 @@ class Polish {
     // 標準入力から二分木に分割したい式を入力する
     var expression = Console.ReadLine();
 
-    if (string.IsNullOrEmpty(expression))
+    if (string.IsNullOrWhiteSpace(expression))
+      // 入力が得られなかった場合、または入力が空白のみの場合は、処理を終了する
       return 1;
+
+    // 入力された式から空白を除去する(空白を空の文字列に置き換える)
+    expression = expression.Replace(" ", "");
 
     Node root;
 
     try {
-      // 入力された式から空白を除去する(空白を空の文字列に置き換える)
-      expression = expression.Replace(" ", "");
-
       // 入力された式における括弧の対応数をチェックする
       Node.ValidateBracketBalance(expression);
 
