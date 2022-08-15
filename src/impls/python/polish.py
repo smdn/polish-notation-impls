@@ -240,14 +240,15 @@ class Node:
     self.right.calculate()
 
     # 計算した左右の子ノードの値を数値型(float)に変換する
+    # 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
+    # ノードの値が計算できないものとして、Falseを返す
     try:
       # 左ノードの値を数値に変換して演算子の左項left_operandの値とする
       left_operand  = float(self.left.expression)
       # 右ノードの値を数値に変換して演算子の右項right_operandの値とする
       right_operand = float(self.right.expression)
     except:
-      # 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-      # ノードの値が計算できないものとして、Falseを返す
+      # floatで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       return False
 
     # 現在のノードの演算子に応じて左右の子ノードの値を演算し、

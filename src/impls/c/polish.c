@@ -290,6 +290,7 @@ int calculate(Node* node)
     left_operand = strtod(node->left->exp, &endptr_value);
 
     if (ERANGE == errno || endptr_value != (node->left->exp + strlen(node->left->exp)))
+        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
         return -1;
 
     // 右ノードの値を数値に変換して演算子の右項right_operandの値とする
@@ -297,6 +298,7 @@ int calculate(Node* node)
     right_operand = strtod(node->right->exp, &endptr_value);
 
     if (ERANGE == errno || endptr_value != (node->right->exp + strlen(node->right->exp)))
+        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
         return -1;
 
     // ノードの演算子に応じて左右の子ノードの値を演算し、

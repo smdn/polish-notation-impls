@@ -259,10 +259,12 @@ class Node {
 
     // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
     if (!double.TryParse(Left.Expression, out var leftOperand))
+      // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       return false;
 
     // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
     if (!double.TryParse(Right.Expression, out var rightOperand))
+      // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       return false;
 
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、

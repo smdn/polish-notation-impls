@@ -266,6 +266,8 @@ class Node {
         right.calculate();
 
         // 計算した左右の子ノードの値を数値型(double)に変換する
+        // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
+        // ノードの値が計算できないものとして、falseを返す
         double leftOperand, rightOperand;
 
         try {
@@ -275,8 +277,7 @@ class Node {
             rightOperand = Double.parseDouble(right.expression);
         }
         catch (NumberFormatException ex) {
-            // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-            // ノードの値が計算できないものとして、falseを返す
+            // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
             return false;
         }
 

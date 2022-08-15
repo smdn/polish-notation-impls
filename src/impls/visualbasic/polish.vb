@@ -240,10 +240,16 @@ Class Node
     Dim leftOperand, rightOperand As Double
 
     ' 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-    If Not Double.TryParse(Left.Expression, leftOperand) Then Return False
+    If Not Double.TryParse(Left.Expression, leftOperand) Then
+      ' Doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
+      Return False
+    End If
 
     ' 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-    If Not Double.TryParse(Right.Expression, rightOperand) Then Return False
+    If Not Double.TryParse(Right.Expression, rightOperand) Then
+      ' Doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
+      Return False
+    End If
 
     ' 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     ' 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする
