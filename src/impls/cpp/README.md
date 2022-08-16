@@ -59,6 +59,13 @@ msbuild /t:Clean # 成果物ファイルを削除する
 
 `msbuild`コマンドを使用する場合は、`PATH`環境変数に`msbuild.exe`のあるディレクトリを追加しておく必要があります。
 
+スクリプト`find-msbuild.ps1`を実行することで、`msbuild.exe`のパスを検索することができます。
+
+```bat
+> .\find-msbuild.ps1
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+```
+
 ## g++でのコンパイル・実行方法
 ```sh
 g++ -std=c++2a polish.cpp -o polish # ソースファイルをコンパイルする
