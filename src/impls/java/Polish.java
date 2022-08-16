@@ -30,7 +30,7 @@ class Node {
 
     // 式expression内の括弧の対応を検証するメソッド
     // 開き括弧と閉じ括弧が同数でない場合はエラーとする
-    public static void ValidateBracketBalance(String expression) throws ExpressionParserException
+    public static void validateBracketBalance(String expression) throws ExpressionParserException
     {
         var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
@@ -339,7 +339,7 @@ public class Polish {
 
         try {
             // 入力された式における括弧の対応数をチェックする
-            Node.ValidateBracketBalance(expression);
+            Node.validateBracketBalance(expression);
 
             // 二分木の根(root)ノードを作成し、式全体を格納する
             root = new Node(expression);
