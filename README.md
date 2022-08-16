@@ -8,6 +8,7 @@
 現在、以下の言語の実装があります。
 
 - [C](src/impls/c/)
+- [C++](src/impls/cpp/)
 - [C#](src/impls/csharp/)
 - [Java](src/impls/java/)
 - [JavaScript](src/impls/javascript/)

@@ -88,7 +88,7 @@ jobs:
         shell: pwsh
         run: |
           $verbose = '${{ inputs.verbose }}' -ieq 'true'
-          $target_impls = Get-Content ./tests/impls/implementations.jsonc | ConvertFrom-Json | Select-Object -ExpandProperty ID
+          $target_impls = Get-Content ./tests/impls/implementations.jsonc | ConvertFrom-Json | Select-Object -ExpandProperty ID | Get-Unique
 
           if ( ! [string]::IsNullOrEmpty( '${{ inputs.target-impl }}' ) ) {
             $target_impls = @('${{ inputs.target-impl }}')
@@ -152,6 +152,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODEJS_MINIMUM_VERSION }}
+
+      - name: Setup MSBuild
+        if: ${{ runner.os == 'Windows' && matrix.target-impl == 'cpp' }}
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Run tests with ${{ matrix.target-impl }} on ${{ matrix.os }}
         shell: pwsh
