@@ -42,7 +42,7 @@
     "ID": "cpp",
     "DisplayName": "C++ (MSBuild/Windows)",
     "Directory": "src/impls/cpp/",
-    "Condition": "$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool](Get-Command msbuild -errorAction SilentlyContinue))",
+    "Condition": "$(![bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool](Get-Command msbuild -errorAction SilentlyContinue))",
     "Commands": {
       "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
