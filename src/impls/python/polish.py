@@ -8,9 +8,14 @@ import sys
 class Node:
   # コンストラクタ(与えられた式expressionを持つノードを構成する)
   def __init__(self, expression):
-    self.expression = expression # このノードが表す式(二分木への分割後は演算子または項となる)
+    self.__expression = expression # このノードが表す式(二分木への分割後は演算子または項となる)
     self.__left = None  # 左の子ノード
     self.__right = None # 右の子ノード
+
+  # このノードが表す式を取得するためのプロパティ
+  @property
+  def expression(self):
+      return self.__expression
 
   # 式expression内の括弧の対応を検証するメソッド
   # 開き括弧と閉じ括弧が同数でない場合はエラーとする
@@ -41,10 +46,10 @@ class Node:
   # 式expressionを二分木へと分割するメソッド
   def parse(self):
     # 式expressionから最も外側にある丸括弧を取り除く
-    self.expression = Node.__remove_outermost_bracket(self.expression)
+    self.__expression = Node.__remove_outermost_bracket(self.__expression)
 
     # 式expressionから演算子を探して位置を取得する
-    pos_operator = Node.__get_operator_position(self.expression)
+    pos_operator = Node.__get_operator_position(self.__expression)
 
     if pos_operator < 0:
       # 式expressionに演算子が含まれない場合、expressionは項であるとみなす
@@ -53,24 +58,24 @@ class Node:
       self.__right = None
       return
 
-    if pos_operator == 0 or pos_operator == len(self.expression) - 1:
+    if pos_operator == 0 or pos_operator == len(self.__expression) - 1:
       # 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      raise Exception("invalid expression: {}".format(self.expression))
+      raise Exception("invalid expression: {}".format(self.__expression))
 
     # 以下、演算子の位置をもとに左右の部分式に分割する
 
     # 演算子の左側を左の部分式としてノードを作成する
-    self.__left = Node(self.expression[0:pos_operator])
+    self.__left = Node(self.__expression[0:pos_operator])
     # 左側のノード(部分式)について、再帰的に二分木へと分割する
     self.__left.parse()
 
     # 演算子の右側を右の部分式としてノードを作成する
-    self.__right = Node(self.expression[pos_operator + 1:])
+    self.__right = Node(self.__expression[pos_operator + 1:])
     # 右側のノード(部分式)について、再帰的に二分木へと分割する
     self.__right.parse()
 
     # 残った演算子部分をこのノードに設定する
-    self.expression = self.expression[pos_operator]
+    self.__expression = self.__expression[pos_operator]
 
   # 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
   @staticmethod
@@ -180,7 +185,7 @@ class Node:
 
     # 巡回を終えた後でノードの演算子または項を表示する
     # (読みやすさのために項の後に空白を補って表示する)
-    print(self.expression + " ", end = "")
+    print(self.__expression + " ", end = "")
 
   # 中間順序訪問(通りがけ順)で二分木を巡回して
   # すべてのノードの演算子または項を表示するメソッド
@@ -197,7 +202,7 @@ class Node:
       print(" ", end = "")
 
     # 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-    print(self.expression, end = "")
+    print(self.__expression, end = "")
 
     # 表示した後に右の子ノードを再帰的に巡回する
     if self.__right:
@@ -215,7 +220,7 @@ class Node:
   def traverse_preorder(self):
     # 巡回を始める前にノードの演算子または項を表示する
     # (読みやすさのために項の後に空白を補って表示する)
-    print(self.expression + " ", end = "")
+    print(self.__expression + " ", end = "")
 
     # 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     if self.__left:
@@ -250,14 +255,14 @@ class Node:
 
     # 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     # 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
-    if self.expression[0] == "+":
-      self.expression = "{:.17g}".format(left_operand + right_operand)
-    elif self.expression[0] == "-":
-      self.expression = "{:.17g}".format(left_operand - right_operand)
-    elif self.expression[0] == "*":
-      self.expression = "{:.17g}".format(left_operand * right_operand)
-    elif self.expression[0] == "/":
-      self.expression = "{:.17g}".format(left_operand / right_operand)
+    if self.__expression[0] == "+":
+      self.__expression = "{:.17g}".format(left_operand + right_operand)
+    elif self.__expression[0] == "-":
+      self.__expression = "{:.17g}".format(left_operand - right_operand)
+    elif self.__expression[0] == "*":
+      self.__expression = "{:.17g}".format(left_operand * right_operand)
+    elif self.__expression[0] == "/":
+      self.__expression = "{:.17g}".format(left_operand / right_operand)
     else:
       # 上記以外の演算子の場合は計算できないものとして、Falseを返す
       return False

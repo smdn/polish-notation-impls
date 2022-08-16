@@ -4,7 +4,7 @@ using System;
 
 // ノードを構成するデータ構造
 class Node {
-  public string Expression; // このノードが表す式(二分木への分割後は演算子または項となる)
+  public string Expression { get; private set; } // このノードが表す式(二分木への分割後は演算子または項となる)
   private Node? left = null;  // 左の子ノード
   private Node? right = null; // 右の子ノード
 

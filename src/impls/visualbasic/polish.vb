@@ -6,7 +6,7 @@ Imports System
 
 ' ノードを構成するデータ構造
 Class Node
-  Public Expression As String ' このノードが表す式(二分木への分割後は演算子または項となる)
+  Public ReadOnly Property Expression As String ' このノードが表す式(二分木への分割後は演算子または項となる)
   Private left As Node = Nothing  ' 左の子ノード
   Private right As Node = Nothing ' 右の子ノード
 
@@ -43,10 +43,10 @@ Class Node
   ' 式Expressionを二分木へと分割するメソッド
   Public Sub Parse()
     ' 式Expressionから最も外側にある丸括弧を取り除く
-    Expression = RemoveOutermostBracket(Expression)
+    _Expression = RemoveOutermostBracket(_Expression)
 
     ' 式Expressionから演算子を探して位置を取得する
-    Dim posOperator As Integer = GetOperatorPosition(Expression)
+    Dim posOperator As Integer = GetOperatorPosition(_Expression)
 
     If posOperator < 0 Then
       ' 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
@@ -56,25 +56,25 @@ Class Node
       Return
     End If
 
-    If posOperator = 0 OrElse posOperator = Expression.Length - 1 Then
+    If posOperator = 0 OrElse posOperator = _Expression.Length - 1 Then
       ' 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      Throw New Exception("invalid expression: " + Expression)
+      Throw New Exception("invalid expression: " + _Expression)
     End If
 
     ' 以下、演算子の位置をもとに左右の部分式に分割する
 
     ' 演算子の左側を左の部分式としてノードを作成する
-    left = New Node(Expression.Substring(0, posOperator))
+    left = New Node(_Expression.Substring(0, posOperator))
     ' 左側のノード(部分式)について、再帰的に二分木へと分割する
     left.Parse()
 
     ' 演算子の右側を右の部分式としてノードを作成する
-    right = New Node(Expression.Substring(posOperator + 1))
+    right = New Node(_Expression.Substring(posOperator + 1))
     ' 右側のノード(部分式)について、再帰的に二分木へと分割する
     right.Parse()
 
     ' 残った演算子部分をこのノードに設定する
-    Expression = Expression.Substring(posOperator, 1)
+    _Expression = _Expression.Substring(posOperator, 1)
   End Sub
 
   ' 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
@@ -176,7 +176,7 @@ Class Node
 
     ' 巡回を終えた後でノードの演算子または項を表示する
     ' (読みやすさのために項の後に空白を補って表示する)
-    Console.Write(Expression + " ")
+    Console.Write(_Expression + " ")
   End Sub
 
   ' 中間順序訪問(通りがけ順)で二分木を巡回して
@@ -194,7 +194,7 @@ Class Node
     End If
 
     ' 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-    Console.Write(Expression)
+    Console.Write(_Expression)
 
     ' 表示した後に右の子ノードを再帰的に巡回する
     If right IsNot Nothing Then
@@ -213,7 +213,7 @@ Class Node
   Public Sub TraversePreorder()
     ' 巡回を始める前にノードの演算子または項を表示する
     ' (読みやすさのために項の後に空白を補って表示する)
-    Console.Write(Expression + " ")
+    Console.Write(_Expression + " ")
 
     ' 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
     If left IsNot Nothing Then left.TraversePreorder()
@@ -238,24 +238,24 @@ Class Node
     Dim leftOperand, rightOperand As Double
 
     ' 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-    If Not Double.TryParse(left.Expression, leftOperand) Then
+    If Not Double.TryParse(left._Expression, leftOperand) Then
       ' Doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       Return False
     End If
 
     ' 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-    If Not Double.TryParse(right.Expression, rightOperand) Then
+    If Not Double.TryParse(right._Expression, rightOperand) Then
       ' Doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       Return False
     End If
 
     ' 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     ' 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする
-    Select Case Expression(0)
-      Case "+"c: Expression = (leftOperand + rightOperand).ToString("g17")
-      Case "-"c: Expression = (leftOperand - rightOperand).ToString("g17")
-      Case "*"c: Expression = (leftOperand * rightOperand).ToString("g17")
-      Case "/"c: Expression = (leftOperand / rightOperand).ToString("g17")
+    Select Case _Expression(0)
+      Case "+"c: _Expression = (leftOperand + rightOperand).ToString("g17")
+      Case "-"c: _Expression = (leftOperand - rightOperand).ToString("g17")
+      Case "*"c: _Expression = (leftOperand * rightOperand).ToString("g17")
+      Case "/"c: _Expression = (leftOperand / rightOperand).ToString("g17")
       ' 上記以外の演算子の場合は計算できないものとして、Falseを返す
       Case Else: Return False
     End Select

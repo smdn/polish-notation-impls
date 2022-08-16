@@ -10,13 +10,14 @@ class Node {
   #left = null;   // 左の子ノード
   #right = null;  // 右の子ノード
 
-  get expression() { return this.#expression; }
-
   // コンストラクタ(与えられた式expressionを持つノードを構成する)
   constructor(expression)
   {
     this.#expression = expression;
   }
+
+  // このノードが表す式を取得するためのプロパティ
+  get expression() { return this.#expression; }
 
   // 式expression内の括弧の対応を検証するメソッド
   // 開き括弧と閉じ括弧が同数でない場合はエラーとする

@@ -12,7 +12,7 @@ class ExpressionParserException extends Exception {
 
 // ノードを構成するデータ構造
 class Node {
-    public String expression; // このノードが表す式(二分木への分割後は演算子または項となる)
+    private String expression; // このノードが表す式(二分木への分割後は演算子または項となる)
     private Node left = null;  // 左の子ノード
     private Node right = null; // 右の子ノード
 
@@ -20,6 +20,12 @@ class Node {
     public Node(String expression)
     {
         this.expression = expression;
+    }
+
+    // このノードが表す式を取得するためのgetter
+    public String getExpression()
+    {
+        return expression;
     }
 
     // 式expression内の括弧の対応を検証するメソッド
@@ -338,7 +344,7 @@ public class Polish {
             // 二分木の根(root)ノードを作成し、式全体を格納する
             root = new Node(expression);
 
-            System.out.println("expression: " + root.expression);
+            System.out.println("expression: " + root.getExpression());
 
             // 根ノードに格納した式を二分木へと分割する
             root.parse();
@@ -366,7 +372,7 @@ public class Polish {
         // 分割した二分木から式全体の値を計算する
         if (root.calculate()) {
             // 計算できた場合はその値を表示する
-            System.out.println("calculated result: " + root.expression);
+            System.out.println("calculated result: " + root.getExpression());
         }
         else {
             // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
