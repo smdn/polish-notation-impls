@@ -53,7 +53,7 @@
     "ID": "cpp",
     "DisplayName": "C++ (make)",
     "Directory": "src/impls/cpp/",
-    "Condition": "[bool]$(Get-Command make -errorAction SilentlyContinue)",
+    "Condition": "$([bool](Get-Command make -errorAction SilentlyContinue) -and !([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)))",
     "Commands": {
       "Build":  [ { "Command": "make" } ],
       "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
