@@ -21,11 +21,11 @@ Class Node
     Dim nest As Integer = 0 ' 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     ' 1文字目以降を1文字ずつ検証する
-    For i As Integer = 0 To expression.Length - 1
-      If expression(i) = "("c Then
+    For Each ch As Char In expression
+      If ch = "("c Then
         ' 開き丸括弧なので深度を1増やす
         nest += 1
-      Else If expression(i) = ")"c Then
+      Else If ch = ")"c Then
         ' 閉じ丸括弧なので深度を1減らす
         nest -= 1
 

@@ -21,12 +21,12 @@ class Node {
     var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     // 1文字ずつ検証する
-    for (var i = 0; i < expression.Length; i++) {
-      if (expression[i] == '(') {
+    foreach (var ch in expression) {
+      if (ch == '(') {
         // 開き丸括弧なので深度を1増やす
         nest++;
       }
-      else if (expression[i] == ')') {
+      else if (ch == ')') {
         // 閉じ丸括弧なので深度を1減らす
         nest--;
 

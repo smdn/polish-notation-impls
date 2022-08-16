@@ -19,12 +19,12 @@ class Node:
     nest = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     # 1文字ずつ検証する
-    for i in range(0, len(expression)):
-      if expression[i] == "(":
+    for ch in expression:
+      if ch == "(":
         # 開き丸括弧なので深度を1増やす
         nest += 1
 
-      elif expression[i] == ")":
+      elif ch == ")":
         # 閉じ丸括弧なので深度を1減らす
         nest -= 1
 
