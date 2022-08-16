@@ -154,7 +154,7 @@ jobs:
           node-version: ${{ env.NODEJS_MINIMUM_VERSION }}
 
       - name: Setup MSBuild
-        if: ${{ startsWith(runner.os, 'windows-') && matrix.target-impl == 'cpp' }}
+        if: ${{ runner.os == 'Windows' && matrix.target-impl == 'cpp' }}
         uses: microsoft/setup-msbuild@v1.1
 
       - name: Run tests with ${{ matrix.target-impl }} on ${{ matrix.os }}
