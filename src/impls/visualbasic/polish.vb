@@ -7,8 +7,8 @@ Imports System
 ' ノードを構成するデータ構造
 Class Node
   Public Expression As String ' このノードが表す式(二分木への分割後は演算子または項となる)
-  Public Left As Node = Nothing  ' 左の子ノード
-  Public Right As Node = Nothing ' 右の子ノード
+  Private left As Node = Nothing  ' 左の子ノード
+  Private right As Node = Nothing ' 右の子ノード
 
   ' コンストラクタ(与えられた式expressionを持つノードを構成する)
   Public Sub New(ByVal expression As String)
@@ -51,8 +51,8 @@ Class Node
     If posOperator < 0 Then
       ' 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
       ' (左右に子ノードを持たないノードとする)
-      Left = Nothing
-      Right = Nothing
+      left = Nothing
+      right = Nothing
       Return
     End If
 
@@ -64,14 +64,14 @@ Class Node
     ' 以下、演算子の位置をもとに左右の部分式に分割する
 
     ' 演算子の左側を左の部分式としてノードを作成する
-    Left = New Node(Expression.Substring(0, posOperator))
+    left = New Node(Expression.Substring(0, posOperator))
     ' 左側のノード(部分式)について、再帰的に二分木へと分割する
-    Left.Parse()
+    left.Parse()
 
     ' 演算子の右側を右の部分式としてノードを作成する
-    Right = New Node(Expression.Substring(posOperator + 1))
+    right = New Node(Expression.Substring(posOperator + 1))
     ' 右側のノード(部分式)について、再帰的に二分木へと分割する
-    Right.Parse()
+    right.Parse()
 
     ' 残った演算子部分をこのノードに設定する
     Expression = Expression.Substring(posOperator, 1)
@@ -171,8 +171,8 @@ Class Node
   ' すべてのノードの演算子または項を表示するメソッド
   Public Sub TraversePostorder()
     ' 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-    If Left  IsNot Nothing Then Left .TraversePostorder()
-    If Right IsNot Nothing Then Right.TraversePostorder()
+    If left IsNot Nothing Then left.TraversePostorder()
+    If right IsNot Nothing Then right.TraversePostorder()
 
     ' 巡回を終えた後でノードの演算子または項を表示する
     ' (読みやすさのために項の後に空白を補って表示する)
@@ -183,11 +183,11 @@ Class Node
   ' すべてのノードの演算子または項を表示するメソッド
   Public Sub TraverseInorder()
     ' 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-    If Left IsNot Nothing AndAlso Right IsNot Nothing Then Console.Write("(")
+    If left IsNot Nothing AndAlso right IsNot Nothing Then Console.Write("(")
 
     ' 表示する前に左の子ノードを再帰的に巡回する
-    If Left IsNot Nothing Then
-      Left.TraverseInorder()
+    If left IsNot Nothing Then
+      left.TraverseInorder()
 
       ' 読みやすさのために空白を補う
       Console.Write(" ")
@@ -197,15 +197,15 @@ Class Node
     Console.Write(Expression)
 
     ' 表示した後に右の子ノードを再帰的に巡回する
-    If Right IsNot Nothing Then
+    If right IsNot Nothing Then
       ' 読みやすさのために空白を補う
       Console.Write(" ")
 
-      Right.TraverseInorder()
+      right.TraverseInorder()
     End If
 
     ' 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-    If Left IsNot Nothing AndAlso Right IsNot Nothing Then Console.Write(")")
+    If left IsNot Nothing AndAlso right IsNot Nothing Then Console.Write(")")
   End Sub
 
   ' 先行順序訪問(行きがけ順)で二分木を巡回して
@@ -216,8 +216,8 @@ Class Node
     Console.Write(Expression + " ")
 
     ' 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    If Left  IsNot Nothing Then Left .TraversePreorder()
-    If Right IsNot Nothing Then Right.TraversePreorder()
+    If left IsNot Nothing Then left.TraversePreorder()
+    If right IsNot Nothing Then right.TraversePreorder()
   End Sub
 
   ' 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
@@ -226,11 +226,11 @@ Class Node
   Public Function Calculate() As Boolean
     ' 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     ' それ以上計算できないのでtrueを返す
-    If Left Is Nothing OrElse Right Is Nothing Then Return True
+    If left Is Nothing OrElse right Is Nothing Then Return True
 
     ' 左右の子ノードについて、再帰的にノードの値を計算する
-    Left.Calculate()
-    Right.Calculate()
+    left.Calculate()
+    right.Calculate()
 
     ' 計算した左右の子ノードの値を数値型(double)に変換する
     ' 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
@@ -238,13 +238,13 @@ Class Node
     Dim leftOperand, rightOperand As Double
 
     ' 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-    If Not Double.TryParse(Left.Expression, leftOperand) Then
+    If Not Double.TryParse(left.Expression, leftOperand) Then
       ' Doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       Return False
     End If
 
     ' 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-    If Not Double.TryParse(Right.Expression, rightOperand) Then
+    If Not Double.TryParse(right.Expression, rightOperand) Then
       ' Doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       Return False
     End If
@@ -262,8 +262,8 @@ Class Node
 
     ' 左右の子ノードの値から現在のノードの値が求まったため、
     ' このノードは左右に子ノードを持たない値のみのノードとする
-    Left = Nothing
-    Right = Nothing
+    left = Nothing
+    right = Nothing
 
     ' 計算できたため、trueを返す
     Return True

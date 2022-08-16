@@ -9,8 +9,8 @@ class Node:
   # コンストラクタ(与えられた式expressionを持つノードを構成する)
   def __init__(self, expression):
     self.expression = expression # このノードが表す式(二分木への分割後は演算子または項となる)
-    self.left = None  # 左の子ノード
-    self.right = None # 右の子ノード
+    self.__left = None  # 左の子ノード
+    self.__right = None # 右の子ノード
 
   # 式expression内の括弧の対応を検証するメソッド
   # 開き括弧と閉じ括弧が同数でない場合はエラーとする
@@ -49,8 +49,8 @@ class Node:
     if pos_operator < 0:
       # 式expressionに演算子が含まれない場合、expressionは項であるとみなす
       # (左右に子ノードを持たないノードとする)
-      self.left = None
-      self.right = None
+      self.__left = None
+      self.__right = None
       return
 
     if pos_operator == 0 or pos_operator == len(self.expression) - 1:
@@ -60,14 +60,14 @@ class Node:
     # 以下、演算子の位置をもとに左右の部分式に分割する
 
     # 演算子の左側を左の部分式としてノードを作成する
-    self.left = Node(self.expression[0:pos_operator])
+    self.__left = Node(self.expression[0:pos_operator])
     # 左側のノード(部分式)について、再帰的に二分木へと分割する
-    self.left.parse()
+    self.__left.parse()
 
     # 演算子の右側を右の部分式としてノードを作成する
-    self.right = Node(self.expression[pos_operator + 1:])
+    self.__right = Node(self.expression[pos_operator + 1:])
     # 右側のノード(部分式)について、再帰的に二分木へと分割する
-    self.right.parse()
+    self.__right.parse()
 
     # 残った演算子部分をこのノードに設定する
     self.expression = self.expression[pos_operator]
@@ -173,10 +173,10 @@ class Node:
   # すべてのノードの演算子または項を表示するメソッド
   def traverse_postorder(self):
     # 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-    if self.left:
-      self.left.traverse_postorder()
-    if self.right:
-      self.right.traverse_postorder()
+    if self.__left:
+      self.__left.traverse_postorder()
+    if self.__right:
+      self.__right.traverse_postorder()
 
     # 巡回を終えた後でノードの演算子または項を表示する
     # (読みやすさのために項の後に空白を補って表示する)
@@ -186,12 +186,12 @@ class Node:
   # すべてのノードの演算子または項を表示するメソッド
   def traverse_inorder(self):
     # 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-    if self.left and self.right:
+    if self.__left and self.__right:
       print("(", end = "")
 
     # 表示する前に左の子ノードを再帰的に巡回する
-    if self.left:
-      self.left.traverse_inorder()
+    if self.__left:
+      self.__left.traverse_inorder()
 
       # 読みやすさのために空白を補う
       print(" ", end = "")
@@ -200,14 +200,14 @@ class Node:
     print(self.expression, end = "")
 
     # 表示した後に右の子ノードを再帰的に巡回する
-    if self.right:
+    if self.__right:
       # 読みやすさのために空白を補う
       print(" ", end = "")
 
-      self.right.traverse_inorder()
+      self.__right.traverse_inorder()
 
     # 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-    if self.left and self.right:
+    if self.__left and self.__right:
       print(")", end = "")
 
   # 先行順序訪問(行きがけ順)で二分木を巡回して
@@ -218,10 +218,10 @@ class Node:
     print(self.expression + " ", end = "")
 
     # 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    if self.left:
-      self.left.traverse_preorder()
-    if self.right:
-      self.right.traverse_preorder()
+    if self.__left:
+      self.__left.traverse_preorder()
+    if self.__right:
+      self.__right.traverse_preorder()
 
   # 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
   # ノードの値が計算できた場合はTrue、そうでない場合(記号を含む場合など)はFalseを返す
@@ -229,21 +229,21 @@ class Node:
   def calculate(self):
     # 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     # それ以上計算できないのでTrueを返す
-    if not self.left or not self.right:
+    if not self.__left or not self.__right:
       return True
 
     # 左右の子ノードについて、再帰的にノードの値を計算する
-    self.left.calculate()
-    self.right.calculate()
+    self.__left.calculate()
+    self.__right.calculate()
 
     # 計算した左右の子ノードの値を数値型(float)に変換する
     # 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
     # ノードの値が計算できないものとして、Falseを返す
     try:
       # 左ノードの値を数値に変換して演算子の左項left_operandの値とする
-      left_operand  = float(self.left.expression)
+      left_operand  = float(self.__left.expression)
       # 右ノードの値を数値に変換して演算子の右項right_operandの値とする
-      right_operand = float(self.right.expression)
+      right_operand = float(self.__right.expression)
     except:
       # floatで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       return False
@@ -264,8 +264,8 @@ class Node:
 
     # 左右の子ノードの値から現在のノードの値が求まったため、
     # このノードは左右に子ノードを持たない値のみのノードとする
-    self.left = None
-    self.right = None
+    self.__left = None
+    self.__right = None
 
     # 計算できたため、Trueを返す
     return True

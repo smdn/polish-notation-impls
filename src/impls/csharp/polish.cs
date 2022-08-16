@@ -5,8 +5,8 @@ using System;
 // ノードを構成するデータ構造
 class Node {
   public string Expression; // このノードが表す式(二分木への分割後は演算子または項となる)
-  public Node? Left = null;  // 左の子ノード
-  public Node? Right = null; // 右の子ノード
+  private Node? left = null;  // 左の子ノード
+  private Node? right = null; // 右の子ノード
 
   // コンストラクタ(与えられた式expressionを持つノードを構成する)
   public Node(string expression)
@@ -57,8 +57,8 @@ class Node {
     if (posOperator < 0) {
       // 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
       // (左右に子ノードを持たないノードとする)
-      Left = null;
-      Right = null;
+      left = null;
+      right = null;
       return;
     }
 
@@ -69,14 +69,14 @@ class Node {
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
     // 演算子の左側を左の部分式としてノードを作成する
-    Left = new Node(Expression[..posOperator]);
+    left = new Node(Expression[..posOperator]);
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
-    Left.Parse();
+    left.Parse();
 
     // 演算子の右側を右の部分式としてノードを作成する
-    Right = new Node(Expression[(posOperator + 1)..]);
+    right = new Node(Expression[(posOperator + 1)..]);
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
-    Right.Parse();
+    right.Parse();
 
     // 残った演算子部分をこのノードに設定する
     Expression = Expression.Substring(posOperator, 1);
@@ -179,10 +179,10 @@ class Node {
   public void TraversePostorder()
   {
     // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-    if (Left != null)
-      Left.TraversePostorder();
-    if (Right != null)
-      Right.TraversePostorder();
+    if (left != null)
+      left.TraversePostorder();
+    if (right != null)
+      right.TraversePostorder();
 
     // 巡回を終えた後でノードの演算子または項を表示する
     // (読みやすさのために項の後に空白を補って表示する)
@@ -194,12 +194,12 @@ class Node {
   public void TraverseInorder()
   {
     // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-    if (Left != null && Right != null)
+    if (left != null && right != null)
       Console.Write("(");
 
     // 表示する前に左の子ノードを再帰的に巡回する
-    if (Left != null) {
-      Left.TraverseInorder();
+    if (left != null) {
+      left.TraverseInorder();
 
       // 読みやすさのために空白を補う
       Console.Write(" ");
@@ -209,15 +209,15 @@ class Node {
     Console.Write(Expression);
 
     // 表示した後に右の子ノードを再帰的に巡回する
-    if (Right != null) {
+    if (right != null) {
       // 読みやすさのために空白を補う
       Console.Write(" ");
 
-      Right.TraverseInorder();
+      right.TraverseInorder();
     }
 
     // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-    if (Left != null && Right != null)
+    if (left != null && right != null)
       Console.Write(")");
   }
 
@@ -230,10 +230,10 @@ class Node {
     Console.Write(Expression + " ");
 
     // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    if (Left != null)
-      Left.TraversePreorder();
-    if (Right != null)
-      Right.TraversePreorder();
+    if (left != null)
+      left.TraversePreorder();
+    if (right != null)
+      right.TraversePreorder();
   }
 
   // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
@@ -243,24 +243,24 @@ class Node {
   {
     // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     // それ以上計算できないのでtrueを返す
-    if (Left == null || Right == null)
+    if (left == null || right == null)
       return true;
 
     // 左右の子ノードについて、再帰的にノードの値を計算する
-    Left.Calculate();
-    Right.Calculate();
+    left.Calculate();
+    right.Calculate();
 
     // 計算した左右の子ノードの値を数値型(double)に変換する
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
     // ノードの値が計算できないものとして、falseを返す
 
     // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-    if (!double.TryParse(Left.Expression, out var leftOperand))
+    if (!double.TryParse(left.Expression, out var leftOperand))
       // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       return false;
 
     // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-    if (!double.TryParse(Right.Expression, out var rightOperand))
+    if (!double.TryParse(right.Expression, out var rightOperand))
       // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
       return false;
 
@@ -277,8 +277,8 @@ class Node {
 
     // 左右の子ノードの値から現在のノードの値が求まったため、
     // このノードは左右に子ノードを持たない値のみのノードとする
-    Left = null;
-    Right = null;
+    left = null;
+    right = null;
 
     // 計算できたため、trueを返す
     return true;

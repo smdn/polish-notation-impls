@@ -13,8 +13,8 @@ class ExpressionParserException extends Exception {
 // ノードを構成するデータ構造
 class Node {
     public String expression; // このノードが表す式(二分木への分割後は演算子または項となる)
-    public Node left = null;  // 左の子ノード
-    public Node right = null; // 右の子ノード
+    private Node left = null;  // 左の子ノード
+    private Node right = null; // 右の子ノード
 
     // コンストラクタ(与えられた式expressionを持つノードを構成する)
     public Node(String expression)
