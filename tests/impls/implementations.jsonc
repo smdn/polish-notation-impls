@@ -21,8 +21,39 @@
   },
   {
     "ID": "cpp",
-    "DisplayName": "C++",
+    "DisplayName": "C++ (CI)",
     "Directory": "src/impls/cpp/",
+    "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
+    "Commands": {
+      "Build": [
+        { "Command": "$path_msbuild = .\\find-msbuild.ps1", "UseInvokeExpression": true },
+        { "Command": "$env:Path += \";$([System.IO.Path]::GetDirectoryName($path_msbuild))\"", "UseInvokeExpression": true },
+        { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] }
+      ],
+      "Clean": [
+        { "Command": "$path_msbuild = .\\find-msbuild.ps1", "UseInvokeExpression": true },
+        { "Command": "$env:Path += \";$([System.IO.Path]::GetDirectoryName($path_msbuild))\"", "UseInvokeExpression": true },
+        { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] }
+      ],
+      "Run": { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ID": "cpp",
+    "DisplayName": "C++ (MSBuild/Windows)",
+    "Directory": "src/impls/cpp/",
+    "Condition": "$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool](Get-Command msbuild -errorAction SilentlyContinue))",
+    "Commands": {
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
+      "Run":    { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ID": "cpp",
+    "DisplayName": "C++ (make)",
+    "Directory": "src/impls/cpp/",
+    "Condition": "[bool]$(Get-Command make -errorAction SilentlyContinue)",
     "Commands": {
       "Build":  [ { "Command": "make" } ],
       "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
