@@ -4,6 +4,15 @@
 // SPDX-License-Identifier: MIT
 "use strict"
 
+// 二分木への分割時に発生したエラーを報告するためのエラークラス
+class ExpressionParserError extends Error {
+  constructor(message)
+  {
+    super(message);
+    this.name = "ExpressionParserException";
+  }
+}
+
 // ノードを構成するデータ構造
 class Node {
   #expression;    // このノードが表す式(二分木への分割後は演算子または項となる)
@@ -47,7 +56,7 @@ class Node {
     if (nest !== 0)
       // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
       // 例:"((1+2)"などの場合
-      throw "unbalanced bracket: " + expression;
+      throw new ExpressionParserError("unbalanced bracket: " + expression);
   }
 
   // 式expressionを二分木へと分割するメソッド
@@ -69,7 +78,7 @@ class Node {
 
     if (posOperator === 0 || posOperator === this.#expression.length - 1)
       // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      throw "invalid expression: " + this.#expression;
+      throw new ExpressionParserError("invalid expression: " + this.#expression);
 
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -128,7 +137,7 @@ class Node {
 
     // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
     if (expression.length <= 2)
-      throw "empty bracket: " + expression;
+      throw new ExpressionParserError("empty bracket: " + expression);
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     expression = expression.slice(1, -1);
@@ -371,9 +380,14 @@ function polish_main(_expression) {
     root.traversePreorder(process.stdout);
     process.stdout.write("\n");
   }
-  catch (e) {
-    console.error(e);
-    process.exit(1);
+  catch (err) {
+    if (err instanceof ExpressionParserError) {
+      console.error(err.message);
+      process.exit(1);
+    }
+    else {
+      throw err;
+    }
   }
 
   // 分割した二分木から式全体の値を計算する

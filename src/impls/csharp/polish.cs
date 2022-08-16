@@ -2,6 +2,14 @@
 // SPDX-License-Identifier: MIT
 using System;
 
+// 二分木への分割時に発生したエラーを報告するための例外クラス
+class ExpressionParserException : Exception {
+  public ExpressionParserException(string message)
+    : base(message)
+  {
+  }
+}
+
 // ノードを構成するデータ構造
 class Node {
   public string Expression { get; private set; } // このノードが表す式(二分木への分割後は演算子または項となる)
@@ -42,7 +50,7 @@ class Node {
     if (nest != 0)
       // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
       // 例:"((1+2)"などの場合
-      throw new Exception("unbalanced bracket: " + expression);
+      throw new ExpressionParserException("unbalanced bracket: " + expression);
   }
 
   // 式Expressionを二分木へと分割するメソッド
@@ -64,7 +72,7 @@ class Node {
 
     if (posOperator == 0 || posOperator == Expression.Length - 1)
       // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      throw new Exception("invalid expression: " + Expression);
+      throw new ExpressionParserException("invalid expression: " + Expression);
 
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -119,7 +127,7 @@ class Node {
 
     // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
     if (expression.Length <= 2)
-      throw new Exception("empty bracket: " + expression);
+      throw new ExpressionParserException("empty bracket: " + expression);
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     expression = expression[1..^1];
@@ -333,7 +341,7 @@ class Polish {
       root.TraversePreorder();
       Console.WriteLine();
     }
-    catch (Exception ex) {
+    catch (ExpressionParserException ex) {
       Console.Error.WriteLine(ex.Message);
       return 1;
     }

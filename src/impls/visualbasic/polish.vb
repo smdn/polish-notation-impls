@@ -4,6 +4,15 @@ Option Explicit On
 
 Imports System
 
+' 二分木への分割時に発生したエラーを報告するための例外クラス
+Class ExpressionParserException
+  Inherits Exception
+
+  Public Sub New(ByVal message As String)
+    MyBase.New(message)
+  End Sub
+End Class
+
 ' ノードを構成するデータ構造
 Class Node
   Public ReadOnly Property Expression As String ' このノードが表す式(二分木への分割後は演算子または項となる)
@@ -37,7 +46,7 @@ Class Node
 
     ' 深度が0でない場合、式中に開かれていない/閉じられていない括弧があるので、エラーとする
     ' 例:"((1+2)"などの場合
-    If nest <> 0 Then Throw New Exception("unbalanced bracket: " + expression)
+    If nest <> 0 Then Throw New ExpressionParserException("unbalanced bracket: " + expression)
   End Sub
 
   ' 式Expressionを二分木へと分割するメソッド
@@ -58,7 +67,7 @@ Class Node
 
     If posOperator = 0 OrElse posOperator = _Expression.Length - 1 Then
       ' 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      Throw New Exception("invalid expression: " + _Expression)
+      Throw New ExpressionParserException("invalid expression: " + _Expression)
     End If
 
     ' 以下、演算子の位置をもとに左右の部分式に分割する
@@ -113,7 +122,7 @@ Class Node
     If Not hasOutermostBracket Then Return expression
 
     ' 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
-    If expression.Length <= 2 Then Throw New Exception("empty bracket: " + expression)
+    If expression.Length <= 2 Then Throw New ExpressionParserException("empty bracket: " + expression)
 
     ' 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     expression = expression.Substring(1, expression.Length - 2)
@@ -315,7 +324,7 @@ Class Polish
       Console.Write("polish notation: ")
       root.TraversePreorder()
       Console.WriteLine()
-    Catch ex As Exception
+    Catch ex As ExpressionParserException
       Console.Error.WriteLine(ex.Message)
       Return 1
     End Try

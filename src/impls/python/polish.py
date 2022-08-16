@@ -4,6 +4,11 @@
 # -*- coding: utf-8 -*-
 import sys
 
+# 二分木への分割時に発生したエラーを報告するための例外クラス
+class ExpressionParserException(Exception):
+  def __init__(self, message):
+    super().__init__(message)
+
 # ノードを構成するデータ構造
 class Node:
   # コンストラクタ(与えられた式expressionを持つノードを構成する)
@@ -41,7 +46,7 @@ class Node:
     if nest != 0:
       # 式中に開かれていない/閉じられていない括弧があるので、エラーとする
       # 例:"((1+2)"などの場合
-      raise Exception("unbalanced bracket: {}".format(expression))
+      raise ExpressionParserException("unbalanced bracket: {}".format(expression))
 
   # 式expressionを二分木へと分割するメソッド
   def parse(self):
@@ -60,7 +65,7 @@ class Node:
 
     if pos_operator == 0 or pos_operator == len(self.__expression) - 1:
       # 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      raise Exception("invalid expression: {}".format(self.__expression))
+      raise ExpressionParserException("invalid expression: {}".format(self.__expression))
 
     # 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -114,7 +119,7 @@ class Node:
 
     # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
     if len(expression) <= 2:
-      raise Exception("empty bracket: {}".format(expression))
+      raise ExpressionParserException("empty bracket: {}".format(expression))
 
     # 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     expression = expression[1:-1]
@@ -319,7 +324,7 @@ def main():
     root.traverse_preorder()
     print()
 
-  except Exception as err:
+  except ExpressionParserException as err:
     print(err, file = sys.stderr)
     return 1
 
