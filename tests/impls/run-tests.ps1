@@ -313,6 +313,11 @@ if ($TargetImplementationId) {
   $implementations = $implementations | where ID -eq $TargetImplementationId
 }
 
+$implementations = $implementations | Where-Object {
+  # '-or' operator does not performs short-circuit evaluation
+  ($_.Condition -eq $null) -or (($_.Condition -ne $null) -and (Invoke-Expression $_.Condition))
+}
+
 $testsuites = Get-ChildItem -Path $([System.IO.Path]::Combine($PSScriptRoot, "testcases/*.jsonc")) -File |
   # where Name -eq 'should-be-fail.jsonc' |
   ForEach-Object {
