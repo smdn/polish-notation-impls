@@ -5,6 +5,8 @@
 #
 
 # folder paths of Visual Studio
+$MSBUILD_VS2022_BUILDTOOLS_PATH = "Microsoft Visual Studio`\2022`\BuildTools`\MSBuild`\Current`\Bin"
+$MSBUILD_VS2019_BUILDTOOLS_PATH = "Microsoft Visual Studio`\2019`\BuildTools`\MSBuild`\Current`\Bin"
 $MSBUILD_17_ENTERPRISE_PATH     = "Microsoft Visual Studio`\2022`\Enterprise`\MSBuild`\Current`\Bin"    # Visual Studio 2022 Enterprise
 $MSBUILD_16_COMMUNITY_PATH      = "Microsoft Visual Studio`\2019`\Community`\MSBuild`\Current`\Bin"     # Visual Studio 2019 Community (not tested)
 $MSBUILD_16_PROFESSIONAL_PATH   = "Microsoft Visual Studio`\2019`\Professional`\MSBuild`\Current`\Bin"  # Visual Studio 2019 Professional
@@ -14,6 +16,8 @@ $MSBUILD_15_PROFESSIONAL_PATH   = "Microsoft Visual Studio`\2017`\Professional`\
 # target paths for MSBuild
 # sort by priority
 [array]$SEARCH_PATHS = @(
+    $MSBUILD_VS2022_BUILDTOOLS_PATH,
+    $MSBUILD_VS2019_BUILDTOOLS_PATH,
     $MSBUILD_17_ENTERPRISE_PATH,
     $MSBUILD_16_COMMUNITY_PATH,
     $MSBUILD_16_PROFESSIONAL_PATH,
