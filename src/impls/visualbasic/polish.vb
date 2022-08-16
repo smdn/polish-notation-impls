@@ -132,8 +132,6 @@ Class Node
   ' 式expressionから最も右側にあり、かつ優先順位が低い演算子を探して位置を返すメソッド
   ' (演算子がない場合は-1を返す)
   Private Shared Function GetOperatorPosition(ByVal expression As String) As Integer
-    If String.IsNullOrEmpty(expression) Then Return -1
-
     Dim posOperator As Integer = -1 ' 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     Dim currentPriority As Integer = Integer.MaxValue ' 現在見つかっている演算子の優先順位(初期値としてInteger.MaxValueを設定)
     Dim nest As Integer = 0 ' 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)

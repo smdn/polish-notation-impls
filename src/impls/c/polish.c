@@ -101,9 +101,6 @@ int get_pos_operator(char *exp)
     int nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
     int priority;
 
-    if (!exp)
-        return pos_operator;
-
     // 与えられた文字列を先頭から1文字ずつ検証する
     for (i = 0; exp[i]; i++) {
         switch (exp[i]) {

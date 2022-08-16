@@ -150,9 +150,6 @@ class Node {
     // (演算子がない場合は-1を返す)
     private static int getOperatorPosition(String expression)
     {
-        if (expression == null || expression.length() == 0)
-            return -1;
-
         var posOperator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
         var currentPriority = Integer.MAX_VALUE; // 現在見つかっている演算子の優先順位(初期値としてInteger.MAX_VALUEを設定)
         var nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)

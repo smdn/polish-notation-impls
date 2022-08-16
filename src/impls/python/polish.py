@@ -127,9 +127,6 @@ class Node:
   # (演算子がない場合は-1を返す)
   @staticmethod
   def __get_operator_position(expression):
-    if not expression or len(expression) == 0:
-      return -1
-
     pos_operator = -1 # 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     current_priority = sys.maxsize # 現在見つかっている演算子の優先順位(初期値としてsys.maxsizeを設定)
     nest = 0 # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
