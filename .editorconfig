@@ -14,7 +14,7 @@ trim_trailing_whitespace = true
 charset = utf-8-bom
 end_of_line = crlf
 
-[*.{csproj,vbproj,proj,props,targets}]
+[*.{csproj,vbproj,vcxproj,proj,props,targets}]
 charset = utf-8-bom
 indent_size = 2
 end_of_line = crlf
