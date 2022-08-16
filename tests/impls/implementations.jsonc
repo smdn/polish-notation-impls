@@ -20,6 +20,16 @@
     }
   },
   {
+    "ID": "cpp",
+    "DisplayName": "C++",
+    "Directory": "src/impls/cpp/",
+    "Commands": {
+      "Build":  [ { "Command": "make" } ],
+      "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
+      "Run":    { "Command": "polish", "ResolveCommandPath": true },
+    }
+  },
+  {
     "ID": "python",
     "DisplayName": "Python 3",
     "Directory": "src/impls/python/",
