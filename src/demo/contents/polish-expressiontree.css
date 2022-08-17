@@ -66,7 +66,7 @@ SPDX-License-Identifier: MIT
   opacity: 0.4;
 }
 
-.expressiontree-subtree-bound:hover~.expressiontree-subtree-label,
+.expressiontree-subtree-bound:hover ~ .expressiontree-subtree-label,
 .expressiontree-subtree-label-static {
   fill: var(--expressiontree-text-color);
 }
