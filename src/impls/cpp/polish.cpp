@@ -38,7 +38,7 @@ public:
     // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
     // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
     // 計算結果はexpressionに文字列として代入する
-    bool calculate();
+    bool calculate_expression_tree();
 
 private:
     // 式expression内の括弧の対応を検証するメソッド
@@ -292,7 +292,7 @@ void Node::traverse_preorder() const
         right->traverse_preorder();
 }
 
-bool Node::calculate()
+bool Node::calculate_expression_tree()
 {
     // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     // それ以上計算できないのでtrueを返す
@@ -300,8 +300,8 @@ bool Node::calculate()
         return true;
 
     // 左右の子ノードについて、再帰的にノードの値を計算する
-    left->calculate();
-    right->calculate();
+    left->calculate_expression_tree();
+    right->calculate_expression_tree();
 
     // 計算した左右の子ノードの値を数値型(double)に変換する
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
@@ -421,7 +421,7 @@ int main()
     std::cout << std::endl;
 
     // 分割した二分木から式全体の値を計算する
-    if (root->calculate()) {
+    if (root->calculate_expression_tree()) {
         // 計算できた場合はその値を表示する
         std::cout << "calculated result: " << root->get_expression() << std::endl;
         return 0;

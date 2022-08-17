@@ -261,7 +261,7 @@ class Node {
     // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
     // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
     // 計算結果はexpressionに文字列として代入する
-    public boolean calculate()
+    public boolean calculateExpressionTree()
     {
         // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
         // それ以上計算できないのでtrueを返す
@@ -269,8 +269,8 @@ class Node {
             return true;
 
         // 左右の子ノードについて、再帰的にノードの値を計算する
-        left.calculate();
-        right.calculate();
+        left.calculateExpressionTree();
+        right.calculateExpressionTree();
 
         // 計算した左右の子ノードの値を数値型(double)に変換する
         // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
@@ -371,7 +371,7 @@ public class Polish {
         System.out.println();
 
         // 分割した二分木から式全体の値を計算する
-        if (root.calculate()) {
+        if (root.calculateExpressionTree()) {
             // 計算できた場合はその値を表示する
             System.out.println("calculated result: " + root.getExpression());
         }

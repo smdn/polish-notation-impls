@@ -243,15 +243,15 @@ class Node:
   # 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
   # ノードの値が計算できた場合はTrue、そうでない場合(記号を含む場合など)はFalseを返す
   # 計算結果はexpressionに文字列として代入する
-  def calculate(self):
+  def calculate_expression_tree(self):
     # 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     # それ以上計算できないのでTrueを返す
     if not self.__left or not self.__right:
       return True
 
     # 左右の子ノードについて、再帰的にノードの値を計算する
-    self.__left.calculate()
-    self.__right.calculate()
+    self.__left.calculate_expression_tree()
+    self.__right.calculate_expression_tree()
 
     # 計算した左右の子ノードの値を数値型(float)に変換する
     # 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
@@ -333,7 +333,7 @@ def main():
   print()
 
   # 分割した二分木から式全体の値を計算する
-  if root.calculate():
+  if root.calculate_expression_tree():
     # 計算できた場合はその値を表示する
     print("calculated result: {}".format(root.expression))
     return 0

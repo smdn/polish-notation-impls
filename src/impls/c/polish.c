@@ -264,7 +264,7 @@ void traverse_preorder(Node* node)
 // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
 // ノードの値が計算できた場合は0、そうでない場合(記号を含む場合など)は-1を返す
 // 計算結果はnode->expに文字列として代入する
-int calculate(Node* node)
+int calculate_expression_tree(Node* node)
 {
     double left_operand, right_operand;
     char* endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
@@ -275,8 +275,8 @@ int calculate(Node* node)
         return 0;
 
     // 左右の子ノードについて、再帰的にノードの値を計算する
-    calculate(node->left);
-    calculate(node->right);
+    calculate_expression_tree(node->left);
+    calculate_expression_tree(node->right);
 
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
@@ -417,7 +417,7 @@ int main()
     printf("\n");
 
     // 分割した二分木から式全体の値を計算する
-    if (calculate(root) < 0) {
+    if (calculate_expression_tree(root) < 0) {
         // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
         printf("calculated expression: ");
         traverse_inorder(root);

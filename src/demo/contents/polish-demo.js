@@ -45,7 +45,7 @@ function polish_demo_convert_notation(expression)
   document.getElementById("polish-demo-conversionresult-expression-inorder").value = root.inorderNotation;
   document.getElementById("polish-demo-conversionresult-expression-postorder").value = root.postorderNotation;
 
-  if (root.calculate()) {
+  if (root.calculate_expression_tree()) {
     document.getElementById("polish-demo-conversionresult-calculation").value = root.expression;
     polish_demo_set_message("calculated", "green");
   }
@@ -86,7 +86,7 @@ function polish_demo_visualize(expression)
     {
       targetId: "polish-demo-expressiontree-calculation",
       action: (tree, target) => {
-        tree.calculate(new CalculationTransitionRenderer(target));
+        tree.calculate_expression_tree(new CalculationTransitionRenderer(target));
       },
     },
   ];

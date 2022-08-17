@@ -680,31 +680,31 @@ class VisualTreeNode {
    * calculation
    */
 
-  calculate(transitionProcessor)
+  calculate_expression_tree(transitionProcessor)
   {
     let tree = VisualTreeNode._cloneTree(this);
 
     transitionProcessor.startTransition(tree);
 
-    VisualTreeNode._calculate(tree, tree, transitionProcessor);
+    VisualTreeNode._calculate_expression_tree(tree, tree, transitionProcessor);
 
     transitionProcessor.endTransition(tree);
   }
 
-  static _calculate(root, subTree, transitionProcessor)
+  static _calculate_expression_tree(root, subTree, transitionProcessor)
   {
     if (subTree.left)
-      VisualTreeNode._calculate(root, subTree.left, transitionProcessor);
+      VisualTreeNode._calculate_expression_tree(root, subTree.left, transitionProcessor);
 
     if (subTree.right)
-      VisualTreeNode._calculate(root, subTree.right, transitionProcessor);
+      VisualTreeNode._calculate_expression_tree(root, subTree.right, transitionProcessor);
 
     if (!(subTree.left && subTree.right))
       return;
 
     transitionProcessor.setTreeBeforeTransition(root, subTree);
 
-    if (!subTree.node.calculate()) {
+    if (!subTree.node.calculate_expression_tree()) {
       subTree.node.expression = subTree.inorderNotation;
       subTree.node.left = null;
       subTree.node.right = null;
