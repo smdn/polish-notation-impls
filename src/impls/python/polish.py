@@ -56,7 +56,7 @@ class Node:
       raise MalformedExpressionException("unbalanced bracket: {}".format(expression))
 
   # 式expressionを二分木へと分割するメソッド
-  def parse(self):
+  def parse_expression(self):
     # 式expressionから最も外側にある丸括弧を取り除く
     self.__expression = Node.__remove_outermost_bracket(self.__expression)
 
@@ -79,12 +79,12 @@ class Node:
     # 演算子の左側を左の部分式としてノードを作成する
     self.__left = Node(self.__expression[0:pos_operator])
     # 左側のノード(部分式)について、再帰的に二分木へと分割する
-    self.__left.parse()
+    self.__left.parse_expression()
 
     # 演算子の右側を右の部分式としてノードを作成する
     self.__right = Node(self.__expression[pos_operator + 1:])
     # 右側のノード(部分式)について、再帰的に二分木へと分割する
-    self.__right.parse()
+    self.__right.parse_expression()
 
     # 残った演算子部分をこのノードに設定する
     self.__expression = self.__expression[pos_operator]
@@ -311,7 +311,7 @@ def main():
     print("expression: {}".format(root.expression))
 
     # 根ノードに格納した式を二分木へと分割する
-    root.parse()
+    root.parse_expression()
 
   except MalformedExpressionException as err:
     print(err, file = sys.stderr)

@@ -64,7 +64,7 @@ class Node {
   }
 
   // 式expressionを二分木へと分割するメソッド
-  parse()
+  parseExpression()
   {
     // 式expressionから最も外側にある丸括弧を取り除く
     this.#expression = Node.#removeOutermostBracket(this.#expression);
@@ -89,12 +89,12 @@ class Node {
     // 演算子の左側を左の部分式としてノードを作成する
     this.#left = new Node(this.#expression.substr(0, posOperator));
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
-    this.#left.parse();
+    this.#left.parseExpression();
 
     // 演算子の右側を右の部分式としてノードを作成する
     this.#right = new Node(this.#expression.substr(posOperator + 1));
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
-    this.#right.parse();
+    this.#right.parseExpression();
 
     // 残った演算子部分をこのノードに設定する
     this.#expression = this.#expression.at(posOperator);
@@ -364,7 +364,7 @@ function polish_main(_expression) {
     console.log("expression: " + root.expression);
 
     // 根ノードに格納した式を二分木へと分割する
-    root.parse();
+    root.parseExpression();
   }
   catch (err) {
     if (err instanceof MalformedExpressionError) {

@@ -54,7 +54,7 @@ Class Node
   End Sub
 
   ' 式Expressionを二分木へと分割するメソッド
-  Public Sub Parse()
+  Public Sub ParseExpression()
     ' 式Expressionから最も外側にある丸括弧を取り除く
     _Expression = RemoveOutermostBracket(_Expression)
 
@@ -79,12 +79,12 @@ Class Node
     ' 演算子の左側を左の部分式としてノードを作成する
     left = New Node(_Expression.Substring(0, posOperator))
     ' 左側のノード(部分式)について、再帰的に二分木へと分割する
-    left.Parse()
+    left.ParseExpression()
 
     ' 演算子の右側を右の部分式としてノードを作成する
     right = New Node(_Expression.Substring(posOperator + 1))
     ' 右側のノード(部分式)について、再帰的に二分木へと分割する
-    right.Parse()
+    right.ParseExpression()
 
     ' 残った演算子部分をこのノードに設定する
     _Expression = _Expression.Substring(posOperator, 1)
@@ -309,7 +309,7 @@ Class Polish
       Console.WriteLine("expression: {0}", root.Expression)
 
       ' 根ノードに格納した式を二分木へと分割する
-      root.Parse()
+      root.ParseExpression()
     Catch ex As MalformedExpressionException
       Console.Error.WriteLine(ex.Message)
       Return 1

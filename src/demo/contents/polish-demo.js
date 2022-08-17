@@ -39,7 +39,7 @@ function polish_demo_convert_notation(expression)
 {
   let root = new ExpressionTreeNode(expression);
 
-  root.parse();
+  root.parse_expression();
 
   document.getElementById("polish-demo-conversionresult-expression-preorder").value = root.preorderNotation;
   document.getElementById("polish-demo-conversionresult-expression-inorder").value = root.inorderNotation;
@@ -59,7 +59,7 @@ function polish_demo_visualize(expression)
 {
   let root = new ExpressionTreeNode(expression);
 
-  root.parse();
+  root.parse_expression();
 
   let visualizations = [
     {

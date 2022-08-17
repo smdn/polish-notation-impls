@@ -58,7 +58,7 @@ class Node {
   }
 
   // 式Expressionを二分木へと分割するメソッド
-  public void Parse()
+  public void ParseExpression()
   {
     // 式Expressionから最も外側にある丸括弧を取り除く
     Expression = RemoveOutermostBracket(Expression);
@@ -83,12 +83,12 @@ class Node {
     // 演算子の左側を左の部分式としてノードを作成する
     left = new Node(Expression[..posOperator]);
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
-    left.Parse();
+    left.ParseExpression();
 
     // 演算子の右側を右の部分式としてノードを作成する
     right = new Node(Expression[(posOperator + 1)..]);
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
-    right.Parse();
+    right.ParseExpression();
 
     // 残った演算子部分をこのノードに設定する
     Expression = Expression.Substring(posOperator, 1);
@@ -325,7 +325,7 @@ class Polish {
       Console.WriteLine("expression: {0}", root.Expression);
 
       // 根ノードに格納した式を二分木へと分割する
-      root.Parse();
+      root.ParseExpression();
     }
     catch (MalformedExpressionException ex) {
       Console.Error.WriteLine(ex.Message);

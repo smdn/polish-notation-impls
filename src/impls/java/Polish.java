@@ -64,7 +64,7 @@ class Node {
     }
 
     // 式expressionを二分木へと分割するメソッド
-    public void parse() throws MalformedExpressionException
+    public void parseExpression() throws MalformedExpressionException
     {
         // 式expressionから最も外側にある丸括弧を取り除く
         expression = removeOutermostBracket(expression);
@@ -89,12 +89,12 @@ class Node {
         // 演算子の左側を左の部分式としてノードを作成する
         left = new Node(expression.substring(0, posOperator));
         // 左側のノード(部分式)について、再帰的に二分木へと分割する
-        left.parse();
+        left.parseExpression();
 
         // 演算子の右側を右の部分式としてノードを作成する
         right = new Node(expression.substring(posOperator + 1));
         // 右側のノード(部分式)について、再帰的に二分木へと分割する
-        right.parse();
+        right.parseExpression();
 
         // 残った演算子部分をこのノードに設定する
         expression = expression.substring(posOperator, posOperator + 1);
@@ -348,7 +348,7 @@ public class Polish {
             System.out.println("expression: " + root.getExpression());
 
             // 根ノードに格納した式を二分木へと分割する
-            root.parse();
+            root.parseExpression();
         }
         catch (MalformedExpressionException ex) {
             System.err.println(ex.getMessage());

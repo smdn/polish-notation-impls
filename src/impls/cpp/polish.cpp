@@ -21,7 +21,7 @@ public:
     Node(const std::string& expression);
 
     // 式expressionを二分木へと分割するメソッド
-    void parse();
+    void parse_expression();
 
     // 後行順序訪問(帰りがけ順)で二分木を巡回して
     // すべてのノードの演算子または項を表示するメソッド
@@ -108,7 +108,7 @@ void Node::validate_bracket_balance(const std::string& expression) noexcept(fals
         throw MalformedExpressionException("unbalanced bracket: " + expression);
 }
 
-void Node::parse() noexcept(false)
+void Node::parse_expression() noexcept(false)
 {
     // 式expressionから最も外側にある丸括弧を取り除く
     expression = remove_outermost_bracket(expression);
@@ -133,12 +133,12 @@ void Node::parse() noexcept(false)
     // 演算子の左側を左の部分式としてノードを作成する
     left = std::make_unique<Node>(expression.substr(0, pos_operator));
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
-    left->parse();
+    left->parse_expression();
 
     // 演算子の右側を右の部分式としてノードを作成する
     right = std::make_unique<Node>(expression.substr(pos_operator + 1));
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
-    right->parse();
+    right->parse_expression();
 
     // 残った演算子部分をこのノードに設定する
     expression = expression.substr(pos_operator, 1);
@@ -398,7 +398,7 @@ int main()
         std::cout << "expression: " << root->get_expression() << std::endl;
 
         // 根ノードに格納した式を二分木へと分割する
-        root->parse();
+        root->parse_expression();
     }
     catch (const MalformedExpressionException& err) {
         std::cerr << err.what() << std::endl;
