@@ -158,7 +158,7 @@ bool parse_expression(Node* node)
     size_t len = strlen(node->exp);
 
     if (0 == pos_operator || (len - 1) == pos_operator) {
-      // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
+        // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
         fprintf(stderr, "invalid expression: %s\n", node->exp);
         return false;
     }
@@ -166,8 +166,8 @@ bool parse_expression(Node* node)
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
     // 左側・右側のノードを作成する
-    node->left   = create_node();
-    node->right  = create_node();
+    node->left = create_node();
+    node->right = create_node();
 
     if (!node->left || !node->right) {
         // ノードが作成できない場合は、式が長過ぎるためエラーとする
