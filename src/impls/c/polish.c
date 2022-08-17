@@ -332,6 +332,22 @@ void remove_space(char *exp)
     *dst = '\0';
 }
 
+// 標準入力から1行分読み込む関数
+// 最大len_max文字までを標準入力から読み込み、末尾の改行文字を取り除いた上でexpに格納する
+bool read_line(char *exp, size_t len_max)
+{
+    if (!fgets(exp, len_max, stdin))
+        return false;
+
+    // 読み込んだ内容が改行文字で終わる場合は、削除する
+    char *lf = strchr(exp, '\n');
+
+    if (lf)
+        *lf = '\0';
+
+    return true;
+}
+
 // 式exp内の括弧の対応を検証する関数
 // 開き括弧と閉じ括弧が同数でない場合はエラーとする
 bool validate_bracket_balance(char *exp)
@@ -380,7 +396,7 @@ int main()
     // 標準入力から二分木に分割したい式を入力して、式全体をroot->expに格納する
     printf("input expression: ");
 
-    if (1 != scanf("%[^\n]", root->exp))
+    if (!read_line(root->exp, MAX_EXP_LEN))
         // 入力が得られなかった場合は、処理を終了する
         return 1;
 
