@@ -25,17 +25,9 @@
     "Directory": "src/impls/cpp/",
     "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
     "Commands": {
-      "Build": [
-        { "Command": "$path_msbuild = .\\find-msbuild.ps1", "UseInvokeExpression": true },
-        { "Command": "$env:Path += \";$([System.IO.Path]::GetDirectoryName($path_msbuild))\"", "UseInvokeExpression": true },
-        { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] }
-      ],
-      "Clean": [
-        { "Command": "$path_msbuild = .\\find-msbuild.ps1", "UseInvokeExpression": true },
-        { "Command": "$env:Path += \";$([System.IO.Path]::GetDirectoryName($path_msbuild))\"", "UseInvokeExpression": true },
-        { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] }
-      ],
-      "Run": { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
+      "Run":    { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
     }
   },
   {
