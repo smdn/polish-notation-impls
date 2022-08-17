@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <string.h>
 #include <limits.h>
@@ -32,15 +33,15 @@ Node* create_node()
 }
 
 // 式expから最も外側にある丸括弧を取り除く関数
-// (成功した場合は0、エラーの場合は-1を返す)
-int remove_outermost_bracket(char *exp)
+// (成功した場合はtrue、エラーの場合はfalseを返す)
+bool remove_outermost_bracket(char *exp)
 {
-    int has_outermost_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
+    bool has_outermost_bracket = false; // 最も外側に括弧を持つかどうか
     int nest_depth = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if ('(' == exp[0]) {
         // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        has_outermost_bracket = 1;
+        has_outermost_bracket = true;
         nest_depth = 1;
     }
 
@@ -60,20 +61,20 @@ int remove_outermost_bracket(char *exp)
             // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
             // 例:"(1+2)+(3+4)"などの場合
             if (0 == nest_depth && exp[i + 1]) {
-                has_outermost_bracket = 0;
+                has_outermost_bracket = false;
                 break;
             }
         }
     }
 
     // 最も外側に丸括弧がない場合は、何もしない
-    if (0 == has_outermost_bracket)
-        return 0;
+    if (!has_outermost_bracket)
+        return true;
 
     // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if (len <= 2) {
         fprintf(stderr, "empty bracket: %s\n", exp);
-        return -1;
+        return false;
     }
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
@@ -89,7 +90,7 @@ int remove_outermost_bracket(char *exp)
         return remove_outermost_bracket(exp);
     else
         // そうでない場合は処理を終える
-        return 0;
+        return true;
 }
 
 // 式expから最も右側にあり、かつ優先順位が低い演算子を探して位置を返す関数
@@ -133,15 +134,15 @@ int get_pos_operator(char *exp)
 }
 
 // 与えられたノードnodeの式expを二分木へと分割する関数
-// (成功した場合は0、エラーの場合は-1を返す)
-int parse_expression(Node* node)
+// (成功した場合はtrue、エラーの場合はfalseを返す)
+bool parse_expression(Node* node)
 {
     if (!node)
-        return -1;
+        return false;
 
     // 式expから最も外側にある丸括弧を取り除く
-    if (remove_outermost_bracket(node->exp) < 0)
-        return -1;
+    if (!remove_outermost_bracket(node->exp))
+        return false;
 
     // 式expから演算子を探して位置を取得する
     int pos_operator = get_pos_operator(node->exp);
@@ -151,7 +152,7 @@ int parse_expression(Node* node)
         // (左右に子ノードを持たないノードとする)
         node->left  = NULL;
         node->right = NULL;
-        return 0;
+        return true;
     }
 
     size_t len = strlen(node->exp);
@@ -159,7 +160,7 @@ int parse_expression(Node* node)
     if (0 == pos_operator || (len - 1) == pos_operator) {
       // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
         fprintf(stderr, "invalid expression: %s\n", node->exp);
-        return -1;
+        return false;
     }
 
     // 以下、演算子の位置をもとに左右の部分式に分割する
@@ -171,7 +172,7 @@ int parse_expression(Node* node)
     if (!node->left || !node->right) {
         // ノードが作成できない場合は、式が長過ぎるためエラーとする
         fprintf(stderr, "expression too long\n");
-        return -1;
+        return false;
     }
 
     // 演算子の左側を左の部分式としてノードを構成する
@@ -179,22 +180,22 @@ int parse_expression(Node* node)
     strncpy(node->left->exp, node->exp, pos_operator);
 
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
-    if (parse_expression(node->left) < 0)
-        return -1;
+    if (!parse_expression(node->left))
+        return false;
 
     // 演算子の右側を右の部分式としてノードを構成する
     memset(node->right->exp, 0, MAX_EXP_LEN);
     strncpy(node->right->exp, node->exp + pos_operator + 1, len - pos_operator);
 
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
-    if (parse_expression(node->right) < 0)
-        return -1;
+    if (!parse_expression(node->right))
+        return false;
 
     // 残った演算子部分をこのノードに設定する
     node->exp[0] = node->exp[pos_operator];
     node->exp[1] = '\0';
 
-    return 0;
+    return true;
 }
 
 // 後行順序訪問(帰りがけ順)で二分木を巡回して
@@ -260,14 +261,14 @@ void traverse_preorder(Node* node)
 }
 
 // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
-// ノードの値が計算できた場合は0、そうでない場合(記号を含む場合など)は-1を返す
+// ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
 // 計算結果はnode->expに文字列として代入する
-int calculate_expression_tree(Node* node)
+bool calculate_expression_tree(Node* node)
 {
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
-    // それ以上計算できないので0(成功)を返す
+    // それ以上計算できないのでtrueを返す
     if (!node->left || !node->right)
-        return 0;
+        return true;
 
     // 左右の子ノードについて、再帰的にノードの値を計算する
     calculate_expression_tree(node->left);
@@ -275,7 +276,7 @@ int calculate_expression_tree(Node* node)
 
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-    // ノードの値が計算できないものとして、-1(失敗)を返す
+    // ノードの値が計算できないものとして、falseを返す
     double left_operand, right_operand;
     char* endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
 
@@ -285,7 +286,7 @@ int calculate_expression_tree(Node* node)
 
     if (ERANGE == errno || endptr_value != (node->left->exp + strlen(node->left->exp)))
         // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-        return -1;
+        return false;
 
     // 右ノードの値を数値に変換して演算子の右項right_operandの値とする
     errno = 0;
@@ -293,7 +294,7 @@ int calculate_expression_tree(Node* node)
 
     if (ERANGE == errno || endptr_value != (node->right->exp + strlen(node->right->exp)))
         // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-        return -1;
+        return false;
 
     // ノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度node->expに代入することで現在のノードの値とする
@@ -302,8 +303,8 @@ int calculate_expression_tree(Node* node)
       case '-': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand - right_operand); break;
       case '*': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand * right_operand); break;
       case '/': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand / right_operand); break;
-      // 上記以外の演算子の場合は計算できないものとして、-1(失敗)を返す
-      default: return -1;
+        // 上記以外の演算子の場合は計算できないものとして、falseを返す
+      default: return false;
     }
 
     // 左右の子ノードの値からノードの値が求まったため、
@@ -311,8 +312,8 @@ int calculate_expression_tree(Node* node)
     node->left  = NULL;
     node->right = NULL;
 
-    // 計算できたため、0(成功)を返す
-    return 0;
+    // 計算できたため、trueを返す
+    return true;
 }
 
 // 文字列から空白を取り除く関数
@@ -332,8 +333,8 @@ void remove_space(char *exp)
 }
 
 // 式exp内の括弧の対応を検証する関数
-// 開き括弧と閉じ括弧が同数でない場合はエラーとして0以外、同数の場合は0を返す
-int validate_bracket_balance(char *exp)
+// 開き括弧と閉じ括弧が同数でない場合はエラーとする
+bool validate_bracket_balance(char *exp)
 {
     int nest_depth = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
@@ -356,12 +357,15 @@ int validate_bracket_balance(char *exp)
     }
 
     // 深度が0でない場合
-    if (0 != nest_depth)
+    if (0 != nest_depth) {
         // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
         // 例:"((1+2)"などの場合
         fprintf(stderr, "unbalanced bracket: %s\n", exp);
-
-    return nest_depth;
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 // main関数。　結果によって次の値を返す。
@@ -388,13 +392,13 @@ int main()
         return 1;
 
     // 入力された式における括弧の対応数をチェックする
-    if (0 != validate_bracket_balance(root->exp))
+    if (!validate_bracket_balance(root->exp))
         return 1;
 
     printf("expression: %s\n", root->exp);
 
     // 根ノードに格納した式を二分木へと分割する
-    if (parse_expression(root) < 0)
+    if (!parse_expression(root))
         return 1;
 
     // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
@@ -413,7 +417,7 @@ int main()
     printf("\n");
 
     // 分割した二分木から式全体の値を計算する
-    if (calculate_expression_tree(root) < 0) {
+    if (!calculate_expression_tree(root)) {
         // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
         printf("calculated expression: ");
         traverse_inorder(root);
