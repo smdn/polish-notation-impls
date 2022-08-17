@@ -31,26 +31,26 @@ class Node:
   # 開き括弧と閉じ括弧が同数でない場合はエラーとする
   @staticmethod
   def __validate_bracket_balance(expression):
-    nest = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+    nest_depth = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     # 1文字ずつ検証する
     for ch in expression:
       if ch == "(":
         # 開き丸括弧なので深度を1増やす
-        nest += 1
+        nest_depth += 1
 
       elif ch == ")":
         # 閉じ丸括弧なので深度を1減らす
-        nest -= 1
+        nest_depth -= 1
 
         # 深度が負になった場合
-        if nest < 0:
+        if nest_depth < 0:
           # 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
           # 例:"(1+2))"などの場合
           break
 
     # 深度が0でない場合
-    if nest != 0:
+    if nest_depth != 0:
       # 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
       # 例:"((1+2)"などの場合
       raise MalformedExpressionException("unbalanced bracket: {}".format(expression))
@@ -93,18 +93,18 @@ class Node:
   @staticmethod
   def __remove_outermost_bracket(expression):
     has_outermost_bracket = False # 最も外側に括弧を持つかどうか
-    nest = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
+    nest_depth = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if expression[0] == "(":
       # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       has_outermost_bracket = True
-      nest = 1
+      nest_depth = 1
 
     # 1文字目以降を1文字ずつ検証
     for i in range(1, len(expression)):
       if expression[i] == "(":
         # 開き丸括弧なので深度を1増やす
-        nest += 1
+        nest_depth += 1
 
         # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
         if i == 0:
@@ -112,11 +112,11 @@ class Node:
 
       elif expression[i] == ")":
         # 閉じ丸括弧なので深度を1減らす
-        nest -= 1
+        nest_depth -= 1
 
         # 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         # 例:"(1+2)+(3+4)"などの場合
-        if nest == 0 and i < len(expression) - 1:
+        if nest_depth == 0 and i < len(expression) - 1:
           has_outermost_bracket = False
           break
 
@@ -146,7 +146,7 @@ class Node:
   def __get_operator_position(expression):
     pos_operator = -1 # 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     current_priority = sys.maxsize # 現在見つかっている演算子の優先順位(初期値としてsys.maxsizeを設定)
-    nest = 0 # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
+    nest_depth = 0 # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     # 与えられた文字列を先頭から1文字ずつ検証する
     for i in range(len(expression)):
@@ -165,10 +165,10 @@ class Node:
         priority = 3
       # 文字が丸括弧の場合は、括弧の深度を設定する
       elif expression[i] == "(":
-        nest += 1
+        nest_depth += 1
         continue
       elif expression[i] == ")":
-        nest -= 1
+        nest_depth -= 1
         continue
       # それ以外の文字の場合は何もしない
       else:
@@ -177,7 +177,7 @@ class Node:
       # 括弧の深度が0(丸括弧でくくられていない部分)かつ、
       # 現在見つかっている演算子よりも優先順位が同じか低い場合
       # (優先順位が同じ場合は、より右側に同じ優先順位の演算子があることになる)
-      if nest == 0 and priority <= current_priority:
+      if nest_depth == 0 and priority <= current_priority:
         # 最も優先順位が低い演算子とみなし、その位置を保存する
         current_priority = priority
         pos_operator = i

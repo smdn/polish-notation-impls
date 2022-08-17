@@ -81,20 +81,20 @@ Node::Node(const std::string& expression) noexcept(false)
 
 void Node::validate_bracket_balance(const std::string& expression) noexcept(false)
 {
-    auto nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+    auto nest_depth = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     // 1文字ずつ検証する
     for (auto& ch : expression) {
         if ('(' == ch) {
             // 開き丸括弧なので深度を1増やす
-            nest++;
+            nest_depth++;
         }
         else if (')' == ch) {
             // 閉じ丸括弧なので深度を1減らす
-            nest--;
+            nest_depth--;
 
             // 深度が負になった場合
-            if (nest < 0)
+            if (nest_depth < 0)
                 // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
                 // 例:"(1+2))"などの場合
                 break;
@@ -102,7 +102,7 @@ void Node::validate_bracket_balance(const std::string& expression) noexcept(fals
     }
 
     // 深度が0でない場合
-    if (0 != nest)
+    if (0 != nest_depth)
         // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
         // 例:"((1+2)"などの場合
         throw MalformedExpressionException("unbalanced bracket: " + expression);
@@ -147,27 +147,27 @@ void Node::parse_expression() noexcept(false)
 std::string Node::remove_outermost_bracket(const std::string& expression) noexcept(false)
 {
     auto has_outermost_bracket = false; // 最も外側に括弧を持つかどうか
-    auto nest = 0;                      // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
+    auto nest_depth = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if ('(' == expression.front()) {
         // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
         has_outermost_bracket = true;
-        nest = 1;
+        nest_depth = 1;
     }
 
     // 1文字目以降を1文字ずつ検証
     for (auto it = expression.begin() + 1; it != expression.end(); it++) {
         if ('(' == *it) {
             // 開き丸括弧なので深度を1増やす
-            nest++;
+            nest_depth++;
         }
         else if (')' == *it) {
             // 閉じ丸括弧なので深度を1減らす
-            nest--;
+            nest_depth--;
 
             // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
             // 例:"(1+2)+(3+4)"などの場合
-            if (0 == nest && (it + 1) != expression.end()) {
+            if (0 == nest_depth && (it + 1) != expression.end()) {
                 has_outermost_bracket = false;
                 break;
             }
@@ -202,7 +202,7 @@ std::string::size_type Node::get_operator_position(std::string_view expression) 
     // 現在見つかっている演算子の優先順位(初期値としてintの最大値を設定)
     auto priority_current = std::numeric_limits<int>::max();
     // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
-    auto nest = 0;
+    auto nest_depth = 0;
 
     // 与えられた文字列を先頭から1文字ずつ検証する
     for (auto it = expression.begin(); it < expression.end(); it++) {
@@ -216,8 +216,8 @@ std::string::size_type Node::get_operator_position(std::string_view expression) 
             case '*': priority = 3; break;
             case '/': priority = 3; break;
             // 文字が丸括弧の場合は、括弧の深度を設定する
-            case '(': nest++; continue;
-            case ')': nest--; continue;
+            case '(': nest_depth++; continue;
+            case ')': nest_depth--; continue;
             // それ以外の文字の場合は何もしない
             default: continue;
         }
@@ -225,7 +225,7 @@ std::string::size_type Node::get_operator_position(std::string_view expression) 
         // 括弧の深度が0(丸括弧でくくられていない部分)かつ、
         // 現在見つかっている演算子よりも優先順位が同じか低い場合
         // (優先順位が同じ場合は、より右側に同じ優先順位の演算子があることになる)
-        if (0 == nest && priority <= priority_current) {
+        if (0 == nest_depth && priority <= priority_current) {
             // 最も優先順位が低い演算子とみなし、その位置を保存する
             priority_current = priority;
             pos_operator = std::distance(expression.begin(), it);

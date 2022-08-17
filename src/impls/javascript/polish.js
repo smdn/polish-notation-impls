@@ -36,20 +36,20 @@ class Node {
   // 開き括弧と閉じ括弧が同数でない場合はエラーとする
   static #validateBracketBalance(expression)
   {
-    let nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+    let nestDepth = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     // 1文字ずつ検証する
     for (let i = 0; i < expression.length; i++) {
       if (expression[i] === '(') {
         // 開き丸括弧なので深度を1増やす
-        nest++;
+        nestDepth++;
       }
       else if (expression[i] === ')') {
         // 閉じ丸括弧なので深度を1減らす
-        nest--;
+        nestDepth--;
 
         // 深度が負になった場合
-        if (nest < 0)
+        if (nestDepth < 0)
           // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
           // 例:"(1+2))"などの場合
           break;
@@ -57,7 +57,7 @@ class Node {
     }
 
     // 深度が0でない場合
-    if (nest !== 0)
+    if (nestDepth !== 0)
       // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
       // 例:"((1+2)"などの場合
       throw new MalformedExpressionError("unbalanced bracket: " + expression);
@@ -104,19 +104,19 @@ class Node {
   static #removeOutermostBracket(expression)
   {
     let hasOutermostBracket = false; // 最も外側に括弧を持つかどうか
-    let nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
+    let nestDepth = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if (expression[0] === "(") {
       // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       hasOutermostBracket = true;
-      nest = 1;
+      nestDepth = 1;
     }
 
     // 1文字目以降を1文字ずつ検証
     for (let i = 1; i < expression.length; i++) {
       if (expression[i] === "(") {
         // 開き丸括弧なので深度を1増やす
-        nest++;
+        nestDepth++;
 
         // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
         if (i === 0)
@@ -124,11 +124,11 @@ class Node {
       }
       else if (expression[i] === ")") {
         // 閉じ丸括弧なので深度を1減らす
-        nest--;
+        nestDepth--;
 
         // 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         // 例:"(1+2)+(3+4)"などの場合
-        if (nest === 0 && i < expression.length - 1) {
+        if (nestDepth === 0 && i < expression.length - 1) {
           hasOutermostBracket = false;
           break;
         }
@@ -162,7 +162,7 @@ class Node {
   {
     let posOperator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     let currentPriority = Number.MAX_VALUE; // 現在見つかっている演算子の優先順位(初期値としてNumber.MAX_VALUEを設定)
-    let nest = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
+    let nestDepth = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     // 与えられた文字列を先頭から1文字ずつ検証する
     for (let i = 0; i < expression.length; i++) {
@@ -176,8 +176,8 @@ class Node {
         case "*": priority = 3; break;
         case "/": priority = 3; break;
         // 文字が丸括弧の場合は、括弧の深度を設定する
-        case "(": nest++; continue;
-        case ")": nest--; continue;
+        case "(": nestDepth++; continue;
+        case ")": nestDepth--; continue;
         // それ以外の文字の場合は何もしない
         default: continue;
       }
@@ -185,7 +185,7 @@ class Node {
       // 括弧の深度が0(丸括弧でくくられていない部分)かつ、
       // 現在見つかっている演算子よりも優先順位が同じか低い場合
       // (優先順位が同じ場合は、より右側に同じ優先順位の演算子があることになる)
-      if (nest == 0 && priority <= currentPriority) {
+      if (nestDepth == 0 && priority <= currentPriority) {
         // 最も優先順位が低い演算子とみなし、その位置を保存する
         currentPriority = priority;
         posOperator = i;

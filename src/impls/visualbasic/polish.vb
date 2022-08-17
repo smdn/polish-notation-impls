@@ -31,26 +31,26 @@ Class Node
   ' 式expression内の括弧の対応を検証するメソッド
   ' 開き括弧と閉じ括弧が同数でない場合はエラーとする
   Private Shared Sub ValidateBracketBalance(ByVal expression As String)
-    Dim nest As Integer = 0 ' 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+    Dim nestDepth As Integer = 0 ' 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     ' 1文字目以降を1文字ずつ検証する
     For Each ch As Char In expression
       If ch = "("c Then
         ' 開き丸括弧なので深度を1増やす
-        nest += 1
+        nestDepth += 1
       Else If ch = ")"c Then
         ' 閉じ丸括弧なので深度を1減らす
-        nest -= 1
+        nestDepth -= 1
 
         ' 深度が負になった場合、式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
         ' 例:"(1+2))"などの場合
-        If nest < 0 Then Exit For
+        If nestDepth < 0 Then Exit For
       End If
     Next
 
     ' 深度が0でない場合、式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
     ' 例:"((1+2)"などの場合
-    If nest <> 0 Then Throw New MalformedExpressionException("unbalanced bracket: " + expression)
+    If nestDepth <> 0 Then Throw New MalformedExpressionException("unbalanced bracket: " + expression)
   End Sub
 
   ' 式Expressionを二分木へと分割するメソッド
@@ -93,29 +93,29 @@ Class Node
   ' 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
   Private Shared Function RemoveOutermostBracket(ByVal expression As String) As String
     Dim hasOutermostBracket As Boolean = False ' 最も外側に括弧を持つかどうか
-    Dim nest As Integer = 0 ' 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
+    Dim nestDepth As Integer = 0 ' 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     If expression(0) = "("c Then
       ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
       hasOutermostBracket = True
-      nest = 1
+      nestDepth = 1
     End If
 
     ' 1文字目以降を1文字ずつ検証
     For i As Integer = 1 To expression.Length - 1
       If expression(i) = "("c Then
         ' 開き丸括弧なので深度を1増やす
-        nest += 1
+        nestDepth += 1
 
         ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
         If i = 0 Then hasOutermostBracket = True
       Else If expression(i) = ")"c Then
         ' 閉じ丸括弧なので深度を1減らす
-        nest -= 1
+        nestDepth -= 1
 
         ' 最後の文字以外で開き丸括弧がすべて閉じられた場合、最も外側には丸括弧がないと判断する
         ' 例:"(1+2)+(3+4)"などの場合
-        If nest = 0 AndAlso i < expression.Length - 1 Then
+        If nestDepth = 0 AndAlso i < expression.Length - 1 Then
           hasOutermostBracket = False
           Exit For
         End If
@@ -147,7 +147,7 @@ Class Node
   Private Shared Function GetOperatorPosition(ByVal expression As String) As Integer
     Dim posOperator As Integer = -1 ' 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     Dim currentPriority As Integer = Integer.MaxValue ' 現在見つかっている演算子の優先順位(初期値としてInteger.MaxValueを設定)
-    Dim nest As Integer = 0 ' 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
+    Dim nestDepth As Integer = 0 ' 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     ' 与えられた文字列を先頭から1文字ずつ検証する
     For i As Integer = 0 To expression.Length - 1
@@ -161,8 +161,8 @@ Class Node
         Case "*"c: priority = 3
         Case "/"c: priority = 3
         ' 文字が丸括弧の場合は、括弧の深度を設定する
-        Case "("c: nest += 1: Continue For
-        Case ")"c: nest -= 1: Continue For
+        Case "("c: nestDepth += 1: Continue For
+        Case ")"c: nestDepth -= 1: Continue For
         ' それ以外の文字の場合は何もしない
         Case Else: Continue For
       End Select
@@ -170,7 +170,7 @@ Class Node
       ' 括弧の深度が0(丸括弧でくくられていない部分)かつ、
       ' 現在見つかっている演算子よりも優先順位が同じか低い場合
       ' (優先順位が同じ場合は、より右側に同じ優先順位の演算子があることになる)
-      If nest = 0 AndAlso priority <= currentPriority Then
+      If nestDepth = 0 AndAlso priority <= currentPriority Then
         ' 最も優先順位が低い演算子とみなし、その位置を保存する
         currentPriority = priority
         posOperator = i
