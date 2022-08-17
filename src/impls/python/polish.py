@@ -4,8 +4,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
-# 二分木への分割時に発生したエラーを報告するための例外クラス
-class ExpressionParserException(Exception):
+# 与えられた式が不正な形式であることを報告するための例外クラス
+class MalformedExpressionException(Exception):
   def __init__(self, message):
     super().__init__(message)
 
@@ -49,9 +49,9 @@ class Node:
 
     # 深度が0でない場合
     if nest != 0:
-      # 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+      # 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
       # 例:"((1+2)"などの場合
-      raise ExpressionParserException("unbalanced bracket: {}".format(expression))
+      raise MalformedExpressionException("unbalanced bracket: {}".format(expression))
 
   # 式expressionを二分木へと分割するメソッド
   def parse(self):
@@ -69,8 +69,8 @@ class Node:
       return
 
     if pos_operator == 0 or pos_operator == len(self.__expression) - 1:
-      # 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      raise ExpressionParserException("invalid expression: {}".format(self.__expression))
+      # 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
+      raise MalformedExpressionException("invalid expression: {}".format(self.__expression))
 
     # 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -122,9 +122,9 @@ class Node:
     if not has_outermost_bracket:
       return expression
 
-    # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if len(expression) <= 2:
-      raise ExpressionParserException("empty bracket: {}".format(expression))
+      raise MalformedExpressionException("empty bracket: {}".format(expression))
 
     # 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     expression = expression[1:-1]
@@ -326,7 +326,7 @@ def main():
     root.traverse_preorder()
     print()
 
-  except ExpressionParserException as err:
+  except MalformedExpressionException as err:
     print(err, file = sys.stderr)
     return 1
 

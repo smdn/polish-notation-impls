@@ -4,12 +4,12 @@
 // SPDX-License-Identifier: MIT
 "use strict"
 
-// 二分木への分割時に発生したエラーを報告するためのエラークラス
-class ExpressionParserError extends Error {
+// 与えられた式が不正な形式であることを報告するためのエラークラス
+class MalformedExpressionError extends Error {
   constructor(message)
   {
     super(message);
-    this.name = "ExpressionParserException";
+    this.name = "MalformedExpressionError";
   }
 }
 
@@ -50,7 +50,7 @@ class Node {
 
         // 深度が負になった場合
         if (nest < 0)
-          // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+          // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
           // 例:"(1+2))"などの場合
           break;
       }
@@ -58,9 +58,9 @@ class Node {
 
     // 深度が0でない場合
     if (nest !== 0)
-      // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+      // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
       // 例:"((1+2)"などの場合
-      throw new ExpressionParserError("unbalanced bracket: " + expression);
+      throw new MalformedExpressionError("unbalanced bracket: " + expression);
   }
 
   // 式expressionを二分木へと分割するメソッド
@@ -81,8 +81,8 @@ class Node {
     }
 
     if (posOperator === 0 || posOperator === this.#expression.length - 1)
-      // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-      throw new ExpressionParserError("invalid expression: " + this.#expression);
+      // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
+      throw new MalformedExpressionError("invalid expression: " + this.#expression);
 
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -139,9 +139,9 @@ class Node {
     if (!hasOutermostBracket)
       return expression;
 
-    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if (expression.length <= 2)
-      throw new ExpressionParserError("empty bracket: " + expression);
+      throw new MalformedExpressionError("empty bracket: " + expression);
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     expression = expression.slice(1, -1);
@@ -382,7 +382,7 @@ function polish_main(_expression) {
     process.stdout.write("\n");
   }
   catch (err) {
-    if (err instanceof ExpressionParserError) {
+    if (err instanceof MalformedExpressionError) {
       console.error(err.message);
       process.exit(1);
     }

@@ -3,9 +3,9 @@
 import java.io.*;
 import java.text.*;
 
-// 二分木への分割時に発生したエラーを報告するための例外クラス
-class ExpressionParserException extends Exception {
-    public ExpressionParserException(String message) {
+// 与えられた式が不正な形式であることを報告するための例外クラス
+class MalformedExpressionException extends Exception {
+    public MalformedExpressionException(String message) {
         super(message);
     }
 }
@@ -17,7 +17,7 @@ class Node {
     private Node right = null; // 右の子ノード
 
     // コンストラクタ(与えられた式expressionを持つノードを構成する)
-    public Node(String expression) throws ExpressionParserException
+    public Node(String expression) throws MalformedExpressionException
     {
         // 式expressionにおける括弧の対応数をチェックする
         validateBracketBalance(expression);
@@ -34,7 +34,7 @@ class Node {
 
     // 式expression内の括弧の対応を検証するメソッド
     // 開き括弧と閉じ括弧が同数でない場合はエラーとする
-    private static void validateBracketBalance(String expression) throws ExpressionParserException
+    private static void validateBracketBalance(String expression) throws MalformedExpressionException
     {
         var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
@@ -50,7 +50,7 @@ class Node {
 
                 // 深度が負になった場合
                 if (nest < 0)
-                    // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+                    // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
                     // 例:"(1+2))"などの場合
                     break;
             }
@@ -58,13 +58,13 @@ class Node {
 
         // 深度が0でない場合
         if (nest != 0)
-            // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+            // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
             // 例:"((1+2)"などの場合
-            throw new ExpressionParserException("unbalanced bracket: " + expression);
+            throw new MalformedExpressionException("unbalanced bracket: " + expression);
     }
 
     // 式expressionを二分木へと分割するメソッド
-    public void parse() throws ExpressionParserException
+    public void parse() throws MalformedExpressionException
     {
         // 式expressionから最も外側にある丸括弧を取り除く
         expression = removeOutermostBracket(expression);
@@ -81,8 +81,8 @@ class Node {
         }
 
         if (posOperator == 0 || posOperator == expression.length() - 1)
-            // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-            throw new ExpressionParserException("invalid expression: " + expression);
+            // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
+            throw new MalformedExpressionException("invalid expression: " + expression);
 
         // 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -101,7 +101,7 @@ class Node {
     }
 
     // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
-    private static String removeOutermostBracket(String expression) throws ExpressionParserException
+    private static String removeOutermostBracket(String expression) throws MalformedExpressionException
     {
         var hasOutermostBracket = false; // 最も外側に括弧を持つかどうか
         var nest = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
@@ -139,9 +139,9 @@ class Node {
         if (!hasOutermostBracket)
             return expression;
 
-        // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+        // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
         if (expression.length() <= 2)
-            throw new ExpressionParserException("empty bracket: " + expression);
+            throw new MalformedExpressionException("empty bracket: " + expression);
 
         // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
         expression = expression.substring(1, expression.length() - 1);
@@ -365,7 +365,7 @@ public class Polish {
             root.traversePreorder();
             System.out.println();
         }
-        catch (ExpressionParserException ex) {
+        catch (MalformedExpressionException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
         }

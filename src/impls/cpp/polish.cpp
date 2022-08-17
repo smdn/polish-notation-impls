@@ -56,10 +56,10 @@ private:
     static std::string format_number(const double& number) noexcept;
 };
 
-// 二分木への分割時に発生したエラーを報告するための例外クラス
-class ExpressionParserException : public std::exception {
+// 与えられた式が不正な形式であることを報告するための例外クラス
+class MalformedExpressionException : public std::exception {
 public:
-    ExpressionParserException(const std::string& message)
+    MalformedExpressionException(const std::string& message)
         : message(message)
     {
     }
@@ -95,7 +95,7 @@ void Node::validate_bracket_balance(const std::string& expression) noexcept(fals
 
             // 深度が負になった場合
             if (nest < 0)
-                // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+                // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
                 // 例:"(1+2))"などの場合
                 break;
         }
@@ -103,9 +103,9 @@ void Node::validate_bracket_balance(const std::string& expression) noexcept(fals
 
     // 深度が0でない場合
     if (0 != nest)
-        // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+        // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
         // 例:"((1+2)"などの場合
-        throw ExpressionParserException("unbalanced bracket: " + expression);
+        throw MalformedExpressionException("unbalanced bracket: " + expression);
 }
 
 void Node::parse() noexcept(false)
@@ -125,8 +125,8 @@ void Node::parse() noexcept(false)
     }
 
     if (0 == pos_operator || (expression.length() - 1) == pos_operator)
-        // 演算子の位置が式の先頭または末尾の場合は不正な式とする
-        throw ExpressionParserException("invalid expression: " + expression);
+        // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
+        throw MalformedExpressionException("invalid expression: " + expression);
 
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
@@ -178,9 +178,9 @@ std::string Node::remove_outermost_bracket(const std::string& expression) noexce
     if (!has_outermost_bracket)
         return std::string(expression);
 
-    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if (expression.length() <= 2)
-        throw ExpressionParserException("empty bracket: " + expression);
+        throw MalformedExpressionException("empty bracket: " + expression);
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     auto expr = expression.substr(1, expression.length() - 2);
@@ -415,7 +415,7 @@ int main()
         root->traverse_preorder();
         std::cout << std::endl;
     }
-    catch (const ExpressionParserException& err) {
+    catch (const MalformedExpressionException& err) {
         std::cerr << err.what() << std::endl;
         return 1;
     }

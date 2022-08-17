@@ -69,7 +69,7 @@ int remove_outermost_bracket(char *exp)
     if (0 == has_outermost_bracket)
         return 0;
 
-    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なのでエラーとする
+    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if (len <= 2) {
         fprintf(stderr, "empty bracket: %s\n", exp);
         return -1;
@@ -159,7 +159,7 @@ int parse_expression(Node* node)
     len = strlen(node->exp);
 
     if (0 == pos_operator || (len - 1) == pos_operator) {
-      // 演算子の位置が式の先頭または末尾の場合は不正な式とする
+      // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
         fprintf(stderr, "invalid expression: %s\n", node->exp);
         return -1;
     }
@@ -353,7 +353,7 @@ int validate_bracket_balance(char *exp)
 
             // 深度が負になった場合
             if (nest < 0)
-                // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点でエラーとする
+                // 式中で開かれた括弧よりも閉じ括弧が多いため、その時点で不正な式と判断する
                 // 例:"(1+2))"などの場合
                 break;
         }
@@ -361,7 +361,7 @@ int validate_bracket_balance(char *exp)
 
     // 深度が0でない場合
     if (0 != nest)
-        // 式中に開かれていない/閉じられていない括弧があるので、エラーとする
+        // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
         // 例:"((1+2)"などの場合
         fprintf(stderr, "unbalanced bracket: %s\n", exp);
 
