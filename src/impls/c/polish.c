@@ -35,8 +35,6 @@ Node* create_node()
 // (成功した場合は0、エラーの場合は-1を返す)
 int remove_outermost_bracket(char *exp)
 {
-    int i;
-    size_t len;
     int has_outermost_bracket = 0; // 最も外側に括弧を持つかどうか(0=持たない、1=持つ)
     int nest_depth = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
@@ -47,6 +45,9 @@ int remove_outermost_bracket(char *exp)
     }
 
     // 1文字目以降を1文字ずつ検証
+    int i;
+    size_t len;
+
     for (i = 1, len = 1; exp[i]; i++, len++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
@@ -95,14 +96,14 @@ int remove_outermost_bracket(char *exp)
 // (演算子がない場合は-1を返す)
 int get_pos_operator(char *exp)
 {
-    int i;
     int pos_operator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
     int priority_current = INT_MAX; // 現在見つかっている演算子の優先順位(初期値としてINT_MAXを設定)
     int nest_depth = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
-    int priority;
 
     // 与えられた文字列を先頭から1文字ずつ検証する
-    for (i = 0; exp[i]; i++) {
+    for (int i = 0; exp[i]; i++) {
+        int priority;
+
         switch (exp[i]) {
             // 文字が演算子かどうか検証し、演算子の場合は演算子の優先順位を設定する
             case '=': priority = 1; break;
@@ -135,9 +136,6 @@ int get_pos_operator(char *exp)
 // (成功した場合は0、エラーの場合は-1を返す)
 int parse_expression(Node* node)
 {
-    int pos_operator;
-    size_t len;
-
     if (!node)
         return -1;
 
@@ -146,7 +144,7 @@ int parse_expression(Node* node)
         return -1;
 
     // 式expから演算子を探して位置を取得する
-    pos_operator = get_pos_operator(node->exp);
+    int pos_operator = get_pos_operator(node->exp);
 
     if (-1 == pos_operator) {
         // 式expに演算子が含まれない場合、expは項であるとみなす
@@ -156,7 +154,7 @@ int parse_expression(Node* node)
         return 0;
     }
 
-    len = strlen(node->exp);
+    size_t len = strlen(node->exp);
 
     if (0 == pos_operator || (len - 1) == pos_operator) {
       // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
@@ -266,9 +264,6 @@ void traverse_preorder(Node* node)
 // 計算結果はnode->expに文字列として代入する
 int calculate_expression_tree(Node* node)
 {
-    double left_operand, right_operand;
-    char* endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
-
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
     // それ以上計算できないので0(成功)を返す
     if (!node->left || !node->right)
@@ -281,6 +276,8 @@ int calculate_expression_tree(Node* node)
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
     // ノードの値が計算できないものとして、-1(失敗)を返す
+    double left_operand, right_operand;
+    char* endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
 
     // 左ノードの値を数値に変換して演算子の左項left_operandの値とする
     errno = 0;
@@ -338,11 +335,10 @@ void remove_space(char *exp)
 // 開き括弧と閉じ括弧が同数でない場合はエラーとして0以外、同数の場合は0を返す
 int validate_bracket_balance(char *exp)
 {
-    int i;
     int nest_depth = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     // 1文字ずつ検証する
-    for (i = 0; exp[i]; i++) {
+    for (int i = 0; exp[i]; i++) {
         if ('(' == exp[i]) {
             // 開き丸括弧なので深度を1増やす
             nest_depth++;
