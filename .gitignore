@@ -6,3 +6,6 @@ TestResult.xml
 TestResults/
 mono_crash.mem.*.blob
 mono_crash.*.json
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
