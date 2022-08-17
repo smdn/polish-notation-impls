@@ -365,21 +365,6 @@ function polish_main(_expression) {
 
     // 根ノードに格納した式を二分木へと分割する
     root.parse();
-
-    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-    process.stdout.write("reverse polish notation: ");
-    root.traversePostorder(process.stdout);
-    process.stdout.write("\n");
-
-    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-    process.stdout.write("infix notation: ");
-    root.traverseInorder(process.stdout);
-    process.stdout.write("\n");
-
-    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-    process.stdout.write("polish notation: ");
-    root.traversePreorder(process.stdout);
-    process.stdout.write("\n");
   }
   catch (err) {
     if (err instanceof MalformedExpressionError) {
@@ -390,6 +375,21 @@ function polish_main(_expression) {
       throw err;
     }
   }
+
+  // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+  process.stdout.write("reverse polish notation: ");
+  root.traversePostorder(process.stdout);
+  process.stdout.write("\n");
+
+  // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+  process.stdout.write("infix notation: ");
+  root.traverseInorder(process.stdout);
+  process.stdout.write("\n");
+
+  // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+  process.stdout.write("polish notation: ");
+  root.traversePreorder(process.stdout);
+  process.stdout.write("\n");
 
   // 分割した二分木から式全体の値を計算する
   if (root.calculate()) {

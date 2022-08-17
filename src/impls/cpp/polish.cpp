@@ -399,26 +399,26 @@ int main()
 
         // 根ノードに格納した式を二分木へと分割する
         root->parse();
-
-        // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-        std::cout << "reverse polish notation: ";
-        root->traverse_postorder();
-        std::cout << std::endl;
-
-        // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-        std::cout << "infix notation: ";
-        root->traverse_inorder();
-        std::cout << std::endl;
-
-        // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-        std::cout << "polish notation: ";
-        root->traverse_preorder();
-        std::cout << std::endl;
     }
     catch (const MalformedExpressionException& err) {
         std::cerr << err.what() << std::endl;
         return 1;
     }
+
+    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+    std::cout << "reverse polish notation: ";
+    root->traverse_postorder();
+    std::cout << std::endl;
+
+    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+    std::cout << "infix notation: ";
+    root->traverse_inorder();
+    std::cout << std::endl;
+
+    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+    std::cout << "polish notation: ";
+    root->traverse_preorder();
+    std::cout << std::endl;
 
     // 分割した二分木から式全体の値を計算する
     if (root->calculate()) {

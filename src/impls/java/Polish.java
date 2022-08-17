@@ -349,26 +349,26 @@ public class Polish {
 
             // 根ノードに格納した式を二分木へと分割する
             root.parse();
-
-            // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-            System.out.print("reverse polish notation: ");
-            root.traversePostorder();
-            System.out.println();
-
-            // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-            System.out.print("infix notation: ");
-            root.traverseInorder();
-            System.out.println();
-
-            // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-            System.out.print("polish notation: ");
-            root.traversePreorder();
-            System.out.println();
         }
         catch (MalformedExpressionException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
+
+        // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+        System.out.print("reverse polish notation: ");
+        root.traversePostorder();
+        System.out.println();
+
+        // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+        System.out.print("infix notation: ");
+        root.traverseInorder();
+        System.out.println();
+
+        // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+        System.out.print("polish notation: ");
+        root.traversePreorder();
+        System.out.println();
 
         // 分割した二分木から式全体の値を計算する
         if (root.calculate()) {

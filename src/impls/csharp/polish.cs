@@ -326,26 +326,26 @@ class Polish {
 
       // 根ノードに格納した式を二分木へと分割する
       root.Parse();
-
-      // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-      Console.Write("reverse polish notation: ");
-      root.TraversePostorder();
-      Console.WriteLine();
-
-      // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-      Console.Write("infix notation: ");
-      root.TraverseInorder();
-      Console.WriteLine();
-
-      // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-      Console.Write("polish notation: ");
-      root.TraversePreorder();
-      Console.WriteLine();
     }
     catch (MalformedExpressionException ex) {
       Console.Error.WriteLine(ex.Message);
       return 1;
     }
+
+    // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
+    Console.Write("reverse polish notation: ");
+    root.TraversePostorder();
+    Console.WriteLine();
+
+    // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
+    Console.Write("infix notation: ");
+    root.TraverseInorder();
+    Console.WriteLine();
+
+    // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
+    Console.Write("polish notation: ");
+    root.TraversePreorder();
+    Console.WriteLine();
 
     // 分割した二分木から式全体の値を計算する
     if (root.Calculate()) {
