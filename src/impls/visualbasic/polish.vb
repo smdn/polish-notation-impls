@@ -21,12 +21,16 @@ Class Node
 
   ' コンストラクタ(与えられた式expressionを持つノードを構成する)
   Public Sub New(ByVal expression As String)
+    ' 式expressionにおける括弧の対応数をチェックする
+    ValidateBracketBalance(expression)
+
+    ' チェックした式expressionをこのノードが表す式として設定する
     Me.Expression = expression
   End Sub
 
   ' 式expression内の括弧の対応を検証するメソッド
   ' 開き括弧と閉じ括弧が同数でない場合はエラーとする
-  Public Shared Sub ValidateBracketBalance(ByVal expression As String)
+  Private Shared Sub ValidateBracketBalance(ByVal expression As String)
     Dim nest As Integer = 0 ' 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     ' 1文字目以降を1文字ずつ検証する
@@ -299,9 +303,6 @@ Class Polish
     Dim root As Node
 
     Try
-      ' 入力された式における括弧の対応数をチェックする
-      Node.ValidateBracketBalance(expression)
-
       ' 二分木の根(root)ノードを作成し、式全体を格納する
       root = New Node(expression)
 

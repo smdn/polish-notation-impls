@@ -17,8 +17,12 @@ class Node {
     private Node right = null; // 右の子ノード
 
     // コンストラクタ(与えられた式expressionを持つノードを構成する)
-    public Node(String expression)
+    public Node(String expression) throws ExpressionParserException
     {
+        // 式expressionにおける括弧の対応数をチェックする
+        validateBracketBalance(expression);
+
+        // チェックした式expressionをこのノードが表す式として設定する
         this.expression = expression;
     }
 
@@ -30,7 +34,7 @@ class Node {
 
     // 式expression内の括弧の対応を検証するメソッド
     // 開き括弧と閉じ括弧が同数でない場合はエラーとする
-    public static void validateBracketBalance(String expression) throws ExpressionParserException
+    private static void validateBracketBalance(String expression) throws ExpressionParserException
     {
         var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
@@ -338,9 +342,6 @@ public class Polish {
         Node root = null;
 
         try {
-            // 入力された式における括弧の対応数をチェックする
-            Node.validateBracketBalance(expression);
-
             // 二分木の根(root)ノードを作成し、式全体を格納する
             root = new Node(expression);
 

@@ -19,12 +19,16 @@ class Node {
   // コンストラクタ(与えられた式expressionを持つノードを構成する)
   public Node(string expression)
   {
+    // 式expressionにおける括弧の対応数をチェックする
+    ValidateBracketBalance(expression);
+
+    // チェックした式expressionをこのノードが表す式として設定する
     Expression = expression;
   }
 
   // 式expression内の括弧の対応を検証するメソッド
   // 開き括弧と閉じ括弧が同数でない場合はエラーとする
-  public static void ValidateBracketBalance(string expression)
+  private static void ValidateBracketBalance(string expression)
   {
     var nest = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
@@ -315,9 +319,6 @@ class Polish {
     Node root;
 
     try {
-      // 入力された式における括弧の対応数をチェックする
-      Node.ValidateBracketBalance(expression);
-
       // 二分木の根(root)ノードを作成し、式全体を格納する
       root = new Node(expression);
 

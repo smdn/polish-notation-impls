@@ -18,10 +18,7 @@ public:
     inline const std::string& get_expression() const { return expression; }
 
     // コンストラクタ(与えられた式expressionを持つノードを構成する)
-    Node(const std::string& expression)
-        : expression(expression)
-    {
-    }
+    Node(const std::string& expression);
 
     // 式expressionを二分木へと分割するメソッド
     void parse();
@@ -43,11 +40,11 @@ public:
     // 計算結果はexpressionに文字列として代入する
     bool calculate();
 
+private:
     // 式expression内の括弧の対応を検証するメソッド
     // 開き括弧と閉じ括弧が同数でない場合はエラーとする
     static void validate_bracket_balance(const std::string& expression);
 
-private:
     // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
     static std::string remove_outermost_bracket(const std::string& expression);
 
@@ -72,6 +69,15 @@ public:
 protected:
     std::string message;
 };
+
+Node::Node(const std::string& expression) noexcept(false)
+{
+    // 式expressionにおける括弧の対応数をチェックする
+    validate_bracket_balance(expression);
+
+    // チェックした式expressionをこのノードが表す式として設定する
+    this->expression = expression;
+}
 
 void Node::validate_bracket_balance(const std::string& expression) noexcept(false)
 {
@@ -386,9 +392,6 @@ int main()
     std::unique_ptr<Node> root = nullptr;
 
     try {
-        // 入力された式における括弧の対応数をチェックする
-        Node::validate_bracket_balance(expression);
-
         // 二分木の根(root)ノードを作成し、式全体を格納する
         root = std::make_unique<Node>(expression);
 

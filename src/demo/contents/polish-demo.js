@@ -149,8 +149,6 @@ function polish_demo_run(e)
     try {
       expression = expression.replace(/\s+/g, '');
 
-      Node.validateBracketBalance(expression);
-
       polish_demo_convert_notation(expression);
 
       if (document.getElementById("polish-demo-visualize").checked)

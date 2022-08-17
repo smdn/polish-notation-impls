@@ -13,7 +13,12 @@ class ExpressionParserException(Exception):
 class Node:
   # コンストラクタ(与えられた式expressionを持つノードを構成する)
   def __init__(self, expression):
+    # 式expressionにおける括弧の対応数をチェックする
+    Node.__validate_bracket_balance(expression)
+
+    # チェックした式expressionをこのノードが表す式として設定する
     self.__expression = expression # このノードが表す式(二分木への分割後は演算子または項となる)
+
     self.__left = None  # 左の子ノード
     self.__right = None # 右の子ノード
 
@@ -25,7 +30,7 @@ class Node:
   # 式expression内の括弧の対応を検証するメソッド
   # 開き括弧と閉じ括弧が同数でない場合はエラーとする
   @staticmethod
-  def validate_bracket_balance(expression):
+  def __validate_bracket_balance(expression):
     nest = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     # 1文字ずつ検証する
@@ -298,9 +303,6 @@ def main():
   root = None
 
   try:
-    # 入力された式における括弧の対応数をチェックする
-    Node.validate_bracket_balance(expression)
-
     # 二分木の根(root)ノードを作成し、式全体を格納する
     root = Node(expression)
 
