@@ -6,6 +6,24 @@ SPDX-License-Identifier: MIT
   <!--
     ref: https://docs.microsoft.com/ja-jp/cpp/build/walkthrough-using-msbuild-to-create-a-visual-cpp-project
   -->
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FFBC4BCD-7EE8-4158-ADF2-D63FF64600C9}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetName>polish</TargetName>
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <PreferredToolArchitecture />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version -->
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/utf-8-set-source-and-executable-character-sets-to-utf-8 -->
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -16,24 +34,10 @@ SPDX-License-Identifier: MIT
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props" />
-
-  <PropertyGroup>
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
-  </PropertyGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-
   <ItemGroup>
-    <ClCompile Include="polish.cpp">
-      <LanguageStandard>stdcpp20</LanguageStandard> <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version -->
-      <AdditionalOptions>/utf-8</AdditionalOptions> <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/utf-8-set-source-and-executable-character-sets-to-utf-8 -->
-    </ClCompile>
+    <ClCompile Include="polish.cpp" />
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Targets" />
-
 </Project>
