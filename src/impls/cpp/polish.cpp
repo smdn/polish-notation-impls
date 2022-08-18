@@ -350,7 +350,6 @@ bool Node::calculate_expression_tree()
     return true;
 }
 
-// 演算結果の数値を文字列化するためのメソッド
 std::string Node::format_number(const double& number) noexcept
 {
     std::ostringstream stream;
