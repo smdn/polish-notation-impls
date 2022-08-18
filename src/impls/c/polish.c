@@ -336,6 +336,7 @@ void remove_space(char *exp)
 // 最大len_max文字までを標準入力から読み込み、末尾の改行文字を取り除いた上でexpに格納する
 bool read_line(char *exp, size_t len_max)
 {
+    // 標準入力から最大(len_max - 1)文字を読み込む
     if (!fgets(exp, len_max, stdin))
         return false;
 
