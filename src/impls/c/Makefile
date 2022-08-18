@@ -1,5 +1,5 @@
-CC     = gcc
-#CC     = clang
+CC = gcc
+#CC = clang
 CFLAGS = -O4 -Wall -I/usr/local/include
 
 all: polish

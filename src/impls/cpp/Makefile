@@ -1,14 +1,14 @@
-CC     = g++
-#CC     = clang++
+CXX = g++
+#CXX = clang++
 CFLAGS = -std=c++2a -O4 -Wall -I/usr/local/include
 
 all: polish
 
 polish: polish.o
-	$(CC) polish.o -o polish
+	$(CXX) polish.o -o polish
 
 polish.o: polish.cpp
-	$(CC) $(CFLAGS) -c polish.cpp
+	$(CXX) $(CFLAGS) -c polish.cpp
 
 clean:
 	rm -f *.o polish
