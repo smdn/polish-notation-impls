@@ -1,6 +1,6 @@
 CC = gcc
 #CC = clang
-CFLAGS = -O2 -Wall
+CFLAGS = -std=c17 -O2 -Wall
 
 all: polish
 
