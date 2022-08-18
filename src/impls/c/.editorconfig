@@ -12,4 +12,4 @@ cpp_new_line_before_else = true
 cpp_indent_preserve_comments = true
 cpp_indent_case_labels = true
 cpp_space_around_assignment_operator = ignore
-cpp_space_pointer_reference_alignment = left
+cpp_space_pointer_reference_alignment = right

@@ -15,8 +15,8 @@ typedef struct Node Node;
 
 struct Node {
     char exp[MAX_EXP_LEN]; // このノードが表す式(二分木への分割後は演算子または項となる)
-    Node* left;  // 左の子ノードへのポインタ
-    Node* right; // 右の子ノードへのポインタ
+    Node *left;  // 左の子ノードへのポインタ
+    Node *right; // 右の子ノードへのポインタ
 };
 
 static Node nodes[MAX_NODES]; // あらかじめMAX_NODES個分のノードを確保するための配列
@@ -24,7 +24,7 @@ static int nb_node_used = 0;  // 確保しているノードのうち、実際�
 
 // ノードを作成する関数
 // (あらかじめ配列に確保してあるノードを順にひとつずつ返す)
-Node* create_node()
+Node *create_node()
 {
     if (nb_node_used == MAX_NODES)
         return NULL;
@@ -38,7 +38,7 @@ Node* create_node()
 
 // 与えられたノードnodeの式expを二分木へと分割する関数
 // (成功した場合はtrue、エラーの場合はfalseを返す)
-bool parse_expression(Node* node);
+bool parse_expression(Node *node);
 
 // 式expから最も外側にある丸括弧を取り除く関数
 // (成功した場合はtrue、エラーの場合はfalseを返す)
@@ -54,15 +54,15 @@ int get_pos_operator(char *exp);
 
 // 後行順序訪問(帰りがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_postorder(Node* node);
+void traverse_postorder(Node *node);
 
 // 中間順序訪問(通りがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_inorder(Node* node);
+void traverse_inorder(Node *node);
 
 // 先行順序訪問(行きがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_preorder(Node* node);
+void traverse_preorder(Node *node);
 
 /*
  * ### 二分木から値の演算を行う関数の宣言 ###
@@ -71,7 +71,7 @@ void traverse_preorder(Node* node);
 // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
 // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
 // 計算結果はnode->expに文字列として代入する
-bool calculate_expression_tree(Node* node);
+bool calculate_expression_tree(Node *node);
 
 /*
  * ### その他の前処理を行う関数の宣言 ###
@@ -92,7 +92,7 @@ bool validate_bracket_balance(char *exp);
  * ### 各関数の実装 ###
  */
 
-bool parse_expression(Node* node)
+bool parse_expression(Node *node)
 {
     if (!node)
         return false;
@@ -252,7 +252,7 @@ int get_pos_operator(char *exp)
     return pos_operator;
 }
 
-void traverse_postorder(Node* node)
+void traverse_postorder(Node *node)
 {
     // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
     if (node->left)
@@ -265,7 +265,7 @@ void traverse_postorder(Node* node)
     printf("%s ", node->exp);
 }
 
-void traverse_inorder(Node* node)
+void traverse_inorder(Node *node)
 {
     // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
     if (node->left && node->right)
@@ -295,7 +295,7 @@ void traverse_inorder(Node* node)
         printf(")");
 }
 
-void traverse_preorder(Node* node)
+void traverse_preorder(Node *node)
 {
     // 巡回を始める前にノードの演算子または項を表示する
     // (読みやすさのために項の後に空白を補って表示する)
@@ -308,7 +308,7 @@ void traverse_preorder(Node* node)
         traverse_preorder(node->right);
 }
 
-bool calculate_expression_tree(Node* node)
+bool calculate_expression_tree(Node *node)
 {
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
     // それ以上計算できないのでtrueを返す
@@ -323,7 +323,7 @@ bool calculate_expression_tree(Node* node)
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
     // ノードの値が計算できないものとして、falseを返す
     double left_operand, right_operand;
-    char* endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
+    char *endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
 
     // 左ノードの値を数値に変換して演算子の左項left_operandの値とする
     errno = 0;
@@ -432,7 +432,7 @@ bool validate_bracket_balance(char *exp)
 int main()
 {
     // 二分木の根(root)ノードを作成する
-    Node* root = create_node();
+    Node *root = create_node();
 
     // 標準入力から二分木に分割したい式を入力して、式全体をroot->expに格納する
     printf("input expression: ");
