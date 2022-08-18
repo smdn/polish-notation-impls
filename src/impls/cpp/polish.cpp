@@ -64,7 +64,7 @@ public:
     {
     }
 
-    virtual const char* what() const noexcept { return message.c_str(); }
+    virtual const char* what() const noexcept override { return message.c_str(); }
 
 protected:
     std::string message;
