@@ -46,7 +46,7 @@ bool remove_outermost_bracket(char *exp)
     }
 
     // 1文字目以降を1文字ずつ検証
-    int i;
+    unsigned int i;
     size_t len;
 
     for (i = 1, len = 1; exp[i]; i++, len++) {
@@ -102,7 +102,7 @@ int get_pos_operator(char *exp)
     int nest_depth = 0; // 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     // 与えられた文字列を先頭から1文字ずつ検証する
-    for (int i = 0; exp[i]; i++) {
+    for (unsigned int i = 0; exp[i]; i++) {
         int priority;
 
         switch (exp[i]) {
