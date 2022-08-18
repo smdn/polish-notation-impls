@@ -32,8 +32,66 @@ Node* create_node()
         return &nodes[nb_node_used++];
 }
 
+/*
+ * ### 二分木への分割を行う関数の宣言 ###
+ */
+
+// 与えられたノードnodeの式expを二分木へと分割する関数
+// (成功した場合はtrue、エラーの場合はfalseを返す)
+bool parse_expression(Node* node);
+
 // 式expから最も外側にある丸括弧を取り除く関数
 // (成功した場合はtrue、エラーの場合はfalseを返す)
+bool remove_outermost_bracket(char *exp);
+
+// 式expから最も右側にあり、かつ優先順位が低い演算子を探して位置を返す関数
+// (演算子がない場合は-1を返す)
+int get_pos_operator(char *exp);
+
+/*
+ * ### 二分木の巡回を行う関数の宣言 ###
+ */
+
+// 後行順序訪問(帰りがけ順)で二分木を巡回して
+// すべてのノードの演算子または項を表示する関数
+void traverse_postorder(Node* node);
+
+// 中間順序訪問(通りがけ順)で二分木を巡回して
+// すべてのノードの演算子または項を表示する関数
+void traverse_inorder(Node* node);
+
+// 先行順序訪問(行きがけ順)で二分木を巡回して
+// すべてのノードの演算子または項を表示する関数
+void traverse_preorder(Node* node);
+
+/*
+ * ### 二分木から値の演算を行う関数の宣言 ###
+ */
+
+// 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
+// ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
+// 計算結果はnode->expに文字列として代入する
+bool calculate_expression_tree(Node* node);
+
+/*
+ * ### その他の前処理を行う関数の宣言 ###
+ */
+
+// 標準入力から1行分読み込む関数
+// 最大(len_max-1)文字までを標準入力から読み込み、末尾の改行文字を取り除いた上でexpに格納する
+bool read_line(char *exp, size_t len_max);
+
+// 文字列から空白を取り除く関数
+void remove_space(char *exp);
+
+// 式exp内の括弧の対応を検証する関数
+// 開き括弧と閉じ括弧が同数でない場合はエラーとする
+bool validate_bracket_balance(char *exp);
+
+/*
+ * ### 各関数の実装 ###
+ */
+
 bool remove_outermost_bracket(char *exp)
 {
     bool has_outermost_bracket = false; // 最も外側に括弧を持つかどうか
@@ -93,8 +151,6 @@ bool remove_outermost_bracket(char *exp)
         return true;
 }
 
-// 式expから最も右側にあり、かつ優先順位が低い演算子を探して位置を返す関数
-// (演算子がない場合は-1を返す)
 int get_pos_operator(char *exp)
 {
     int pos_operator = -1; // 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
@@ -133,8 +189,6 @@ int get_pos_operator(char *exp)
     return pos_operator;
 }
 
-// 与えられたノードnodeの式expを二分木へと分割する関数
-// (成功した場合はtrue、エラーの場合はfalseを返す)
 bool parse_expression(Node* node)
 {
     if (!node)
@@ -198,8 +252,6 @@ bool parse_expression(Node* node)
     return true;
 }
 
-// 後行順序訪問(帰りがけ順)で二分木を巡回して
-// すべてのノードの演算子または項を表示する関数
 void traverse_postorder(Node* node)
 {
     // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
@@ -213,8 +265,6 @@ void traverse_postorder(Node* node)
     printf("%s ", node->exp);
 }
 
-// 中間順序訪問(通りがけ順)で二分木を巡回して
-// すべてのノードの演算子または項を表示する関数
 void traverse_inorder(Node* node)
 {
     // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
@@ -245,8 +295,6 @@ void traverse_inorder(Node* node)
         printf(")");
 }
 
-// 先行順序訪問(行きがけ順)で二分木を巡回して
-// すべてのノードの演算子または項を表示する関数
 void traverse_preorder(Node* node)
 {
     // 巡回を始める前にノードの演算子または項を表示する
@@ -260,9 +308,6 @@ void traverse_preorder(Node* node)
         traverse_preorder(node->right);
 }
 
-// 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
-// ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
-// 計算結果はnode->expに文字列として代入する
 bool calculate_expression_tree(Node* node)
 {
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
@@ -316,7 +361,6 @@ bool calculate_expression_tree(Node* node)
     return true;
 }
 
-// 文字列から空白を取り除く関数
 void remove_space(char *exp)
 {
     char *dst = exp;
@@ -332,8 +376,6 @@ void remove_space(char *exp)
     *dst = '\0';
 }
 
-// 標準入力から1行分読み込む関数
-// 最大len_max文字までを標準入力から読み込み、末尾の改行文字を取り除いた上でexpに格納する
 bool read_line(char *exp, size_t len_max)
 {
     // 標準入力から最大(len_max - 1)文字を読み込む
@@ -349,8 +391,6 @@ bool read_line(char *exp, size_t len_max)
     return true;
 }
 
-// 式exp内の括弧の対応を検証する関数
-// 開き括弧と閉じ括弧が同数でない場合はエラーとする
 bool validate_bracket_balance(char *exp)
 {
     int nest_depth = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
