@@ -327,7 +327,15 @@ $testsuites = Get-ChildItem -Path $([System.IO.Path]::Combine($PSScriptRoot, "te
 $success = $true
 
 foreach ($impl in $implementations) {
-  $ret = Run-Tests $impl $testsuites $RunVerbose
+  $initial_working_dir = $(Get-Location)
+
+  try {
+    $ret = Run-Tests $impl $testsuites $RunVerbose
+  }
+  finally {
+    # revert change of working directory
+    Set-Location $initial_working_dir
+  }
 
   $success = $success -and $ret
 }
