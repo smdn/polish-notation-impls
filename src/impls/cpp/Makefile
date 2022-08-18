@@ -1,6 +1,6 @@
 CXX = g++
 #CXX = clang++
-CFLAGS = -std=c++2a -O4 -Wall -I/usr/local/include
+CXXFLAGS = -std=c++2a -O2 -Wall
 
 all: polish
 
@@ -8,7 +8,7 @@ polish: polish.o
 	$(CXX) polish.o -o polish
 
 polish.o: polish.cpp
-	$(CXX) $(CFLAGS) -c polish.cpp
+	$(CXX) $(CXXFLAGS) -c polish.cpp
 
 clean:
 	rm -f *.o polish
