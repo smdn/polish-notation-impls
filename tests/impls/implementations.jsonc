@@ -11,8 +11,20 @@
   },
   {
     "ID": "c",
-    "DisplayName": "C",
+    "DisplayName": "C (MSBuild/Windows)",
     "Directory": "src/impls/c/",
+    "Condition": "$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool]$(Get-Command msbuild -errorAction SilentlyContinue))",
+    "Commands": {
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
+      "Run":    { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ID": "c",
+    "DisplayName": "C (make)",
+    "Directory": "src/impls/c/",
+    "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
     "Commands": {
       "Build":  [ { "Command": "make" } ],
       "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
