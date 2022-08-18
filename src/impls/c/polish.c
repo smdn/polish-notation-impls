@@ -7,12 +7,12 @@
 #include <string.h>
 #include <limits.h>
 
-typedef struct Node Node;
-
-#define MAX_NODES   80
-#define MAX_EXP_LEN 0x100
+#define MAX_NODES 80 // このプログラムで確保するノードの最大個数
+#define MAX_EXP_LEN 0x100 // 各ノードで保持する式の文字列の最大文字数
 
 // ノードを構成するデータ構造
+typedef struct Node Node;
+
 struct Node {
     char exp[MAX_EXP_LEN]; // このノードが表す式(二分木への分割後は演算子または項となる)
     Node* left;  // 左の子ノードへのポインタ
