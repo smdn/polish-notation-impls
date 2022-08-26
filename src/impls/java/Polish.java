@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-import java.io.*;
-import java.text.*;
-import java.util.*;
-import java.util.function.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.text.DecimalFormat;
+import java.util.OptionalDouble;
+import java.util.function.Consumer;
 
 // 与えられた式が不正な形式であることを報告するための例外クラス
 class MalformedExpressionException extends Exception {
