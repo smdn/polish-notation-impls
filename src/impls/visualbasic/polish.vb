@@ -209,8 +209,8 @@ Class Node
     ' 巡回を開始する
     Traverse(
       Nothing, ' ノードへの行きがけには何もしない
-      Nothing, ' ノードへの通りがけには何もしない
-      _ ' ノードへの帰りがけに、ノードの演算子または項を出力する
+      Nothing, ' ノードの通りがけには何もしない
+      _ ' ノードからの帰りがけに、ノードの演算子または項を出力する
       _ ' (読みやすさのために項の後に空白を補って出力する)
       Sub(node) writer.Write(node.expression + " ")
     )
@@ -228,7 +228,7 @@ Class Node
           writer.Write("("c)
         End If
       End Sub,
-      _ ' ノードへの通りがけに、ノードの演算子または項を出力する
+      _ ' ノードの通りがけに、ノードの演算子または項を出力する
       Sub(node)
         ' 左に子ノードを持つ場合は、読みやすさのために空白を補う
         If node.left IsNot Nothing Then writer.Write(" "c)
@@ -239,7 +239,7 @@ Class Node
         ' 右に子ノードを持つ場合は、読みやすさのために空白を補う
         If node.right IsNot Nothing Then writer.Write(" "c)
       End Sub,
-      _ ' ノードへの帰りがけに、必要なら閉じ括弧を補う
+      _ ' ノードからの帰りがけに、必要なら閉じ括弧を補う
       Sub(node)
         ' 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
         If node.left IsNot Nothing AndAlso node.right IsNot Nothing Then
@@ -257,8 +257,8 @@ Class Node
       _ ' ノードへの行きがけに、ノードの演算子または項を出力する
       _ ' (読みやすさのために項の後に空白を補って出力する)
       Sub(node) writer.Write(node.expression + " "),
-      Nothing, ' ノードへの通りがけ時には何もしない
-      Nothing ' ノードへの帰りがけ時には何もしない
+      Nothing, ' ノードの通りがけ時には何もしない
+      Nothing ' ノードからの帰りがけ時には何もしない
     )
   End Sub
 
@@ -267,12 +267,12 @@ Class Node
   ' 計算結果はresultValueに代入する
   Public Function CalculateExpressionTree(ByRef resultValue As Double) As Boolean
     ' 巡回を開始する
-    ' ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+    ' ノードからの帰りがけに、ノードが表す部分式から、その値を計算する
     ' 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
     Traverse(
       Nothing, ' ノードへの行きがけには何もしない
-      Nothing, ' ノードへの通りがけには何もしない
-      AddressOf CalculateNode ' ノードへの帰りがけに、ノードの値を計算する
+      Nothing, ' ノードの通りがけには何もしない
+      AddressOf CalculateNode ' ノードからの帰りがけに、ノードの値を計算する
     )
 
     ' ノードの値を数値に変換し、計算結果として代入する

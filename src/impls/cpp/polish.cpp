@@ -284,8 +284,8 @@ void Node::write_postorder(std::ostream& stream)
     // 巡回を開始する
     traverse(
         nullptr, // ノードへの行きがけには何もしない
-        nullptr, // ノードへの通りがけには何もしない
-        // ノードへの帰りがけに、ノードの演算子または項を出力する
+        nullptr, // ノードの通りがけには何もしない
+        // ノードからの帰りがけに、ノードの演算子または項を出力する
         // (読みやすさのために項の後に空白を補って出力する)
         [&stream](Node& node) { stream << node.expression << ' '; }
     );
@@ -301,7 +301,7 @@ void Node::write_inorder(std::ostream& stream)
             if (node.left && node.right)
                 stream << '(';
         },
-        // ノードへの通りがけに、ノードの演算子または項を出力する
+        // ノードの通りがけに、ノードの演算子または項を出力する
         [&stream](Node& node) {
             // 左に子ノードを持つ場合は、読みやすさのために空白を補う
             if (node.left)
@@ -314,7 +314,7 @@ void Node::write_inorder(std::ostream& stream)
             if (node.right)
                 stream << ' ';
         },
-        // ノードへの帰りがけに、必要なら閉じ括弧を補う
+        // ノードからの帰りがけに、必要なら閉じ括弧を補う
         [&stream](Node& node) {
             // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
             if (node.left && node.right)
@@ -330,20 +330,20 @@ void Node::write_preorder(std::ostream& stream)
         // ノードへの行きがけに、ノードの演算子または項を出力する
         // (読みやすさのために項の後に空白を補って出力する)
         [&stream](Node& node) { stream << node.expression << ' '; },
-        nullptr, // ノードへの通りがけ時には何もしない
-        nullptr // ノードへの帰りがけ時には何もしない
+        nullptr, // ノードの通りがけ時には何もしない
+        nullptr // ノードからの帰りがけ時には何もしない
     );
 }
 
 bool Node::calculate_expression_tree(double& result_value)
 {
     // 巡回を開始する
-    // ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+    // ノードからの帰りがけに、ノードが表す部分式から、その値を計算する
     // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
     traverse(
         nullptr, // ノードへの行きがけには何もしない
-        nullptr, // ノードへの通りがけには何もしない
-        Node::calculate_node // ノードへの帰りがけに、ノードの値を計算する
+        nullptr, // ノードの通りがけには何もしない
+        Node::calculate_node // ノードからの帰りがけに、ノードの値を計算する
     );
 
     // ノードの値を数値に変換し、計算結果として代入する
