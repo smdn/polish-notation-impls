@@ -265,6 +265,13 @@ function Run-TestCases {
   $result = $true
 
   foreach ($testsuite in $testsuites) {
+    if (($testsuite.TargetImplementations -ne $null) -and !$testsuite.TargetImplementations.Contains($impl.ID)) {
+      if ($verbose) {
+        Write-Host -ForegroundColor Yellow "ℹ️ Test suite '$($testsuite.Name)' is not performed with implementation '$($impl.DisplayName)'"
+      }
+      continue
+    }
+
     $number_of_failure = 0
     $number_of_ignored = 0
 
