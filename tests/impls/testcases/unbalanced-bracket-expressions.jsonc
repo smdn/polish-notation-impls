@@ -36,8 +36,8 @@
     /*
     * parsed as valid expression currently
     */
-    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 0, "Input": "x()" },
-    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 0, "Input": "(x())" },
+    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "x()" },
+    { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "(x())" },
     { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "f=x()" },
   ]
 }

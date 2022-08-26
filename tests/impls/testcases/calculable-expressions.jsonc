@@ -69,11 +69,5 @@
     { "Input": "1 + 2",       "ExpectedCalculationResult": "3" },
     { "Input": " 1 + 2 ",     "ExpectedCalculationResult": "3" },
     { "Input": " ( 1 + 2) ",  "ExpectedCalculationResult": "3" },
-
-    /*
-     * implicit multiplication
-     */
-    { "Input": "2(1+2)",      "ExpectedCalculationResult": "2(1+2)", "ExpectedExitCode": 0 },
-    { "Input": "x=2(1+2)",    "ExpectedCalculationExpression": "x=2(1+2)", "ExpectedExitCode": 2 },
   ]
 }

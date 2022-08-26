@@ -1,7 +1,7 @@
 {
   "Name": "Test cases of incalculable expressions",
   "TestCases": [
-    { "Input": "A",                       "ExpectedExitCode": 0, "ExpectedCalculationResult": "A" }, // is treated as calculated result
+    { "Input": "A",                       "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "A" },
     { "Input": "A + B",                   "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(A + B)" },
     { "Input": "A = B",                   "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(A = B)" },
     { "Input": "(A + B) * C",             "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "((A + B) * C)" },
@@ -23,7 +23,9 @@
     /*
     * implicit multiplications
     */
-    { "Input": "6/2(1+2)",       "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(6 / 2(1+2))" },
-    { "Input": "(2*3)/2(1+2)",   "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(6 / 2(1+2))" },
+    { "Input": "2(1+2)",          "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "2(1+2)" },
+    { "Input": "x=2(1+2)",        "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(x = 2(1+2))" },
+    { "Input": "6/2(1+2)",        "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(6 / 2(1+2))" },
+    { "Input": "(2*3)/2(1+2)",    "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(6 / 2(1+2))" },
   ]
 }
