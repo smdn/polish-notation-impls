@@ -1,15 +1,5 @@
 [
   {
-    "ID": "csharp",
-    "DisplayName": "C#",
-    "Directory": "src/impls/csharp/",
-    "Commands": {
-      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net6.0", "--nologo", "-v:quiet" ] } ],
-      "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net6.0/polish", "ResolveCommandPath": true },
-    }
-  },
-  {
     "ID": "c",
     "DisplayName": "C (MSBuild/Windows)",
     "Directory": "src/impls/c/",
@@ -65,13 +55,23 @@
     }
   },
   {
-    "ID": "python",
-    "DisplayName": "Python 3",
-    "Directory": "src/impls/python/",
+    "ID": "csharp",
+    "DisplayName": "C#",
+    "Directory": "src/impls/csharp/",
     "Commands": {
-      "Build":  [ ],
-      "Clean":  [ ],
-      "Run":    { "Command": "python3", "Arguments": [ "polish.py" ] },
+      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net6.0", "--nologo", "-v:quiet" ] } ],
+      "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
+      "Run":    { "Command": "bin/Release/net6.0/polish", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ID": "java",
+    "DisplayName": "Java",
+    "Directory": "src/impls/java/",
+    "Commands": {
+      "Build":  [ { "Command": "javac", "Arguments": [ "-encoding", "UTF-8", "Polish.java" ] } ],
+      "Clean":  [ { "Command": "Remove-Item", "Arguments": [ "-Force", "*.class" ], "UseInvokeExpression": true } ],
+      "Run":    { "Command": "java", "Arguments": [ "Polish" ] },
     }
   },
   {
@@ -85,13 +85,13 @@
     }
   },
   {
-    "ID": "java",
-    "DisplayName": "Java",
-    "Directory": "src/impls/java/",
+    "ID": "python",
+    "DisplayName": "Python 3",
+    "Directory": "src/impls/python/",
     "Commands": {
-      "Build":  [ { "Command": "javac", "Arguments": [ "-encoding", "UTF-8", "Polish.java" ] } ],
-      "Clean":  [ { "Command": "Remove-Item", "Arguments": [ "-Force", "*.class" ], "UseInvokeExpression": true } ],
-      "Run":    { "Command": "java", "Arguments": [ "Polish" ] },
+      "Build":  [ ],
+      "Clean":  [ ],
+      "Run":    { "Command": "python3", "Arguments": [ "polish.py" ] },
     }
   },
   {
