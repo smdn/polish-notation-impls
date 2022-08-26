@@ -270,7 +270,9 @@ function Run-TestCases {
 
     foreach ($testcase in $testsuite.TestCases) {
       if (($testcase.TargetImplementations -ne $null) -and !$testcase.TargetImplementations.Contains($impl.ID)) {
-        Write-Host -ForegroundColor Yellow "ℹ️ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
+        if ($verbose) {
+          Write-Host -ForegroundColor Yellow "ℹ️ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
+        }
         $number_of_ignored++
         continue
       }
