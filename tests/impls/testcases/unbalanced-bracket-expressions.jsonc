@@ -2,8 +2,8 @@
   "Name": "Test cases of unbalanced bracket expressions",
   "TestCases": [
     /*
-    * unbalanced brackets
-    */
+     * unbalanced brackets
+     */
     { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": "(" },
     { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")" },
     { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")(" },
@@ -25,8 +25,8 @@
     { "ExpectedExitCode": 1, "ExpectAsUnbalancedBracket": true, "Input": ")1+2(" },
 
     /*
-    * empty brackets
-    */
+     * empty brackets
+     */
     { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "()" },
     { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "(())" },
     { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "((()))" },
@@ -34,8 +34,8 @@
     { "ExpectedExitCode": 1, "ExpectAsEmptyBracket": true, "Input": "()=1" },
 
     /*
-    * parsed as valid expression currently
-    */
+     * parsed as valid expression currently
+     */
     { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "x()" },
     { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "(x())" },
     { "ExpectAsInvalidExpression": false, "ExpectedExitCode": 2, "Input": "f=x()" },
