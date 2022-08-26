@@ -52,26 +52,61 @@ int get_pos_operator(const char *const exp);
  * ### 二分木の巡回を行う関数の宣言 ###
  */
 
+// 巡回する際の動作を定義したコールバック関数への関数ポインタ型
+typedef void (*traversal_callback_func_t)(Node *const node);
+
+// 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定された関数をコールバックする関数
+void traverse(
+    Node *const node,
+    const traversal_callback_func_t on_visit,   // ノードの行きがけにコールバックする関数
+    const traversal_callback_func_t on_transit, // ノードの通りがけにコールバックする関数
+    const traversal_callback_func_t on_leave    // ノードの帰りがけにコールバックする関数
+);
+
 // 後行順序訪問(帰りがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_postorder(const Node *const node);
+void print_postorder(Node *const node);
+
+// 帰りがけ順で巡回する際に、帰りがけにコールバックさせる関数
+void print_postorder_on_leave(Node *const node);
 
 // 中間順序訪問(通りがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_inorder(const Node *const node);
+void print_inorder(Node *const node);
+
+// 通りがけ順で巡回する際に、行きがけにコールバックさせる関数
+void print_inorder_on_visit(Node *const node);
+
+// 通りがけ順で巡回する際に、通りがけにコールバックさせる関数
+void print_inorder_on_transit(Node *const node);
+
+// 通りがけ順で巡回する際に、帰りがけにコールバックさせる関数
+void print_inorder_on_leave(Node *const node);
 
 // 先行順序訪問(行きがけ順)で二分木を巡回して
 // すべてのノードの演算子または項を表示する関数
-void traverse_preorder(const Node *const node);
+void print_preorder(Node *const node);
+
+// 行きがけ順で巡回する際に、行きがけにコールバックさせる関数
+void print_preorder_on_visit(Node *const node);
 
 /*
  * ### 二分木から値の演算を行う関数の宣言 ###
  */
 
+// 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算する関数
+// すべてのノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
+// 計算結果はresult_valueに代入する
+bool calculate_expression_tree(Node *const node, double *const result_value);
+
 // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
-// ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
-// 計算結果はnode->expに文字列として代入する
-bool calculate_expression_tree(Node *const node);
+// 計算できた場合、計算結果の値はnode->expに文字列として代入し、左右のノードは削除する
+void calculate_node(Node *const node);
+
+// 与えられた文字列を数値化する関数
+// 正常に変換できた場合はnumberに変換した数値を代入し、trueを返す
+// 変換できなかった場合はfalseを返す
+bool parse_number(const char *const expression, double *const number);
 
 /*
  * ### その他の前処理を行う関数の宣言 ###
@@ -252,94 +287,155 @@ int get_pos_operator(const char *const exp)
     return pos_operator;
 }
 
-void traverse_postorder(const Node *const node)
+void traverse(
+    Node *const node,
+    const traversal_callback_func_t on_visit,
+    const traversal_callback_func_t on_transit,
+    const traversal_callback_func_t on_leave
+)
 {
-    // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-    if (node->left)
-        traverse_postorder(node->left);
-    if (node->right)
-        traverse_postorder(node->right);
+    // このノードの行きがけに行う動作をコールバックする
+    if (on_visit)
+        on_visit(node);
 
+    // 左に子ノードをもつ場合は、再帰的に巡回する
+    if (node->left)
+        traverse(node->left, on_visit, on_transit, on_leave);
+
+    // このノードの通りがけに行う動作をコールバックする
+    if (on_transit)
+        on_transit(node);
+
+    // 右に子ノードをもつ場合は、再帰的に巡回する
+    if (node->right)
+        traverse(node->right, on_visit, on_transit, on_leave);
+
+    // このノードの帰りがけに行う動作をコールバックする
+    if (on_leave)
+        on_leave(node);
+}
+
+void print_postorder(Node *const node)
+{
+    // 巡回を開始する
+    traverse(
+        node,
+        NULL, // ノードへの行きがけ時には何もしない
+        NULL, // ノードへの通りがけ時には何もしない
+        print_postorder_on_leave // ノードへの帰りがけに、ノードの演算子または項を表示する
+    );
+
+    // 巡回が終了したら改行を表示する
+    printf("\n");
+}
+
+void print_postorder_on_leave(Node *const node)
+{
     // 巡回を終えた後でノードの演算子または項を表示する
     // (読みやすさのために項の後に空白を補って表示する)
     printf("%s ", node->exp);
 }
 
-void traverse_inorder(const Node *const node)
+void print_inorder(Node *const node)
 {
-    // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
+    // 巡回を開始する
+    traverse(
+        node,
+        print_inorder_on_visit,     // ノードへの行きがけに、必要なら開き括弧を補う
+        print_inorder_on_transit,   // ノードへの通りがけに、ノードの演算子または項を表示する
+        print_inorder_on_leave      // ノードへの帰りがけに、必要なら閉じ括弧を補う
+    );
+
+    // 巡回が終了したら改行を表示する
+    printf("\n");
+}
+
+void print_inorder_on_visit(Node *const node)
+{
+    // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
     if (node->left && node->right)
         printf("(");
+}
 
-    // 表示する前に左の子ノードを再帰的に巡回する
-    if (node->left) {
-        traverse_inorder(node->left);
-
-        // 読みやすさのために空白を補う
+void print_inorder_on_transit(Node *const node)
+{
+    if (node->left)
+        // 左に子ノードを持つ場合は、読みやすさのために空白を補う
         printf(" ");
-    }
 
-    // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
+    // 左の子ノードから右の子ノードへ巡回する際に、ノードの演算子または項を表示する
     printf("%s", node->exp);
 
-    // 表示した後に右の子ノードを再帰的に巡回する
-    if (node->right) {
-        // 読みやすさのために空白を補う
+    if (node->right)
+        // 右に子ノードを持つ場合は、読みやすさのために空白を補う
         printf(" ");
+}
 
-        traverse_inorder(node->right);
-    }
-
-    // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
+void print_inorder_on_leave(Node *const node)
+{
+    // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
     if (node->left && node->right)
         printf(")");
 }
 
-void traverse_preorder(const Node *const node)
+void print_preorder(Node *const node)
+{
+    // 巡回を開始する
+    traverse(
+        node,
+        print_preorder_on_visit, // ノードへの行きがけに、ノードの演算子または項を表示する
+        NULL, // ノードへの行きがけ時には何もしない
+        NULL  // ノードへの帰りがけ時には何もしない
+    );
+
+    // 巡回が終了したら改行を表示する
+    printf("\n");
+}
+
+void print_preorder_on_visit(Node *const node)
 {
     // 巡回を始める前にノードの演算子または項を表示する
     // (読みやすさのために項の後に空白を補って表示する)
     printf("%s ", node->exp);
-
-    // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    if (node->left)
-        traverse_preorder(node->left);
-    if (node->right)
-        traverse_preorder(node->right);
 }
 
-bool calculate_expression_tree(Node *const node)
+bool calculate_expression_tree(Node *const node, double *const result_value)
+{
+    // 巡回を開始する
+    // ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+    // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
+    traverse(
+        node,
+        NULL, // ノードへの行きがけには何もしない
+        NULL, // ノードへの通りがけには何もしない
+        calculate_node // ノードへの帰りがけに、ノードの値を計算する
+    );
+
+    // ノードの値を数値に変換し、計算結果として代入する
+    return parse_number(node->exp, result_value);
+}
+
+void calculate_node(Node *const node)
 {
     // 左右に子ノードを持たない場合、ノードは部分式ではなく項であり、
-    // それ以上計算できないのでtrueを返す
+    // それ以上計算できないので処理を終える
     if (!node->left || !node->right)
-        return true;
-
-    // 左右の子ノードについて、再帰的にノードの値を計算する
-    calculate_expression_tree(node->left);
-    calculate_expression_tree(node->right);
+        return;
 
     // 計算した左右の子ノードの値を数値型(double)に変換して演算子の左項・右項の値とする
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-    // ノードの値が計算できないものとして、falseを返す
+    // ノードの値が計算できないものとして、処理を終える
     double left_operand, right_operand;
-    char *endptr_value; // strtodで変換できない文字があったかどうかを検出するためのポインタ
 
     // 左ノードの値を数値に変換して演算子の左項left_operandの値とする
-    errno = 0;
-    left_operand = strtod(node->left->exp, &endptr_value);
-
-    if (ERANGE == errno || endptr_value != (node->left->exp + strlen(node->left->exp)))
-        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-        return false;
+    if (!parse_number(node->left->exp, &left_operand))
+        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+        return;
 
     // 右ノードの値を数値に変換して演算子の右項right_operandの値とする
-    errno = 0;
-    right_operand = strtod(node->right->exp, &endptr_value);
-
-    if (ERANGE == errno || endptr_value != (node->right->exp + strlen(node->right->exp)))
-        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-        return false;
+    if (!parse_number(node->right->exp, &right_operand))
+        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+        return;
 
     // ノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度node->expに代入することで現在のノードの値とする
@@ -348,16 +444,36 @@ bool calculate_expression_tree(Node *const node)
         case '-': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand - right_operand); break;
         case '*': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand * right_operand); break;
         case '/': snprintf(node->exp, MAX_EXP_LEN, "%.17g", left_operand / right_operand); break;
-          // 上記以外の演算子の場合は計算できないものとして、falseを返す
-        default: return false;
+        // 上記以外の演算子の場合は計算できないものとして扱い、処理を終える
+        default: return;
     }
 
-    // 左右の子ノードの値からノードの値が求まったため、
-    // このノードは左右に子ノードを持たない値のみのノードとする
+    // 左右の子ノードの値からノードの値の計算結果が求まったため、
+    // このノードは左右に子ノードを持たない計算済みのノードとする
     node->left  = NULL;
     node->right = NULL;
+}
 
-    // 計算できたため、trueを返す
+bool parse_number(const char *const expression, double *const number)
+{
+    // 入力および出力先がNULLの場合は変換できないものとして扱う
+    if (!expression)
+        return false;
+    if (!number)
+        return false;
+
+    char *endptr_value; // strtodで変換できない文字の位置を検出するためのポインタ
+
+    // 与えられた文字列を数値に変換する
+    errno = 0;
+    *number = strtod(expression, &endptr_value);
+
+    if (ERANGE == errno)
+        return false; // doubleで扱える範囲外のため、正常に変換できなかった
+
+    if (endptr_value != (expression + strlen(expression)))
+        return false; // 途中に変換できない文字があるため、正常に変換できなかった
+
     return true;
 }
 
@@ -460,31 +576,29 @@ int main()
 
     // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
     printf("reverse polish notation: ");
-    traverse_postorder(root);
-    printf("\n");
+    print_postorder(root);
 
     // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
     printf("infix notation: ");
-    traverse_inorder(root);
-    printf("\n");
+    print_inorder(root);
 
     // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
     printf("polish notation: ");
-    traverse_preorder(root);
-    printf("\n");
+    print_preorder(root);
 
     // 分割した二分木から式全体の値を計算する
-    if (!calculate_expression_tree(root)) {
-        // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-        printf("calculated expression: ");
-        traverse_inorder(root);
-        printf("\n");
-        return 2;
+    double result_value;
+
+    if (calculate_expression_tree(root, &result_value)) {
+        // 計算できた場合はその値を表示する
+        printf("calculated result: %.17g\n", result_value);
+        return 0;
     }
     else {
-        // 計算できた場合はその値を表示する
-        printf("calculated result: %s\n", root->exp);
-        return 0;
+        // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
+        printf("calculated expression: ");
+        print_inorder(root);
+        return 2;
     }
 }
 
