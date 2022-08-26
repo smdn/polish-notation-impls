@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+using System.IO;
 
 // 与えられた式が不正な形式であることを報告するための例外クラス
 class MalformedExpressionException : Exception {
@@ -12,7 +13,7 @@ class MalformedExpressionException : Exception {
 
 // ノードを構成するデータ構造
 class Node {
-  public string Expression { get; private set; } // このノードが表す式(二分木への分割後は演算子または項となる)
+  private string expression; // このノードが表す式(二分木への分割後は演算子または項となる)
   private Node? left = null;  // 左の子ノード
   private Node? right = null; // 右の子ノード
 
@@ -23,7 +24,7 @@ class Node {
     ValidateBracketBalance(expression);
 
     // チェックした式expressionをこのノードが表す式として設定する
-    Expression = expression;
+    this.expression = expression;
   }
 
   // 式expression内の括弧の対応を検証するメソッド
@@ -61,10 +62,10 @@ class Node {
   public void ParseExpression()
   {
     // 式Expressionから最も外側にある丸括弧を取り除く
-    Expression = RemoveOutermostBracket(Expression);
+    expression = RemoveOutermostBracket(expression);
 
     // 式Expressionから演算子を探して位置を取得する
-    var posOperator = GetOperatorPosition(Expression);
+    var posOperator = GetOperatorPosition(expression);
 
     if (posOperator < 0) {
       // 式Expressionに演算子が含まれない場合、Expressionは項であるとみなす
@@ -74,24 +75,24 @@ class Node {
       return;
     }
 
-    if (posOperator == 0 || posOperator == Expression.Length - 1)
+    if (posOperator == 0 || posOperator == expression.Length - 1)
       // 演算子の位置が式の先頭または末尾の場合は不正な式と判断する
-      throw new MalformedExpressionException("invalid expression: " + Expression);
+      throw new MalformedExpressionException("invalid expression: " + expression);
 
     // 以下、演算子の位置をもとに左右の部分式に分割する
 
     // 演算子の左側を左の部分式としてノードを作成する
-    left = new Node(Expression[..posOperator]);
+    left = new Node(expression[..posOperator]);
     // 左側のノード(部分式)について、再帰的に二分木へと分割する
     left.ParseExpression();
 
     // 演算子の右側を右の部分式としてノードを作成する
-    right = new Node(Expression[(posOperator + 1)..]);
+    right = new Node(expression[(posOperator + 1)..]);
     // 右側のノード(部分式)について、再帰的に二分木へと分割する
     right.ParseExpression();
 
     // 残った演算子部分をこのノードに設定する
-    Expression = Expression.Substring(posOperator, 1);
+    expression = expression.Substring(posOperator, 1);
   }
 
   // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
@@ -186,114 +187,147 @@ class Node {
     return posOperator;
   }
 
-  // 後行順序訪問(帰りがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示するメソッド
-  public void TraversePostorder()
+  // 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定されたデリゲートをコールバックするメソッド
+  public void Traverse(
+    Action<Node>? onVisit,    // ノードの行きがけにコールバックするデリゲート
+    Action<Node>? onTransit,  // ノードの通りがけにコールバックするデリゲート
+    Action<Node>? onLeave     // ノードの帰りがけにコールバックするデリゲート
+  )
   {
-    // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-    if (left != null)
-      left.TraversePostorder();
-    if (right != null)
-      right.TraversePostorder();
+    // このノードの行きがけに行う動作をコールバックする
+    onVisit?.Invoke(this);
 
-    // 巡回を終えた後でノードの演算子または項を表示する
-    // (読みやすさのために項の後に空白を補って表示する)
-    Console.Write(Expression + " ");
+    // 左に子ノードをもつ場合は、再帰的に巡回する
+    left?.Traverse(onVisit, onTransit, onLeave);
+
+    // このノードの通りがけに行う動作をコールバックする
+    onTransit?.Invoke(this);
+
+    // 右に子ノードをもつ場合は、再帰的に巡回する
+    right?.Traverse(onVisit, onTransit, onLeave);
+
+    // このノードの帰りがけに行う動作をコールバックする
+    onLeave?.Invoke(this);
+  }
+
+  // 後行順序訪問(帰りがけ順)で二分木を巡回して
+  // すべてのノードの演算子または項をwriterに出力するメソッド
+  public void WritePostorder(TextWriter writer)
+  {
+    // 巡回を開始する
+    Traverse(
+      null, // ノードへの行きがけには何もしない
+      null, // ノードへの通りがけには何もしない
+      // ノードへの帰りがけに、ノードの演算子または項を出力する
+      // (読みやすさのために項の後に空白を補って出力する)
+      node => writer.Write(node.expression + " ")
+    );
   }
 
   // 中間順序訪問(通りがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示するメソッド
-  public void TraverseInorder()
+  // すべてのノードの演算子または項をwriterに出力するメソッド
+  public void WriteInorder(TextWriter writer)
   {
-    // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-    if (left != null && right != null)
-      Console.Write("(");
+    // 巡回を開始する
+    Traverse(
+      // ノードへの行きがけに、必要なら開き括弧を補う
+      node => {
+        // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
+        if (node.left != null && node.right != null)
+          writer.Write('(');
+      },
+      // ノードへの通りがけに、ノードの演算子または項を出力する
+      node => {
+        // 左に子ノードを持つ場合は、読みやすさのために空白を補う
+        if (node.left != null)
+          writer.Write(' ');
 
-    // 表示する前に左の子ノードを再帰的に巡回する
-    if (left != null) {
-      left.TraverseInorder();
+        // 左の子ノードから右の子ノードへ巡回する際に、ノードの演算子または項を出力する
+        writer.Write(node.expression);
 
-      // 読みやすさのために空白を補う
-      Console.Write(" ");
-    }
-
-    // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-    Console.Write(Expression);
-
-    // 表示した後に右の子ノードを再帰的に巡回する
-    if (right != null) {
-      // 読みやすさのために空白を補う
-      Console.Write(" ");
-
-      right.TraverseInorder();
-    }
-
-    // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-    if (left != null && right != null)
-      Console.Write(")");
+        // 右に子ノードを持つ場合は、読みやすさのために空白を補う
+        if (node.right != null)
+          writer.Write(' ');
+      },
+      // ノードへの帰りがけに、必要なら閉じ括弧を補う
+      node => {
+        // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
+        if (node.left != null && node.right != null)
+          writer.Write(')');
+      }
+    );
   }
 
   // 先行順序訪問(行きがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示するメソッド
-  public void TraversePreorder()
+  // すべてのノードの演算子または項をwriterに出力するメソッド
+  public void WritePreorder(TextWriter writer)
   {
-    // 巡回を始める前にノードの演算子または項を表示する
-    // (読みやすさのために項の後に空白を補って表示する)
-    Console.Write(Expression + " ");
-
-    // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    if (left != null)
-      left.TraversePreorder();
-    if (right != null)
-      right.TraversePreorder();
+    // 巡回を開始する
+    Traverse(
+      // ノードへの行きがけに、ノードの演算子または項を出力する
+      // (読みやすさのために項の後に空白を補って出力する)
+      node => writer.Write(node.expression + " "),
+      null, // ノードへの通りがけ時には何もしない
+      null // ノードへの帰りがけ時には何もしない
+    );
   }
 
-  // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
-  // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
-  // 計算結果はExpressionに文字列として代入する
-  public bool CalculateExpressionTree()
+  // 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算するメソッド
+  // すべてのノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
+  // 計算結果はresultValueに代入する
+  public bool CalculateExpressionTree(out double resultValue)
+  {
+    // 巡回を開始する
+    // ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+    // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
+    Traverse(
+      null, // ノードへの行きがけには何もしない
+      null, // ノードへの通りがけには何もしない
+      CalculateNode // ノードへの帰りがけに、ノードの値を計算する
+    );
+
+    // ノードの値を数値に変換し、計算結果として代入する
+    return double.TryParse(expression, out resultValue);
+  }
+
+  // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
+  // 計算できた場合、計算結果の値はnode.expressionに文字列として代入し、左右のノードは削除する
+  private static void CalculateNode(Node node)
   {
     // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
-    // それ以上計算できないのでtrueを返す
-    if (left == null || right == null)
-      return true;
-
-    // 左右の子ノードについて、再帰的にノードの値を計算する
-    left.CalculateExpressionTree();
-    right.CalculateExpressionTree();
+    // それ以上計算できないので処理を終える
+    if (node.left == null || node.right == null)
+      return;
 
     // 計算した左右の子ノードの値を数値型(double)に変換する
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-    // ノードの値が計算できないものとして、falseを返す
+    // ノードの値が計算できないものとして、処理を終える
 
     // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-    if (!double.TryParse(left.Expression, out var leftOperand))
-      // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-      return false;
+    if (!double.TryParse(node.left.expression, out var leftOperand))
+      // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+      return;
 
     // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-    if (!double.TryParse(right.Expression, out var rightOperand))
-      // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-      return false;
+    if (!double.TryParse(node.right.expression, out var rightOperand))
+      // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+      return;
 
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
-    // 演算した結果を文字列に変換して再度Expressionに代入することで現在のノードの値とする
-    switch (Expression[0]) {
-      case '+': Expression = (leftOperand + rightOperand).ToString("g17"); break;
-      case '-': Expression = (leftOperand - rightOperand).ToString("g17"); break;
-      case '*': Expression = (leftOperand * rightOperand).ToString("g17"); break;
-      case '/': Expression = (leftOperand / rightOperand).ToString("g17"); break;
-      // 上記以外の演算子の場合は計算できないものとして、falseを返す
-      default: return false;
+    // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
+    switch (node.expression[0]) {
+      case '+': node.expression = (leftOperand + rightOperand).ToString("g17"); break;
+      case '-': node.expression = (leftOperand - rightOperand).ToString("g17"); break;
+      case '*': node.expression = (leftOperand * rightOperand).ToString("g17"); break;
+      case '/': node.expression = (leftOperand / rightOperand).ToString("g17"); break;
+      // 上記以外の演算子の場合は計算できないものとして扱い、処理を終える
+      default: return;
     }
 
-    // 左右の子ノードの値から現在のノードの値が求まったため、
-    // このノードは左右に子ノードを持たない値のみのノードとする
-    left = null;
-    right = null;
-
-    // 計算できたため、trueを返す
-    return true;
+    // 左右の子ノードの値からノードの値の計算結果が求まったため、
+    // このノードは左右に子ノードを持たない計算済みのノードとする
+    node.left = null;
+    node.right = null;
   }
 }
 
@@ -322,7 +356,7 @@ class Polish {
       // 二分木の根(root)ノードを作成し、式全体を格納する
       root = new Node(expression);
 
-      Console.WriteLine("expression: {0}", root.Expression);
+      Console.WriteLine("expression: {0}", expression);
 
       // 根ノードに格納した式を二分木へと分割する
       root.ParseExpression();
@@ -334,32 +368,31 @@ class Polish {
 
     // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
     Console.Write("reverse polish notation: ");
-    root.TraversePostorder();
+    root.WritePostorder(Console.Out);
     Console.WriteLine();
 
     // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
     Console.Write("infix notation: ");
-    root.TraverseInorder();
+    root.WriteInorder(Console.Out);
     Console.WriteLine();
 
     // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
     Console.Write("polish notation: ");
-    root.TraversePreorder();
+    root.WritePreorder(Console.Out);
     Console.WriteLine();
 
     // 分割した二分木から式全体の値を計算する
-    if (root.CalculateExpressionTree()) {
+    if (root.CalculateExpressionTree(out var resultValue)) {
       // 計算できた場合はその値を表示する
-      Console.WriteLine("calculated result: {0}", root.Expression);
+      Console.WriteLine("calculated result: {0:g17}", resultValue);
       return 0;
     }
     else {
       // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
       Console.Write("calculated expression: ");
-      root.TraverseInorder();
+      root.WriteInorder(Console.Out);
       Console.WriteLine();
       return 2;
     }
   }
 }
-
