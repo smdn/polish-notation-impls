@@ -1,8 +1,10 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -15,30 +17,38 @@ private:
     std::unique_ptr<Node> right = nullptr;  // 右の子ノード
 
 public:
-    inline const std::string& get_expression() const { return expression; }
-
     // コンストラクタ(与えられた式expressionを持つノードを構成する)
     Node(const std::string& expression);
 
     // 式expressionを二分木へと分割するメソッド
     void parse_expression();
 
+    // 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定された関数をコールバックするメソッド
+    void traverse(
+        std::function<void(Node&)> on_visit,      // ノードの行きがけにコールバックする関数
+        std::function<void(Node&)> on_transit,    // ノードの通りがけにコールバックする関数
+        std::function<void(Node&)> on_leave       // ノードの帰りがけにコールバックする関数
+    );
+
     // 後行順序訪問(帰りがけ順)で二分木を巡回して
-    // すべてのノードの演算子または項を表示するメソッド
-    void traverse_postorder() const;
+    // すべてのノードの演算子または項をstreamに出力するメソッド
+    void write_postorder(std::ostream& stream);
 
     // 中間順序訪問(通りがけ順)で二分木を巡回して
-    // すべてのノードの演算子または項を表示するメソッド
-    void traverse_inorder() const;
+    // すべてのノードの演算子または項をstreamに出力するメソッド
+    void write_inorder(std::ostream& stream);
 
     // 先行順序訪問(行きがけ順)で二分木を巡回して
-    // すべてのノードの演算子または項を表示するメソッド
-    void traverse_preorder() const;
+    // すべてのノードの演算子または項をstreamに出力するメソッド
+    void write_preorder(std::ostream& stream);
 
-    // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
-    // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
-    // 計算結果はexpressionに文字列として代入する
-    bool calculate_expression_tree();
+    // 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算するメソッド
+    // すべてのノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
+    // 計算結果はresult_valueに代入する
+    bool calculate_expression_tree(double& result_value);
+
+    // 演算結果の数値を文字列化するためのメソッド
+    static std::string format_number(const double& number) noexcept;
 
 private:
     // 式expression内の括弧の対応を検証するメソッド
@@ -52,8 +62,14 @@ private:
     // (演算子がない場合はstring::nposを返す)
     static std::string::size_type get_operator_position(std::string_view expression) noexcept;
 
-    // 演算結果の数値を文字列化するためのメソッド
-    static std::string format_number(const double& number) noexcept;
+    // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
+    // 計算できた場合、計算結果の値はnode.expressionに文字列として代入し、左右のノードは削除する
+    static void calculate_node(Node& node);
+
+    // 与えられた文字列を数値化するメソッド
+    // 正常に変換できた場合はnumberに変換した数値を代入し、trueを返す
+    // 変換できなかった場合はfalseを返す
+    static bool parse_number(const std::string& expression, double& number);
 };
 
 // 与えられた式が不正な形式であることを報告するための例外クラス
@@ -236,118 +252,162 @@ std::string::size_type Node::get_operator_position(std::string_view expression) 
     return pos_operator;
 }
 
-void Node::traverse_postorder() const
+void Node::traverse(
+    std::function<void(Node&)> on_visit,
+    std::function<void(Node&)> on_transit,
+    std::function<void(Node&)> on_leave
+)
 {
-    // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
+    // このノードの行きがけに行う動作をコールバックする
+    if (on_visit)
+        on_visit(*this);
+
+    // 左に子ノードをもつ場合は、再帰的に巡回する
     if (left)
-        left->traverse_postorder();
+        left->traverse(on_visit, on_transit, on_leave);
+
+    // このノードの通りがけに行う動作をコールバックする
+    if (on_transit)
+        on_transit(*this);
+
+    // 右に子ノードをもつ場合は、再帰的に巡回する
     if (right)
-        right->traverse_postorder();
+        right->traverse(on_visit, on_transit, on_leave);
 
-    // 巡回を終えた後でノードの演算子または項を表示する
-    // (読みやすさのために項の後に空白を補って表示する)
-    std::cout << expression << ' ';
+    // このノードの帰りがけに行う動作をコールバックする
+    if (on_leave)
+        on_leave(*this);
 }
 
-void Node::traverse_inorder() const
+void Node::write_postorder(std::ostream& stream)
 {
-    // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-    if (left && right)
-        std::cout << '(';
-
-    // 表示する前に左の子ノードを再帰的に巡回する
-    if (left) {
-        left->traverse_inorder();
-
-        // 読みやすさのために空白を補う
-        std::cout << ' ';
-    }
-
-    // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-    std::cout << expression;
-
-    // 表示した後に右の子ノードを再帰的に巡回する
-    if (right) {
-        // 読みやすさのために空白を補う
-        std::cout << ' ';
-
-        right->traverse_inorder();
-    }
-
-    // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-    if (left && right)
-        std::cout << ')';
+    // 巡回を開始する
+    traverse(
+        nullptr, // ノードへの行きがけには何もしない
+        nullptr, // ノードへの通りがけには何もしない
+        // ノードへの帰りがけに、ノードの演算子または項を出力する
+        // (読みやすさのために項の後に空白を補って出力する)
+        [&stream](Node& node) { stream << node.expression << ' '; }
+    );
 }
 
-void Node::traverse_preorder() const
+void Node::write_inorder(std::ostream& stream)
 {
-    // 巡回を始める前にノードの演算子または項を表示する
-    // (読みやすさのために項の後に空白を補って表示する)
-    std::cout << expression << ' ';
+    // 巡回を開始する
+    traverse(
+        // ノードへの行きがけに、必要なら開き括弧を補う
+        [&stream](Node& node) {
+            // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
+            if (node.left && node.right)
+                stream << '(';
+        },
+        // ノードへの通りがけに、ノードの演算子または項を出力する
+        [&stream](Node& node) {
+            // 左に子ノードを持つ場合は、読みやすさのために空白を補う
+            if (node.left)
+                stream << ' ';
 
-    // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    if (left)
-        left->traverse_preorder();
-    if (right)
-        right->traverse_preorder();
+            // 左の子ノードから右の子ノードへ巡回する際に、ノードの演算子または項を出力する
+            stream << node.expression;
+
+            // 右に子ノードを持つ場合は、読みやすさのために空白を補う
+            if (node.right)
+                stream << ' ';
+        },
+        // ノードへの帰りがけに、必要なら閉じ括弧を補う
+        [&stream](Node& node) {
+            // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
+            if (node.left && node.right)
+                stream << ')';
+        }
+    );
 }
 
-bool Node::calculate_expression_tree()
+void Node::write_preorder(std::ostream& stream)
+{
+    // 巡回を開始する
+    traverse(
+        // ノードへの行きがけに、ノードの演算子または項を出力する
+        // (読みやすさのために項の後に空白を補って出力する)
+        [&stream](Node& node) { stream << node.expression << ' '; },
+        nullptr, // ノードへの通りがけ時には何もしない
+        nullptr // ノードへの帰りがけ時には何もしない
+    );
+}
+
+bool Node::calculate_expression_tree(double& result_value)
+{
+    // 巡回を開始する
+    // ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+    // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
+    traverse(
+        nullptr, // ノードへの行きがけには何もしない
+        nullptr, // ノードへの通りがけには何もしない
+        Node::calculate_node // ノードへの帰りがけに、ノードの値を計算する
+    );
+
+    // ノードの値を数値に変換し、計算結果として代入する
+    return parse_number(expression, result_value);
+}
+
+void Node::calculate_node(Node& node)
 {
     // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
-    // それ以上計算できないのでtrueを返す
-    if (!left || !right)
-        return true;
-
-    // 左右の子ノードについて、再帰的にノードの値を計算する
-    left->calculate_expression_tree();
-    right->calculate_expression_tree();
+    // それ以上計算できないので処理を終える
+    if (!node.left || !node.right)
+        return;
 
     // 計算した左右の子ノードの値を数値型(double)に変換する
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-    // ノードの値が計算できないものとして、falseを返す
+    // ノードの値が計算できないものとして、処理を終える
     double left_operand, right_operand;
 
-    try {
-        size_t pos_invalid; // std::stodで変換できない文字の位置を検出するための変数
+    // 左ノードの値を数値に変換して演算子の左項left_operandの値とする
+    if (!parse_number(node.left->expression, left_operand))
+        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+        return;
 
-        // 左ノードの値を数値に変換して演算子の左項left_operandの値とする
-        left_operand = std::stod(left->expression, &pos_invalid);
-
-        if (pos_invalid < left->expression.length())
-            return false; // 途中に変換できない文字があるため、計算できないものとして扱う
-
-        // 右ノードの値を数値に変換して演算子の右項right_operandの値とする
-        right_operand = std::stod(right->expression, &pos_invalid);
-
-        if (pos_invalid < right->expression.length())
-            return false; // 途中に変換できない文字があるため、計算できないものとして扱う
-    }
-    catch (std::out_of_range&) {
-        return false;// doubleで扱える範囲外のため、計算できないものとして扱う
-    }
-    catch (std::invalid_argument&) {
-        return false; // doubleに変換できないため、計算できないものとして扱う
-    }
+    // 右ノードの値を数値に変換して演算子の右項right_operandの値とする
+    if (!parse_number(node.right->expression, right_operand))
+        // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+        return;
 
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
-    switch (expression.front()) {
-        case '+': expression = format_number(left_operand + right_operand); break;
-        case '-': expression = format_number(left_operand - right_operand); break;
-        case '*': expression = format_number(left_operand * right_operand); break;
-        case '/': expression = format_number(left_operand / right_operand); break;
-        // 上記以外の演算子の場合は計算できないものとして、falseを返す
-        default: return false;
+    switch (node.expression.front()) {
+        case '+': node.expression = format_number(left_operand + right_operand); break;
+        case '-': node.expression = format_number(left_operand - right_operand); break;
+        case '*': node.expression = format_number(left_operand * right_operand); break;
+        case '/': node.expression = format_number(left_operand / right_operand); break;
+        // 上記以外の演算子の場合は計算できないものとして扱い、処理を終える
+        default: return;
     }
 
-    // 左右の子ノードの値から現在のノードの値が求まったため、
-    // このノードは左右に子ノードを持たない値のみのノードとする
-    left = nullptr;
-    right = nullptr;
+    // 左右の子ノードの値からノードの値の計算結果が求まったため、
+    // このノードは左右に子ノードを持たない計算済みのノードとする
+    node.left = nullptr;
+    node.right = nullptr;
+}
 
-    // 計算できたため、trueを返す
-    return true;
+bool Node::parse_number(const std::string& expression, double& number)
+{
+    try {
+        size_t pos_invalid; // std::stodで変換できない文字の位置を検出するための変数
+
+        // 与えられた文字列を数値に変換する
+        number = std::stod(expression, &pos_invalid);
+
+        if (pos_invalid < expression.length())
+            return false; // 途中に変換できない文字があるため、正常に変換できなかった
+
+        return true;
+    }
+    catch (std::out_of_range&) {
+        return false;// doubleで扱える範囲外のため、正常に変換できなかった
+    }
+    catch (std::invalid_argument&) {
+        return false; // doubleに変換できないため、正常に変換できなかった
+    }
 }
 
 std::string Node::format_number(const double& number) noexcept
@@ -394,7 +454,7 @@ int main()
         // 二分木の根(root)ノードを作成し、式全体を格納する
         root = std::make_unique<Node>(expression);
 
-        std::cout << "expression: " << root->get_expression() << std::endl;
+        std::cout << "expression: " << expression << std::endl;
 
         // 根ノードに格納した式を二分木へと分割する
         root->parse_expression();
@@ -406,29 +466,31 @@ int main()
 
     // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
     std::cout << "reverse polish notation: ";
-    root->traverse_postorder();
+    root->write_postorder(std::cout);
     std::cout << std::endl;
 
     // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
     std::cout << "infix notation: ";
-    root->traverse_inorder();
+    root->write_inorder(std::cout);
     std::cout << std::endl;
 
     // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
     std::cout << "polish notation: ";
-    root->traverse_preorder();
+    root->write_preorder(std::cout);
     std::cout << std::endl;
 
     // 分割した二分木から式全体の値を計算する
-    if (root->calculate_expression_tree()) {
+    double result_value;
+
+    if (root->calculate_expression_tree(result_value)) {
         // 計算できた場合はその値を表示する
-        std::cout << "calculated result: " << root->get_expression() << std::endl;
+        std::cout << "calculated result: " << Node::format_number(result_value) << std::endl;
         return 0;
     }
     else {
         // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
         std::cout << "calculated expression: ";
-        root->traverse_inorder();
+        root->write_inorder(std::cout);
         std::cout << std::endl;
         return 2;
     }

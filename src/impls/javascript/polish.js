@@ -29,9 +29,6 @@ class Node {
     this.#expression = expression;
   }
 
-  // このノードが表す式を取得するためのプロパティ
-  get expression() { return this.#expression; }
-
   // 式expression内の括弧の対応を検証するメソッド
   // 開き括弧と閉じ括弧が同数でない場合はエラーとする
   static #validateBracketBalance(expression)
@@ -196,117 +193,169 @@ class Node {
     return posOperator;
   }
 
-  // 後行順序訪問(帰りがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示するメソッド
-  traversePostorder(stdout)
+  // 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定された関数をコールバックするメソッド
+  traverse(
+    onVisit,    // ノードの行きがけにコールバックする関数
+    onTransit,  // ノードの通りがけにコールバックする関数
+    onLeave     // ノードの帰りがけにコールバックする関数
+  )
   {
-    // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-    if (this.#left)
-      this.#left.traversePostorder(stdout);
-    if (this.#right)
-      this.#right.traversePostorder(stdout);
+    // このノードの行きがけに行う動作をコールバックする
+    onVisit?.(this);
 
-    // 巡回を終えた後でノードの演算子または項を表示する
-    // (読みやすさのために項の後に空白を補って表示する)
-    stdout.write(this.#expression + " ");
+    // 左に子ノードをもつ場合は、再帰的に巡回する
+    this.#left?.traverse(onVisit, onTransit, onLeave);
+
+    // このノードの通りがけに行う動作をコールバックする
+    onTransit?.(this);
+
+    // 右に子ノードをもつ場合は、再帰的に巡回する
+    this.#right?.traverse(onVisit, onTransit, onLeave);
+
+    // このノードの帰りがけに行う動作をコールバックする
+    onLeave?.(this);
+  }
+
+  // 後行順序訪問(帰りがけ順)で二分木を巡回して
+  // すべてのノードの演算子または項をoutに出力するメソッド
+  writePostorder(out)
+  {
+    // 巡回を開始する
+    this.traverse(
+      null, // ノードへの行きがけには何もしない
+      null, // ノードへの通りがけには何もしない
+      // ノードへの帰りがけに、ノードの演算子または項を出力する
+      // (読みやすさのために項の後に空白を補って出力する)
+      node => out.write(node.#expression + " ")
+    );
   }
 
   // 中間順序訪問(通りがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示するメソッド
-  traverseInorder(stdout)
+  // すべてのノードの演算子または項をoutに出力するメソッド
+  writeInorder(out)
   {
-    // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-    if (this.#left && this.#right)
-      stdout.write("(");
+    // 巡回を開始する
+    this.traverse(
+      // ノードへの行きがけに、必要なら開き括弧を補う
+      node => {
+        // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
+        if (node.#left && node.#right)
+          out.write('(');
+      },
+      // ノードへの通りがけに、ノードの演算子または項を出力する
+      node => {
+        // 左に子ノードを持つ場合は、読みやすさのために空白を補う
+        if (node.#left)
+          out.write(' ');
 
-    // 表示する前に左の子ノードを再帰的に巡回する
-    if (this.#left) {
-      this.#left.traverseInorder(stdout);
+        // 左の子ノードから右の子ノードへ巡回する際に、ノードの演算子または項を出力する
+        out.write(node.#expression);
 
-      // 読みやすさのために空白を補う
-      stdout.write(" ");
-    }
-
-    // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-    stdout.write(this.#expression);
-
-    // 表示した後に右の子ノードを再帰的に巡回する
-    if (this.#right) {
-      // 読みやすさのために空白を補う
-      stdout.write(" ");
-
-      this.#right.traverseInorder(stdout);
-    }
-
-    // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-    if (this.#left && this.#right)
-      stdout.write(")");
+        // 右に子ノードを持つ場合は、読みやすさのために空白を補う
+        if (node.#right)
+          out.write(' ');
+      },
+      // ノードへの帰りがけに、必要なら閉じ括弧を補う
+      node => {
+        // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
+        if (node.#left && node.#right)
+          out.write(')');
+      }
+    );
   }
 
   // 先行順序訪問(行きがけ順)で二分木を巡回して
-  // すべてのノードの演算子または項を表示するメソッド
-  traversePreorder(stdout)
+  // すべてのノードの演算子または項をoutに出力するメソッド
+  writePreorder(out)
   {
-    // 巡回を始める前にノードの演算子または項を表示する
-    // (読みやすさのために項の後に空白を補って表示する)
-    stdout.write(this.#expression + " ");
-
-    // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-    if (this.#left)
-      this.#left.traversePreorder(stdout);
-    if (this.#right)
-      this.#right.traversePreorder(stdout);
+    // 巡回を開始する
+    this.traverse(
+      // ノードへの行きがけに、ノードの演算子または項を出力する
+      // (読みやすさのために項の後に空白を補って出力する)
+      node => out.write(node.#expression + " "),
+      null, // ノードへの通りがけ時には何もしない
+      null // ノードへの帰りがけ時には何もしない
+    );
   }
 
-  // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
-  // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
-  // 計算結果はexpressionに文字列として代入する
+  // 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算するメソッド
+  // すべてのノードの値が計算できた場合はその値、そうでない場合(記号を含む場合など)はundefinedを返す
   calculateExpressionTree()
   {
-    // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
-    // それ以上計算できないのでtrueを返す
-    if (!this.#left || !this.#right)
-      return true;
+    // 巡回を開始する
+    // ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+    // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
+    this.traverse(
+      null, // ノードへの行きがけには何もしない
+      null, // ノードへの通りがけには何もしない
+      Node.#calculateNode // ノードへの帰りがけに、ノードの値を計算する
+    );
 
-    // 左右の子ノードについて、再帰的にノードの値を計算する
-    this.#left.calculateExpressionTree();
-    this.#right.calculateExpressionTree();
+    // ノードの値を数値に変換し、計算結果を返す
+    return Node.#parseNumber(this.#expression);
+  }
+
+  // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
+  // 計算できた場合、計算結果の値はnode.expressionに文字列として代入し、左右のノードは削除する
+  static #calculateNode(node)
+  {
+    // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
+    // それ以上計算できないので処理を終える
+    if (!node.#left || !node.#right)
+      return;
 
     // 計算した左右の子ノードの値を数値型(Number)に変換する
     // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-    // ノードの値が計算できないものとして、falseを返す
+    // ノードの値が計算できないものとして、処理を終える
 
     // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-    let leftOperand = new Number(this.#left.expression);
-    // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-    let rightOperand = new Number(this.#right.expression);
+    let leftOperand = Node.#parseNumber(node.#left.#expression);
 
-    if (isNaN(leftOperand) || isNaN(rightOperand))
-      // Numberで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-      return false;
+    if (leftOperand === undefined)
+      // Numberで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+      return;
+
+    // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
+    let rightOperand = Node.#parseNumber(node.#right.#expression);
+
+    if (rightOperand === undefined)
+      // Numberで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+      return;
 
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
-    switch (this.#expression[0]) {
-      case "+": this.#expression = this.#formatNumber(leftOperand + rightOperand); break;
-      case "-": this.#expression = this.#formatNumber(leftOperand - rightOperand); break;
-      case "*": this.#expression = this.#formatNumber(leftOperand * rightOperand); break;
-      case "/": this.#expression = this.#formatNumber(leftOperand / rightOperand); break;
-      // 上記以外の演算子の場合は計算できないものとして、falseを返す
-      default: return false;
+    switch (node.#expression[0]) {
+      case "+": node.#expression = Node.formatNumber(leftOperand + rightOperand); break;
+      case "-": node.#expression = Node.formatNumber(leftOperand - rightOperand); break;
+      case "*": node.#expression = Node.formatNumber(leftOperand * rightOperand); break;
+      case "/": node.#expression = Node.formatNumber(leftOperand / rightOperand); break;
+      // 上記以外の演算子の場合は計算できないものとして扱い、処理を終える
+      default: return;
     }
 
-    // 左右の子ノードの値から現在のノードの値が求まったため、
-    // このノードは左右に子ノードを持たない値のみのノードとする
-    this.#left = null;
-    this.#right = null;
+    // 左右の子ノードの値からノードの値の計算結果が求まったため、
+    // このノードは左右に子ノードを持たない計算済みのノードとする
+    node.#left = null;
+    node.#right = null;
+  }
 
-    // 計算できたため、trueを返す
-    return true;
+  // 与えられた文字列を数値化するメソッド
+  // 正常に変換できた場合は変換した数値を返す
+  // 変換できなかった場合はundefinedを返す
+  static #parseNumber(expression)
+  {
+    // 与えられた文字列を数値に変換する
+    let number = new Number(expression);
+
+    if (isNaN(number))
+      // Numberで扱える範囲外の値か、途中に変換できない文字があるため、正常に変換できなかった
+      return undefined;
+
+    return number;
   }
 
   // 演算結果の数値を文字列化するためのメソッド
-  #formatNumber(number)
+  static formatNumber(number)
   {
     let nf = new Intl.NumberFormat("en", {
       style: "decimal",
@@ -361,7 +410,7 @@ function polish_main(_expression) {
     // 二分木の根(root)ノードを作成し、式全体を格納する
     root = new Node(expression);
 
-    console.log("expression: " + root.expression);
+    console.log("expression: " + expression);
 
     // 根ノードに格納した式を二分木へと分割する
     root.parseExpression();
@@ -378,30 +427,31 @@ function polish_main(_expression) {
 
   // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
   process.stdout.write("reverse polish notation: ");
-  root.traversePostorder(process.stdout);
+  root.writePostorder(process.stdout);
   process.stdout.write("\n");
 
   // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
   process.stdout.write("infix notation: ");
-  root.traverseInorder(process.stdout);
+  root.writeInorder(process.stdout);
   process.stdout.write("\n");
 
   // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
   process.stdout.write("polish notation: ");
-  root.traversePreorder(process.stdout);
+  root.writePreorder(process.stdout);
   process.stdout.write("\n");
 
   // 分割した二分木から式全体の値を計算する
-  if (root.calculateExpressionTree()) {
+  let resultValue = root.calculateExpressionTree()
+
+  if (resultValue !== undefined) {
     // 計算できた場合はその値を表示する
-    console.log("calculated result: " + root.expression);
+    console.log("calculated result: " + Node.formatNumber(resultValue));
   }
   else {
     // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
     process.stdout.write("calculated expression: ");
-    root.traverseInorder(process.stdout);
+    root.writeInorder(process.stdout);
     process.stdout.write("\n");
     process.exit(2);
   }
 }
-

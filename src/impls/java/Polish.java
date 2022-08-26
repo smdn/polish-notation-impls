@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 import java.io.*;
 import java.text.*;
+import java.util.*;
+import java.util.function.*;
 
 // 与えられた式が不正な形式であることを報告するための例外クラス
 class MalformedExpressionException extends Exception {
@@ -24,12 +26,6 @@ class Node {
 
         // チェックした式expressionをこのノードが表す式として設定する
         this.expression = expression;
-    }
-
-    // このノードが表す式を取得するためのgetter
-    public String getExpression()
-    {
-        return expression;
     }
 
     // 式expression内の括弧の対応を検証するメソッド
@@ -196,120 +192,179 @@ class Node {
         return posOperator;
     }
 
-    // 後行順序訪問(帰りがけ順)で二分木を巡回して
-    // すべてのノードの演算子または項を表示するメソッド
-    public void traversePostorder()
+    // 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定された関数型インターフェースをコールバックするメソッド
+    public void Traverse(
+        Consumer<Node> onVisit,     // ノードの行きがけにコールバックする関数型インターフェース
+        Consumer<Node> onTransit,   // ノードの通りがけにコールバックする関数型インターフェース
+        Consumer<Node> onLeave      // ノードの帰りがけにコールバックする関数型インターフェース
+    )
     {
-        // 左右に子ノードをもつ場合、表示する前にノードを再帰的に巡回する
-        if (left != null)
-            left.traversePostorder();
-        if (right != null)
-            right.traversePostorder();
+        // このノードの行きがけに行う動作をコールバックする
+        if (onVisit != null)
+            onVisit.accept(this);
 
-        // 巡回を終えた後でノードの演算子または項を表示する
-        // (読みやすさのために項の後に空白を補って表示する)
-        System.out.print(expression + " ");
+        // 左に子ノードをもつ場合は、再帰的に巡回する
+        if (left != null)
+            left.Traverse(onVisit, onTransit, onLeave);
+
+        // このノードの通りがけに行う動作をコールバックする
+        if (onTransit != null)
+            onTransit.accept(this);
+
+        // 右に子ノードをもつ場合は、再帰的に巡回する
+        if (right != null)
+            right.Traverse(onVisit, onTransit, onLeave);
+
+        // このノードの帰りがけに行う動作をコールバックする
+        if (onLeave != null)
+            onLeave.accept(this);
+    }
+
+    // 後行順序訪問(帰りがけ順)で二分木を巡回して
+    // すべてのノードの演算子または項をstreamに出力するメソッド
+    public void printPostorder(PrintStream stream)
+    {
+        // 巡回を開始する
+        Traverse(
+            null, // ノードへの行きがけには何もしない
+            null, // ノードへの通りがけには何もしない
+            // ノードへの帰りがけに、ノードの演算子または項を出力する
+            // (読みやすさのために項の後に空白を補って出力する)
+            node -> stream.print(node.expression + " ")
+        );
     }
 
     // 中間順序訪問(通りがけ順)で二分木を巡回して
-    // すべてのノードの演算子または項を表示するメソッド
-    public void traverseInorder()
+    // すべてのノードの演算子または項をstreamに出力するメソッド
+    public void printInorder(PrintStream stream)
     {
-        // 左右に項を持つ場合、読みやすさのために項の前に開き括弧を補う
-        if (left != null && right != null)
-            System.out.print("(");
+        // 巡回を開始する
+        Traverse(
+            // ノードへの行きがけに、必要なら開き括弧を補う
+            node -> {
+                // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
+                if (node.left != null && node.right != null)
+                    stream.print('(');
+            },
+            // ノードへの通りがけに、ノードの演算子または項を出力する
+            node -> {
+                // 左に子ノードを持つ場合は、読みやすさのために空白を補う
+                if (node.left != null)
+                    stream.print(' ');
 
-        // 表示する前に左の子ノードを再帰的に巡回する
-        if (left != null) {
-            left.traverseInorder();
+                // 左の子ノードから右の子ノードへ巡回する際に、ノードの演算子または項を出力する
+                stream.print(node.expression);
 
-            // 読みやすさのために空白を補う
-            System.out.print(" ");
-        }
-
-        // 左の子ノードの巡回を終えた後でノードの演算子または項を表示する
-        System.out.print(expression);
-
-        // 表示した後に右の子ノードを再帰的に巡回する
-        if (right != null) {
-            // 読みやすさのために空白を補う
-            System.out.print(" ");
-
-            right.traverseInorder();
-        }
-
-        // 左右に項を持つ場合、読みやすさのために項の後に閉じ括弧を補う
-        if (left != null && right != null)
-            System.out.print(")");
+                // 右に子ノードを持つ場合は、読みやすさのために空白を補う
+                if (node.right != null)
+                    stream.print(' ');
+            },
+            // ノードへの帰りがけに、必要なら閉じ括弧を補う
+            node -> {
+                // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
+                if (node.left != null && node.right != null)
+                    stream.print(')');
+            }
+        );
     }
 
     // 先行順序訪問(行きがけ順)で二分木を巡回して
-    // すべてのノードの演算子または項を表示するメソッド
-    public void traversePreorder()
+    // すべてのノードの演算子または項をstreamに出力するメソッド
+    public void printPreorder(PrintStream stream)
     {
-        // 巡回を始める前にノードの演算子または項を表示する
-        // (読みやすさのために項の後に空白を補って表示する)
-        System.out.print(expression + " ");
-
-        // 左右に子ノードをもつ場合、表示した後にノードを再帰的に巡回する
-        if (left != null)
-            left.traversePreorder();
-        if (right != null)
-            right.traversePreorder();
+        // 巡回を開始する
+        Traverse(
+            // ノードへの行きがけに、ノードの演算子または項を出力する
+            // (読みやすさのために項の後に空白を補って出力する)
+            node -> stream.print(node.expression + " "),
+            null, // ノードへの通りがけ時には何もしない
+            null // ノードへの帰りがけ時には何もしない
+        );
     }
 
-    // 現在のノードの演算子と左右の子ノードの値から、ノードの値を計算するメソッド
-    // ノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
-    // 計算結果はexpressionに文字列として代入する
-    public boolean calculateExpressionTree()
+    // 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算するメソッド
+    // すべてのノードの値が計算できた場合は計算結果の値を持つOptionalDoubleを返す
+    // そうでない場合(記号を含む場合など)は空のOptionalDoubleを返す
+    public OptionalDouble calculateExpressionTree()
+    {
+        // 巡回を開始する
+        // ノードへの帰りがけに、ノードが表す部分式から、その値を計算する
+        // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
+        Traverse(
+            null, // ノードへの行きがけには何もしない
+            null, // ノードへの通りがけには何もしない
+            Node::calculateNode // ノードへの帰りがけに、ノードの値を計算する
+        );
+
+        // ノードの値を数値に変換し、計算結果を返す
+        return parseNumber(expression);
+    }
+
+    // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
+    // 計算できた場合、計算結果の値はnode.expressionに文字列として代入し、左右のノードは削除する
+    private static void calculateNode(Node node)
     {
         // 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
-        // それ以上計算できないのでtrueを返す
-        if (left == null || right == null)
-            return true;
-
-        // 左右の子ノードについて、再帰的にノードの値を計算する
-        left.calculateExpressionTree();
-        right.calculateExpressionTree();
+        // それ以上計算できないので処理を終える
+        if (node.left == null || node.right == null)
+            return;
 
         // 計算した左右の子ノードの値を数値型(double)に変換する
         // 変換できない場合(左右の子ノードが記号を含む式などの場合)は、
-        // ノードの値が計算できないものとして、falseを返す
-        double leftOperand, rightOperand;
+        // ノードの値が計算できないものとして、処理を終える
 
-        try {
-            // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
-            leftOperand  = Double.parseDouble( left.expression);
-            // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
-            rightOperand = Double.parseDouble(right.expression);
-        }
-        catch (NumberFormatException ex) {
-            // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱う
-            return false;
-        }
+        // 左ノードの値を数値に変換して演算子の左項leftOperandの値とする
+        OptionalDouble possibleLeftOperand = parseNumber(node.left.expression);
+
+        if (!possibleLeftOperand.isPresent())
+            // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+            return;
+
+        double leftOperand = possibleLeftOperand.getAsDouble();
+
+        // 右ノードの値を数値に変換して演算子の右項rightOperandの値とする
+        OptionalDouble possibleRightOperand = parseNumber(node.right.expression);
+
+        if (!possibleRightOperand.isPresent())
+            // doubleで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
+            return;
+
+        double rightOperand = possibleRightOperand.getAsDouble();
 
         // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
         // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
-        switch (expression.charAt(0)) {
-            case '+': expression = formatNumber(leftOperand + rightOperand); break;
-            case '-': expression = formatNumber(leftOperand - rightOperand); break;
-            case '*': expression = formatNumber(leftOperand * rightOperand); break;
-            case '/': expression = formatNumber(leftOperand / rightOperand); break;
-            // 上記以外の演算子の場合は計算できないものとして、falseを返す
-            default: return false;
+        switch (node.expression.charAt(0)) {
+            case '+': node.expression = formatNumber(leftOperand + rightOperand); break;
+            case '-': node.expression = formatNumber(leftOperand - rightOperand); break;
+            case '*': node.expression = formatNumber(leftOperand * rightOperand); break;
+            case '/': node.expression = formatNumber(leftOperand / rightOperand); break;
+            // 上記以外の演算子の場合は計算できないものとして扱い、処理を終える
+            default: return;
         }
 
-        // 左右の子ノードの値から現在のノードの値が求まったため、
-        // このノードは左右に子ノードを持たない値のみのノードとする
-        left = null;
-        right = null;
+        // 左右の子ノードの値からノードの値の計算結果が求まったため、
+        // このノードは左右に子ノードを持たない計算済みのノードとする
+        node.left = null;
+        node.right = null;
+    }
 
-        // 計算できたため、trueを返す
-        return true;
+    // 与えられた文字列を数値化するメソッド
+    // 正常に変換できた場合は変換した数値を持つOptionalDoubleを返す
+    // 変換できなかった場合は空のOptionalDoubleを返す
+    private static OptionalDouble parseNumber(String expression)
+    {
+        try {
+            // 与えられた文字列を数値に変換する
+            return OptionalDouble.of(Double.parseDouble(expression));
+        }
+        catch (NumberFormatException ex) {
+            // doubleで扱える範囲外の値か、途中に変換できない文字があるため、正常に変換できなかった
+            return OptionalDouble.empty();
+        }
     }
 
     // 演算結果の数値を文字列化するためのメソッド
-    private String formatNumber(double number)
+    public static String formatNumber(double number)
     {
         return (new DecimalFormat("#.#################")).format(number);
     }
@@ -345,7 +400,7 @@ public class Polish {
             // 二分木の根(root)ノードを作成し、式全体を格納する
             root = new Node(expression);
 
-            System.out.println("expression: " + root.getExpression());
+            System.out.println("expression: " + expression);
 
             // 根ノードに格納した式を二分木へと分割する
             root.parseExpression();
@@ -357,31 +412,32 @@ public class Polish {
 
         // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
         System.out.print("reverse polish notation: ");
-        root.traversePostorder();
+        root.printPostorder(System.out);
         System.out.println();
 
         // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
         System.out.print("infix notation: ");
-        root.traverseInorder();
+        root.printInorder(System.out);
         System.out.println();
 
         // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
         System.out.print("polish notation: ");
-        root.traversePreorder();
+        root.printPreorder(System.out);
         System.out.println();
 
         // 分割した二分木から式全体の値を計算する
-        if (root.calculateExpressionTree()) {
+        OptionalDouble possibleResultValue = root.calculateExpressionTree();
+
+        if (possibleResultValue.isPresent()) {
             // 計算できた場合はその値を表示する
-            System.out.println("calculated result: " + root.getExpression());
+            System.out.println("calculated result: " + Node.formatNumber(possibleResultValue.getAsDouble()));
         }
         else {
             // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
             System.out.print("calculated expression: ");
-            root.traverseInorder();
+            root.printInorder(System.out);
             System.out.println();
             System.exit(2);
         }
     }
 }
-
