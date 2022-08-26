@@ -14,7 +14,7 @@ Param(
   $TargetImplementationId = $null
 )
 
-function Run-Tests {
+function Invoke-Tests {
   param(
     $impl,
     $testsuites,
@@ -98,7 +98,7 @@ function Run-Tests {
     Write-Host "$($impl.Commands.Run.Command) $($impl.Commands.Run.Arguments -join ' ')"
   }
 
-  $ret = Run-TestCases $impl $psi $testsuites $verbose
+  $ret = Invoke-TestCases $impl $psi $testsuites $verbose
 
   if ($ret) {
     Write-Host -ForegroundColor Green "🆗 All tests passed"
@@ -107,7 +107,7 @@ function Run-Tests {
   return $ret
 }
 
-function Run-TestCase {
+function Invoke-TestCase {
   param (
     $psi,
     $testcase,
@@ -135,7 +135,7 @@ function Run-TestCase {
     )
   }
 
-  if ($testcase.Input -ne $null) {
+  if ($null -ne $testcase.Input) {
     [void]$p.StandardInput.WriteLine($testcase.Input)
     [void]$p.StandardInput.Flush()
   }
@@ -223,7 +223,7 @@ function Run-TestCase {
     #
     # exit code
     #
-    if (($testcase.ExpectedExitCode -ne $null) -and ($testcase.ExpectedExitCode -ne $result_exitcode)) {
+    if (($null -ne $testcase.ExpectedExitCode) -and ($testcase.ExpectedExitCode -ne $result_exitcode)) {
       throw "'$($testcase.Input)' is expected to be exited with exit code $($testcase.ExpectedExitCode), but was $result_exitcode"
     }
 
@@ -254,7 +254,7 @@ function Run-TestCase {
   return $true
 }
 
-function Run-TestCases {
+function Invoke-TestCases {
   param (
     $impl,
     $psi,
@@ -265,7 +265,7 @@ function Run-TestCases {
   $result = $true
 
   foreach ($testsuite in $testsuites) {
-    if (($testsuite.TargetImplementations -ne $null) -and !$testsuite.TargetImplementations.Contains($impl.ID)) {
+    if (($null -ne $testsuite.TargetImplementations) -and !$testsuite.TargetImplementations.Contains($impl.ID)) {
       if ($verbose) {
         Write-Host -ForegroundColor Yellow "ℹ️ Test suite '$($testsuite.Name)' is not performed with implementation '$($impl.DisplayName)'"
       }
@@ -276,7 +276,7 @@ function Run-TestCases {
     $number_of_ignored = 0
 
     foreach ($testcase in $testsuite.TestCases) {
-      if (($testcase.TargetImplementations -ne $null) -and !$testcase.TargetImplementations.Contains($impl.ID)) {
+      if (($null -ne $testcase.TargetImplementations) -and !$testcase.TargetImplementations.Contains($impl.ID)) {
         if ($verbose) {
           Write-Host -ForegroundColor Yellow "ℹ️ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
         }
@@ -284,7 +284,7 @@ function Run-TestCases {
         continue
       }
 
-      $ret = Run-TestCase $psi $testcase $verbose
+      $ret = Invoke-TestCase $psi $testcase $verbose
 
       if (!$ret) {
         $number_of_failure++
@@ -319,7 +319,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 $implementations = Get-Content -Path $([System.IO.Path]::Combine($PSScriptRoot, "implementations.jsonc")) | ConvertFrom-Json
 
 if ($TargetImplementationId) {
-  $implementations = $implementations | where ID -eq $TargetImplementationId
+  $implementations = $implementations | Where-Object ID -eq $TargetImplementationId
 }
 
 $implementations = $implementations | Where-Object {
@@ -339,7 +339,7 @@ foreach ($impl in $implementations) {
   $initial_working_dir = $(Get-Location)
 
   try {
-    $ret = Run-Tests $impl $testsuites $RunVerbose
+    $ret = Invoke-Tests $impl $testsuites $RunVerbose
   }
   finally {
     # revert change of working directory
