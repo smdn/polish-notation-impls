@@ -1,0 +1,11 @@
+<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<svg xmlns="http://www.w3.org/2000/svg" id="polish-expressiontree-defs" width="0" height="0" style="display: none;">
+ <defs>
+  <symbol class="expressiontree-traversalorder-path-marker" id="expressiontree-traversalorder-path-marker-arrow" viewBox="-5 -5 10 10">
+   <polygon points="+5,0 -5,-5, -2,0 -5,+5"/>
+  </symbol>
+ </defs>
+</svg>

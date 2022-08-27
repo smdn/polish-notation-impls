@@ -232,40 +232,40 @@ class DemoServer {
   private static async Task<string> ConstructIndexAsync()
   {
     XDocument templateIndex;
-    XDocument fragmentPolishDemo;
 
     using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "index.template.xhtml"))) {
       templateIndex = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken: default);
     }
 
-    using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "polish-demo.fragment.xhtml"))) {
-      var nsmgr = new XmlNamespaceManager(new NameTable());
+    var nsPlaceholder = (XNamespace)"https://github.com/smdn/polish-notation-impls";
 
-      nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
+    foreach (var elementPlaceholder in templateIndex.Descendants(nsPlaceholder + "placeholder").ToList()) {
+      var file = elementPlaceholder.Attribute("file")?.Value;
 
-      var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
-      var settings = new XmlReaderSettings() {
-        Async = true,
-        DtdProcessing = DtdProcessing.Ignore,
-        CloseInput = true,
-        ConformanceLevel = ConformanceLevel.Fragment,
-        IgnoreComments = true,
-        IgnoreWhitespace = true,
-      };
+      using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, file))) {
+        var nsmgr = new XmlNamespaceManager(new NameTable());
 
-      var reader = XmlReader.Create(stream, settings, context);
+        nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
 
-      fragmentPolishDemo = await XDocument.LoadAsync(reader, LoadOptions.None, cancellationToken: default);
+        var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
+        var settings = new XmlReaderSettings() {
+          Async = true,
+          DtdProcessing = DtdProcessing.Ignore,
+          CloseInput = true,
+          ConformanceLevel = ConformanceLevel.Fragment,
+          IgnoreComments = true,
+          IgnoreWhitespace = true,
+        };
+
+        var reader = XmlReader.Create(stream, settings, context);
+
+        var replacement = await XDocument.LoadAsync(reader, LoadOptions.None, cancellationToken: default);
+
+        elementPlaceholder.AddAfterSelf(replacement.Root);
+        elementPlaceholder.Remove();
+      }
     }
 
-    var nsPlaceholder = (XNamespace)"https://github.com/smdn/polish-notation-impls";
-    var elementPlaceholder = templateIndex.Descendants(nsPlaceholder + "placeholder").FirstOrDefault();
-
-    if (elementPlaceholder is null)
-      throw new InvalidOperationException("placeholder element not found");
-
-    elementPlaceholder.AddAfterSelf(fragmentPolishDemo.Root);
-    elementPlaceholder.Remove();
 
     var sb = new StringBuilder(10 * 1024);
     var writerSettings = new XmlWriterSettings() {
