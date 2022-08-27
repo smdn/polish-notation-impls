@@ -366,6 +366,14 @@ class Node {
 
     return nf.format(number);
   }
+
+  // 以下はデモで必要とするプロパティ(このプログラムでは使用しない)
+  get expression() { return this.#expression; }
+  set expression(newValue) { this.#expression = newValue; }
+  get left() { return this.#left; }
+  set left(newValue) { this.#left = newValue; }
+  get right() { return this.#right; }
+  set right(newValue) { this.#right = newValue; }
 }
 
 if (typeof require == "function") {

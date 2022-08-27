@@ -39,19 +39,21 @@ function polish_demo_convert_notation(expression)
 {
   let root = new ExpressionTreeNode(expression);
 
-  root.parse_expression();
+  root.parseExpression();
 
   document.getElementById("polish-demo-conversionresult-expression-preorder").value = root.preorderNotation;
   document.getElementById("polish-demo-conversionresult-expression-inorder").value = root.inorderNotation;
   document.getElementById("polish-demo-conversionresult-expression-postorder").value = root.postorderNotation;
 
-  if (root.calculate_expression_tree()) {
-    document.getElementById("polish-demo-conversionresult-calculation").value = root.expression;
-    polish_demo_set_message("calculated", "green");
-  }
-  else {
+  let resultValue = root.calculateExpressionTree();
+
+  if (resultValue === undefined) {
     document.getElementById("polish-demo-conversionresult-calculation").value = root.inorderNotation;
     polish_demo_set_message("calculated partially", "orange");
+  }
+  else {
+    document.getElementById("polish-demo-conversionresult-calculation").value = resultValue;
+    polish_demo_set_message("calculated", "green");
   }
 }
 
@@ -59,7 +61,7 @@ function polish_demo_visualize(expression)
 {
   let root = new ExpressionTreeNode(expression);
 
-  root.parse_expression();
+  root.parseExpression();
 
   let visualizations = [
     {

@@ -177,19 +177,16 @@ class Svg {
 }
 
 class ExpressionTreeNode extends Node {
-  constructor(expression, left, right)
+  constructor(expression)
   {
     super(expression);
-
-    this.left = left;
-    this.right = right;
   }
 
   get postorderNotation()
   {
     let stdout = new PseudoStdOut();
 
-    this.traversePostorder(stdout);
+    this.writePostorder(stdout);
 
     return stdout.toString().trim();
   }
@@ -198,7 +195,7 @@ class ExpressionTreeNode extends Node {
   {
     let stdout = new PseudoStdOut();
 
-    this.traverseInorder(stdout);
+    this.writeInorder(stdout);
 
     return stdout.toString().trim();
   }
@@ -207,7 +204,7 @@ class ExpressionTreeNode extends Node {
   {
     let stdout = new PseudoStdOut();
 
-    this.traversePreorder(stdout);
+    this.writePreorder(stdout);
 
     return stdout.toString().trim();
   }
@@ -237,7 +234,7 @@ class VisualTreeNode {
   {
     let stdout = new PseudoStdOut();
 
-    this.node.traverseInorder(stdout);
+    this.node.writeInorder(stdout);
 
     return stdout.toString();
   }
@@ -704,7 +701,7 @@ class VisualTreeNode {
 
     transitionProcessor.setTreeBeforeTransition(root, subTree);
 
-    if (!subTree.node.calculate_expression_tree()) {
+    if (subTree.node.calculateExpressionTree() !== undefined) {
       subTree.node.expression = subTree.inorderNotation;
       subTree.node.left = null;
       subTree.node.right = null;
