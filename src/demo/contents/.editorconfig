@@ -5,6 +5,6 @@ indent_size = 1
 charset = utf-8
 insert_final_newline = true
 
-[*.{css,js}]
+[*.{css,js,mjs}]
 indent_style = space
 indent_size = 2

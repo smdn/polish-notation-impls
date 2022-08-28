@@ -152,9 +152,9 @@ class DemoServer {
         )
       },
       {
-        "/polish.js",
+        "/Node.mjs",
         static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ImplementationsBasePath, "javascript/polish.js")),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "Node.mjs")),
           contentType: ContentTypeJavaScript
         )
       },
@@ -166,9 +166,9 @@ class DemoServer {
         )
       },
       {
-        "/polish-demo.js",
+        "/polish-demo.mjs",
         static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.js")),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.mjs")),
           contentType: ContentTypeJavaScript
         )
       },
@@ -180,9 +180,9 @@ class DemoServer {
         )
       },
       {
-        "/polish-expressiontree.js",
+        "/polish-expressiontree.mjs",
         static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.js")),
+          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.mjs")),
           contentType: ContentTypeJavaScript
         )
       },

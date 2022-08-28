@@ -1,5 +1,12 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+import {
+  Svg,
+  ExpressionTreeNode,
+  VisualTreeNode,
+  TraversalOrderRenderer,
+  CalculationTransitionRenderer
+} from './polish-expressiontree.mjs'
 
 function polish_demo_remove_children(e)
 {
@@ -139,7 +146,7 @@ function polish_demo_visualize(expression)
 */
 }
 
-function polish_demo_run(e)
+export function polish_demo_run(e)
 {
   try {
     e.disabled = true;

@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-
-"use strict"
+import { Node } from "./Node.mjs";
 
 class PseudoStdOut {
   #buffer = [];
@@ -17,7 +16,7 @@ class PseudoStdOut {
   }
 }
 
-class Svg {
+export class Svg {
   static get NS() { return "http://www.w3.org/2000/svg"; }
 
   static findElement(element, elementName)
@@ -173,7 +172,7 @@ class Svg {
   }
 }
 
-class ExpressionTreeNode extends Node {
+export class ExpressionTreeNode extends Node {
   constructor(expression)
   {
     super(expression);
@@ -221,7 +220,7 @@ class ExpressionTreeNode extends Node {
   }
 }
 
-class VisualTreeNode {
+export class VisualTreeNode {
   static get RADIUS() { return 12.5; }
   static get SIBLING_DISTANCE() { return /*1.0*/ 0.95; }
   static get BRANCH_WIDTH() { return VisualTreeNode.RADIUS * 1.25; }
@@ -731,12 +730,12 @@ class VisualTreeNode {
   }
 }
 
-class TreeTraverser {
+export class TreeTraverser {
   appendPath(nodeFrom, nodeTo, d) { }
   closePath() { }
 }
 
-class TraversalPathRenderer extends TreeTraverser {
+export class TraversalPathRenderer extends TreeTraverser {
   constructor(target, targetDefs)
   {
     super();
@@ -806,7 +805,7 @@ class TraversalPathRenderer extends TreeTraverser {
   }
 }
 
-class TraversalOrderRenderer extends TreeTraverser {
+export class TraversalOrderRenderer extends TreeTraverser {
   static get DURATION_IN_SECS() { return 1.0; }
   static get WAIT_IN_SECS() { return 2.5; }
   static get T_OFFSET() { return 0.0; }
@@ -1252,7 +1251,7 @@ class TraversalOrderRenderer extends TreeTraverser {
   }
 }
 
-class TreeTransitionProcessor {
+export class TreeTransitionProcessor {
   constructor() {}
 
   startTransition(tree) { }
@@ -1261,7 +1260,7 @@ class TreeTransitionProcessor {
   endTransition(tree) { }
 }
 
-class CalculationTransitionRenderer extends TreeTransitionProcessor {
+export class CalculationTransitionRenderer extends TreeTransitionProcessor {
   constructor(target, stepsToRender)
   {
     super();
