@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "main": "polish.js",
+  "scripts": {
+    "start": "node polish.js"
+  }
+}
