@@ -4,19 +4,16 @@
 "use strict"
 
 class PseudoStdOut {
-  constructor()
-  {
-    this._buffer = [];
-  }
+  #buffer = [];
 
   write(val)
   {
-    this._buffer.push(val);
+    this.#buffer.push(val);
   }
 
   toString()
   {
-    return this._buffer.join("");
+    return this.#buffer.join("");
   }
 }
 
@@ -211,15 +208,15 @@ class ExpressionTreeNode extends Node {
 
   createVisualTree()
   {
-    return ExpressionTreeNode._createVisualTree(this);
+    return ExpressionTreeNode.#createVisualTree(this);
   }
 
-  static _createVisualTree(node)
+  static #createVisualTree(node)
   {
     return new VisualTreeNode(
       node,
-      node.left ? ExpressionTreeNode._createVisualTree(node.left) : null,
-      node.right ? ExpressionTreeNode._createVisualTree(node.right) : null
+      node.left ? ExpressionTreeNode.#createVisualTree(node.left) : null,
+      node.right ? ExpressionTreeNode.#createVisualTree(node.right) : null
     );
   }
 }
@@ -282,36 +279,36 @@ class VisualTreeNode {
   {
     this.locate();
 
-    return this._render(target, renderInformationalElements);
+    return this.#render(target, renderInformationalElements);
   }
 
   locate()
   {
-    this._locate(0, 0);
+    this.#locate(0, 0);
   }
 
   renderSubTree(target, level, depthMax, renderInformationalElements)
   {
-    return this._render(target, renderInformationalElements);
+    return this.#render(target, renderInformationalElements);
   }
 
-  _locate(x, y)
+  #locate(x, y)
   {
     this.x = x;
     this.y = y;
 
-    let dxl = VisualTreeNode.BRANCH_WIDTH * Math.pow(VisualTreeNode.SIBLING_DISTANCE * 2, this._getLeftWidthScaler());
-    let dxr = VisualTreeNode.BRANCH_WIDTH * Math.pow(VisualTreeNode.SIBLING_DISTANCE * 2, this._getRightWidthScaler());
+    let dxl = VisualTreeNode.BRANCH_WIDTH * Math.pow(VisualTreeNode.SIBLING_DISTANCE * 2, this.#getLeftWidthScaler());
+    let dxr = VisualTreeNode.BRANCH_WIDTH * Math.pow(VisualTreeNode.SIBLING_DISTANCE * 2, this.#getRightWidthScaler());
     let dy = VisualTreeNode.BRANCH_HEIGHT;
 
     if (this.left)
-      this.left._locate(this.x - dxl, this.y + dy, null, null);
+      this.left.#locate(this.x - dxl, this.y + dy, null, null);
 
     if (this.right)
-      this.right._locate(this.x + dxr, this.y + dy, null, null);
+      this.right.#locate(this.x + dxr, this.y + dy, null, null);
   }
 
-  _getLeftWidthScaler()
+  #getLeftWidthScaler()
   {
     if (false && this.left)
       return this.left.depth;
@@ -319,7 +316,7 @@ class VisualTreeNode {
       return this.depth - 1;
   }
 
-  _getRightWidthScaler()
+  #getRightWidthScaler()
   {
     if (false && this.right)
       return this.right.depth;
@@ -327,7 +324,7 @@ class VisualTreeNode {
       return this.depth - 1;
   }
 
-  _render(target, renderInformationalElements)
+  #render(target, renderInformationalElements)
   {
     let groupSubtree = target.appendChild(Svg.createElement("g", { "class": "expressiontree-subtree" }));
 
@@ -347,7 +344,7 @@ class VisualTreeNode {
           "y1": this.y, "y2": subtree.tree.y,
         }));
 
-        let t = subtree.tree._render(groupSubtree, renderInformationalElements);
+        let t = subtree.tree.#render(groupSubtree, renderInformationalElements);
 
         t.setAttribute("class", subtree.className);
       });
@@ -447,21 +444,21 @@ class VisualTreeNode {
 
   traversePathInorder(traverser)
   {
-    this._traversePathInorder(traverser);
+    this.#traversePathInorder(traverser);
 
     return traverser.closePath();
   }
 
   traversePathPreorder(traverser)
   {
-    this._traversePathPreorder(traverser);
+    this.#traversePathPreorder(traverser);
 
     return traverser.closePath();
   }
 
   traversePathPostorder(traverser)
   {
-    this._traversePathPostorder(traverser);
+    this.#traversePathPostorder(traverser);
 
     return traverser.closePath();
   }
@@ -475,95 +472,95 @@ class VisualTreeNode {
   static get PATH_SELF_INORDER() { return 6; }
   static get PATH_SELF_POSTORDER() { return 7; }
 
-  _traversePathInorder(traverser)
+  #traversePathInorder(traverser)
   {
     if (this.left) {
-      this._traversePathThisToLeft(traverser);
+      this.#traversePathThisToLeft(traverser);
 
-      this.left._traversePathInorder(traverser);
+      this.left.#traversePathInorder(traverser);
 
-      this._traversePathLeftToThis(traverser);
+      this.#traversePathLeftToThis(traverser);
     }
 
-    VisualTreeNode._traversePath(traverser, this, this, VisualTreeNode.PATH_SELF_INORDER);
+    VisualTreeNode.#traversePath(traverser, this, this, VisualTreeNode.PATH_SELF_INORDER);
 
     if (this.right) {
-      this._traversePathThisToRight(traverser);
+      this.#traversePathThisToRight(traverser);
 
-      this.right._traversePathInorder(traverser);
+      this.right.#traversePathInorder(traverser);
 
-      this._traversePathRightToThis(traverser);
+      this.#traversePathRightToThis(traverser);
     }
   }
 
-  _traversePathPreorder(traverser)
+  #traversePathPreorder(traverser)
   {
-    VisualTreeNode._traversePath(traverser, this, this, VisualTreeNode.PATH_SELF_PREORDER);
+    VisualTreeNode.#traversePath(traverser, this, this, VisualTreeNode.PATH_SELF_PREORDER);
 
     if (this.left) {
-      this._traversePathThisToLeft(traverser);
+      this.#traversePathThisToLeft(traverser);
 
-      this.left._traversePathPreorder(traverser);
+      this.left.#traversePathPreorder(traverser);
 
-      this._traversePathLeftToThis(traverser);
-    }
-
-    if (this.right) {
-      this._traversePathThisToRight(traverser);
-
-      this.right._traversePathPreorder(traverser);
-
-      this._traversePathRightToThis(traverser);
-    }
-  }
-
-  _traversePathPostorder(traverser)
-  {
-    if (this.left) {
-      this._traversePathThisToLeft(traverser);
-
-      this.left._traversePathPostorder(traverser);
-
-      this._traversePathLeftToThis(traverser);
+      this.#traversePathLeftToThis(traverser);
     }
 
     if (this.right) {
-      this._traversePathThisToRight(traverser);
+      this.#traversePathThisToRight(traverser);
 
-      this.right._traversePathPostorder(traverser);
+      this.right.#traversePathPreorder(traverser);
 
-      this._traversePathRightToThis(traverser);
+      this.#traversePathRightToThis(traverser);
+    }
+  }
+
+  #traversePathPostorder(traverser)
+  {
+    if (this.left) {
+      this.#traversePathThisToLeft(traverser);
+
+      this.left.#traversePathPostorder(traverser);
+
+      this.#traversePathLeftToThis(traverser);
     }
 
-    VisualTreeNode._traversePath(traverser, this, this, VisualTreeNode.PATH_SELF_POSTORDER);
+    if (this.right) {
+      this.#traversePathThisToRight(traverser);
+
+      this.right.#traversePathPostorder(traverser);
+
+      this.#traversePathRightToThis(traverser);
+    }
+
+    VisualTreeNode.#traversePath(traverser, this, this, VisualTreeNode.PATH_SELF_POSTORDER);
   }
 
-  _traversePathThisToLeft(traverser)
+  #traversePathThisToLeft(traverser)
   {
-    VisualTreeNode._traversePath(traverser, this, this.left, VisualTreeNode.PATH_THIS_TO_LEFT);
+    VisualTreeNode.#traversePath(traverser, this, this.left, VisualTreeNode.PATH_THIS_TO_LEFT);
   }
 
-  _traversePathLeftToThis(traverser)
+  #traversePathLeftToThis(traverser)
   {
-    VisualTreeNode._traversePath(traverser, this.left, this, VisualTreeNode.PATH_LEFT_TO_THIS);
+    VisualTreeNode.#traversePath(traverser, this.left, this, VisualTreeNode.PATH_LEFT_TO_THIS);
   }
 
-  _traversePathLeftToRight(traverser)
+  #traversePathLeftToRight(traverser)
   {
-    VisualTreeNode._traversePath(traverser, this.left, this.right, VisualTreeNode.PATH_LEFT_TO_RIGHT);
+    VisualTreeNode.#traversePath(traverser, this.left, this.right, VisualTreeNode.PATH_LEFT_TO_RIGHT);
   }
 
-  _traversePathThisToRight(traverser)
+  #traversePathThisToRight(traverser)
   {
-    VisualTreeNode._traversePath(traverser, this, this.right, VisualTreeNode.PATH_THIS_TO_RIGHT);
+    VisualTreeNode.#traversePath(traverser, this, this.right, VisualTreeNode.PATH_THIS_TO_RIGHT);
   }
 
-  _traversePathRightToThis(traverser)
+  #traversePathRightToThis(traverser)
   {
-    VisualTreeNode._traversePath(traverser, this.right, this, VisualTreeNode.PATH_RIGHT_TO_THIS);
+    VisualTreeNode.#traversePath(traverser, this.right, this, VisualTreeNode.PATH_RIGHT_TO_THIS);
   }
 
-  static _traversePath(traverser, nodeFrom, nodeTo, pathType)
+  static #traversePath(traverser, nodeFrom, nodeTo, pathType)
   {
     // [node point]
     //        0
@@ -679,22 +676,22 @@ class VisualTreeNode {
 
   calculate_expression_tree(transitionProcessor)
   {
-    let tree = VisualTreeNode._cloneTree(this);
+    let tree = VisualTreeNode.#cloneTree(this);
 
     transitionProcessor.startTransition(tree);
 
-    VisualTreeNode._calculate_expression_tree(tree, tree, transitionProcessor);
+    VisualTreeNode.#calculate_expression_tree(tree, tree, transitionProcessor);
 
     transitionProcessor.endTransition(tree);
   }
 
-  static _calculate_expression_tree(root, subTree, transitionProcessor)
+  static #calculate_expression_tree(root, subTree, transitionProcessor)
   {
     if (subTree.left)
-      VisualTreeNode._calculate_expression_tree(root, subTree.left, transitionProcessor);
+      VisualTreeNode.#calculate_expression_tree(root, subTree.left, transitionProcessor);
 
     if (subTree.right)
-      VisualTreeNode._calculate_expression_tree(root, subTree.right, transitionProcessor);
+      VisualTreeNode.#calculate_expression_tree(root, subTree.right, transitionProcessor);
 
     if (!(subTree.left && subTree.right))
       return;
@@ -713,12 +710,12 @@ class VisualTreeNode {
     transitionProcessor.setTreeAfterTransition(root, subTree);
   }
 
-  static _cloneTree(n)
+  static #cloneTree(n)
   {
     let clone = new VisualTreeNode(
       new Node(n.node.expression),
-      n.left ? VisualTreeNode._cloneTree(n.left) : null,
-      n.right ? VisualTreeNode._cloneTree(n.right) : null
+      n.left ? VisualTreeNode.#cloneTree(n.left) : null,
+      n.right ? VisualTreeNode.#cloneTree(n.right) : null
     );
 
     clone.x = n.x;
@@ -748,7 +745,7 @@ class TraversalPathRenderer extends TreeTraverser {
     this.targetDefs = targetDefs;
   }
 
-  static _renderPathMarker(target)
+  static #renderPathMarker(target)
   {
     const markerId = "polish-path-marker-arrow";
 
@@ -803,7 +800,7 @@ class TraversalPathRenderer extends TreeTraverser {
 
   closePath()
   {
-    TraversalPathRenderer._renderPathMarker(this.targetDefs);
+    TraversalPathRenderer.#renderPathMarker(this.targetDefs);
 
     return null; // TODO
   }
@@ -815,7 +812,7 @@ class TraversalOrderRenderer extends TreeTraverser {
   static get T_OFFSET() { return 0.0; }
   static get T_OFFSET_STATUSREAD() { return TraversalOrderRenderer.DURATION_IN_SECS * 0.6; }
 
-  static get _ID_PATH_MARKER() { return "expressiontree-traversalorder-path-marker-arrow"; }
+  static get #ID_PATH_MARKER() { return "expressiontree-traversalorder-path-marker-arrow"; }
 
   get totalDurationInSeconds() { return this.t; }
 
@@ -834,11 +831,11 @@ class TraversalOrderRenderer extends TreeTraverser {
     this.orderedNodes = [];
   }
 
-  static _renderPathSymbol(target)
+  static #renderPathSymbol(target)
   {
     if (!target)
       return;
-    if (target.querySelector("#" + TraversalOrderRenderer._ID_PATH_MARKER))
+    if (target.querySelector("#" + TraversalOrderRenderer.#ID_PATH_MARKER))
       return;
 
     let defs = Svg.findOrCreateElement(target, "defs");
@@ -848,7 +845,7 @@ class TraversalOrderRenderer extends TreeTraverser {
         "symbol",
         {
           "class": "expressiontree-traversalorder-path-marker",
-          "id": TraversalOrderRenderer._ID_PATH_MARKER,
+          "id": TraversalOrderRenderer.#ID_PATH_MARKER,
           "viewBox": "-5 -5 10 10",
         }
       )
@@ -898,7 +895,7 @@ class TraversalOrderRenderer extends TreeTraverser {
 
   closePath()
   {
-    TraversalOrderRenderer._renderPathSymbol(this.targetDefs);
+    TraversalOrderRenderer.#renderPathSymbol(this.targetDefs);
 
     let dur = this.totalDurationInSeconds + TraversalOrderRenderer.WAIT_IN_SECS;
 
@@ -1007,7 +1004,7 @@ class TraversalOrderRenderer extends TreeTraverser {
         {
           "xlink:href": {
             nsuri: "http://www.w3.org/1999/xlink",
-            val: "#" + TraversalOrderRenderer._ID_PATH_MARKER
+            val: "#" + TraversalOrderRenderer.#ID_PATH_MARKER
           },
           "x": "-5",
           "y": "-5",
