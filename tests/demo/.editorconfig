@@ -1,0 +1,9 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+[*.svg]
+indent_size = 1
+charset = utf-8
+
+[*.{js,mjs}]
+indent_style = space
+indent_size = 2

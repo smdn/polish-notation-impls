@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "main": "test.js",
+  "dependencies": {
+    "jsdom": "^20.0.0"
+  },
+  "scripts": {
+    "start": "node test.js"
+  }
+}
