@@ -20,6 +20,7 @@ var settings = new XmlWriterSettings() {
   Indent = true,
   IndentChars = " ",
   NewLineChars = "\n",
+  NewLineOnAttributes = true
 };
 
 foreach (var file in Args) {

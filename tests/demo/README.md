@@ -1,2 +1,9 @@
 # requirements
-`npm install jsdom`
+```sh
+npm install jsdom
+```
+
+# run tests
+```sh
+./run-test.ps1
+```
