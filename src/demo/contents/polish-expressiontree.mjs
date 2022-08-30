@@ -1001,10 +1001,7 @@ export class TraversalOrderRenderer extends TreeTraverser {
       Svg.createElement(
         "use",
         {
-          "xlink:href": {
-            nsuri: "http://www.w3.org/1999/xlink",
-            val: "#" + TraversalOrderRenderer.#ID_PATH_MARKER
-          },
+          "href": "#" + TraversalOrderRenderer.#ID_PATH_MARKER,
           "x": "-5",
           "y": "-5",
           "width": "10",
