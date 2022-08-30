@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import * as fs from "fs";
-import { execSync } from "child_process";
 import { JSDOM } from 'jsdom';
 import {
   Svg,
@@ -11,92 +10,124 @@ import {
   CalculationTransitionRenderer
 } from '../../src/demo/contents/polish-expressiontree.mjs'
 
-function main(expression) {
+function generate(
+  expression,
+  visualizationMode,
+  elementId,
+  outputPath
+) {
+  if (!expression || expression.replaceAll(" ", "").length == 0) {
+    process.stderr.write("invalid expression\n");
+    process.exit(1);
+  }
+
   let root = new ExpressionTreeNode(expression);
 
   root.parseExpression();
 
-  let visualizations = [
+  let visualizationAction = function(mode) {
+    switch (mode) {
+      case "traverse-preorder":
+        return (tree, target) => {
+          tree.render(target, true);
+          tree.traversePathPreorder(new TraversalOrderRenderer(target, null));
+        };
+      case "traverse-postorder":
+        return (tree, target) => {
+          tree.render(target, true);
+          tree.traversePathPostorder(new TraversalOrderRenderer(target, null));
+        };
+      case "traverse-inorder":
+        return (tree, target) => {
+          tree.render(target, true);
+          tree.traversePathInorder(new TraversalOrderRenderer(target, null));
+        };
+      case "calculate":
+        return (tree, target) => {
+          tree.calculate_expression_tree(new CalculationTransitionRenderer(target));
+        };
+
+      default:
+        throw `undefined visualization mode: ${mode}`
+    }
+  }(visualizationMode);
+
+  let target = VisualTreeNode.initializeSvgElement(
+    VisualTreeNode.createSvgElement(elementId)
+  );
+
+  visualizationAction(root.createVisualTree(), target);
+
+  const maxWidth = 1080;
+
+  Svg.minimizeElement(target, 5, maxWidth);
+
+  fs.writeFileSync(
+    outputPath,
+    target.outerHTML,
     {
-      elementId: "polish-demo-expressiontree-traverse-preorder",
-      outputFileName: "expressiontree-traverse-preorder.actual.svg",
-      action: (tree, target) => {
-        tree.render(target, true);
-        tree.traversePathPreorder(new TraversalOrderRenderer(target, null));
-      },
+      flags: "w",
+      encoding: "utf8"
     },
-    {
-      elementId: "polish-demo-expressiontree-traverse-postorder",
-      outputFileName: "expressiontree-traverse-postorder.actual.svg",
-      action: (tree, target) => {
-        tree.render(target, true);
-        tree.traversePathPostorder(new TraversalOrderRenderer(target, null));
-      },
-    },
-    {
-      elementId: "polish-demo-expressiontree-traverse-inorder",
-      outputFileName: "expressiontree-traverse-inorder.actual.svg",
-      action: (tree, target) => {
-        tree.render(target, true);
-        tree.traversePathInorder(new TraversalOrderRenderer(target, null));
-      },
-    },
-    {
-      elementId: "polish-demo-expressiontree-calculation",
-      outputFileName: "expressiontree-calculation.actual.svg",
-      action: (tree, target) => {
-        tree.calculate_expression_tree(new CalculationTransitionRenderer(target));
-      },
-    },
-  ];
+    (err) => { if (err) throw err; }
+  );
 
-  visualizations.forEach(v => {
-    let target = VisualTreeNode.initializeSvgElement(
-      VisualTreeNode.createSvgElement(v.elementId)
-    );
-
-    v.action(root.createVisualTree(), target);
-
-    const maxWidth = 1080;
-
-    Svg.minimizeElement(target, 5, maxWidth);
-
-    fs.writeFileSync(
-      v.outputFileName,
-      target.outerHTML,
-      {
-        flags: "w",
-        encoding: "utf8"
-      },
-      (err) => { if (err) throw err; }
-    );
-
-    execSync(`./tools/format-xml.csx ${v.outputFileName}`);
-
-    process.stdout.write(`generated ${v.outputFileName}\n`);
-  });
-
+  process.stdout.write(`generated ${outputPath}\n`);
   process.exit(0);
 }
 
-const pseudoDOM = new JSDOM('');
+function main()
+{
+  // TODO: generate SVG with headless Firefox + Selenium
+  const pseudoDOM = new JSDOM('');
 
-// expose `window` and `document` to the global scope
-global.window = pseudoDOM.window;
-global.document = pseudoDOM.window.document;
+  // expose `window` and `document` to the global scope
+  global.window = pseudoDOM.window;
+  global.document = pseudoDOM.window.document;
+  
+  // define SVGElement.getBBox
+  // ref: https://github.com/jsdom/jsdom/issues/3159
+  Object.defineProperty(window.SVGElement.prototype, 'getBBox', {
+    writable: true,
+    value: () => ({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    })
+  });
 
-// define SVGElement.getBBox
-// ref: https://github.com/jsdom/jsdom/issues/3159
-Object.defineProperty(window.SVGElement.prototype, 'getBBox', {
-  writable: true,
-  value: () => ({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0
-  })
-});
+  var expression;
+  var visualizationMode;
+  var elementId;
+  var outputPath;
 
-const expression = "2 + 5 * 3 - 4";
+  for (var i = 0; i < process.argv.length; i++) {
+    switch (process.argv[i]) {
+      case "--input-expression":
+        expression = process.argv[++i];
+        break;
 
-main(expression);
+      case "--visualization-mode":
+        visualizationMode = process.argv[++i];
+        break;
+
+      case "--output-element-id":
+        elementId = process.argv[++i];
+        break;
+
+      case "--output-path":
+        outputPath = process.argv[++i];
+        break;
+    }
+  }
+
+  generate(
+    expression,
+    visualizationMode,
+    elementId,
+    outputPath
+  );
+}
+
+main();
