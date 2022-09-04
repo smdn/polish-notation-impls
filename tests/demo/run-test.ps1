@@ -73,6 +73,8 @@ $testcases += (
 
 New-Item -Path $test_output_dir -ItemType Directory -ErrorAction SilentlyContinue > $null
 
+$exit_code = 0
+
 foreach ($testcase in $testcases) {
   $output_path_svg = [System.IO.Path]::Combine($test_output_dir, $testcase.OutputSvgFileName)
   $output_path_diff = [System.IO.Path]::Combine($test_output_dir, $testcase.OutputDiffFileName)
@@ -104,6 +106,8 @@ foreach ($testcase in $testcases) {
   "generated $output_path_diff"
 
   # print remarkable differences
+  $number_of_differences = 0
+
   foreach ($line in $($difference -split [System.Environment]::NewLine)) {
     if ($line -match '^(?<change>\+|\-)\s+(?<line>.+)$') {
       $change = $Matches.change
@@ -124,6 +128,8 @@ foreach ($testcase in $testcases) {
         continue
       }
 
+      $number_of_differences++;
+
       if ($change -eq '+') {
         Write-Host $line -ForegroundColor Green
       }
@@ -132,4 +138,8 @@ foreach ($testcase in $testcases) {
       }
     }
   }
+
+  $exit_code += $number_of_differences
 }
+
+exit $exit_code
