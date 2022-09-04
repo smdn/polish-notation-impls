@@ -79,6 +79,11 @@ foreach ($testcase in $testcases) {
       $change = $Matches.change
       $line_diff = $matches.line
 
+      # ignore the differences of root <svg> attributes
+      if ($line -match '^(\+|\-) [a-z\-]+\=\"') {
+        continue
+      }
+
       # ignore the differences in coordinate-related attributes
       if (
         $line_diff -match '^(x|y|rx|ry|width|height)=\"(\-?\d+|\-?\d+\.\d+(e(\+|\-)\d+)?)\"' -or
