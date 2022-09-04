@@ -697,7 +697,7 @@ export class VisualTreeNode {
 
     transitionProcessor.setTreeBeforeTransition(root, subTree);
 
-    if (subTree.node.calculateExpressionTree() !== undefined) {
+    if (subTree.node.calculateExpressionTree() === undefined) {
       subTree.node.expression = subTree.inorderNotation;
       subTree.node.left = null;
       subTree.node.right = null;
