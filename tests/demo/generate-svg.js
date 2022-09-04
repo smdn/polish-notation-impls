@@ -21,7 +21,7 @@ function generate(
     process.exit(1);
   }
 
-  let root = new ExpressionTreeNode(expression);
+  let root = new ExpressionTreeNode(expression.replaceAll(" ", ""));
 
   root.parseExpression();
 
