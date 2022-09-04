@@ -13,7 +13,6 @@ import {
 function generate(
   expression,
   visualizationMode,
-  elementId,
   outputPath
 ) {
   if (!expression || expression.replaceAll(" ", "").length == 0) {
@@ -51,6 +50,8 @@ function generate(
         throw `undefined visualization mode: ${mode}`
     }
   }(visualizationMode);
+
+  const elementId = "visualized-expression-tree"
 
   let target = VisualTreeNode.initializeSvgElement(
     VisualTreeNode.createSvgElement(elementId)
@@ -99,7 +100,6 @@ function main()
 
   var expression;
   var visualizationMode;
-  var elementId;
   var outputPath;
 
   for (var i = 0; i < process.argv.length; i++) {
@@ -112,10 +112,6 @@ function main()
         visualizationMode = process.argv[++i];
         break;
 
-      case "--output-element-id":
-        elementId = process.argv[++i];
-        break;
-
       case "--output-path":
         outputPath = process.argv[++i];
         break;
@@ -125,7 +121,6 @@ function main()
   generate(
     expression,
     visualizationMode,
-    elementId,
     outputPath
   );
 }

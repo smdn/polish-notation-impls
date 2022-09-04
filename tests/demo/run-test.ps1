@@ -9,7 +9,6 @@ $testcases = (
   [PSCustomObject]@{
     "VisualizationMode" = "traverse-preorder"
     "InputExpression" = $input_expression
-    "OutputElementId" = "polish-demo-expressiontree-traverse-preorder"
     "OutputSvgFileName" = "expressiontree-traverse-preorder.generated.svg"
     "ExpectedSvgFileName" = "expressiontree-traverse-preorder.expected.svg"
     "OutputDiffFileName" = "expressiontree-traverse-preorder.svg.diff"
@@ -17,7 +16,6 @@ $testcases = (
   [PSCustomObject]@{
     "VisualizationMode" = "traverse-inorder"
     "InputExpression" = $input_expression
-    "OutputElementId" = "polish-demo-expressiontree-traverse-inorder"
     "OutputSvgFileName" = "expressiontree-traverse-inorder.generated.svg"
     "ExpectedSvgFileName" = "expressiontree-traverse-inorder.expected.svg"
     "OutputDiffFileName" = "expressiontree-traverse-inorder.svg.diff"
@@ -25,7 +23,6 @@ $testcases = (
   [PSCustomObject]@{
     "VisualizationMode" = "traverse-postorder"
     "InputExpression" = $input_expression
-    "OutputElementId" = "polish-demo-expressiontree-traverse-postorder"
     "OutputSvgFileName" = "expressiontree-traverse-postorder.generated.svg"
     "ExpectedSvgFileName" = "expressiontree-traverse-postorder.expected.svg"
     "OutputDiffFileName" = "expressiontree-traverse-postorder.svg.diff"
@@ -33,7 +30,6 @@ $testcases = (
   [PSCustomObject]@{
     "VisualizationMode" = "calculate"
     "InputExpression" = $input_expression
-    "OutputElementId" = "polish-demo-expressiontree-calculation"
     "OutputSvgFileName" = "expressiontree-calculation.generated.svg"
     "ExpectedSvgFileName" = "expressiontree-calculation.expected.svg"
     "OutputDiffFileName" = "expressiontree-calculation.svg.diff"
@@ -49,7 +45,6 @@ foreach ($testcase in $testcases) {
   $generator_args = @(
     "--input-expression", $testcase.InputExpression,
     "--visualization-mode", $testcase.VisualizationMode,
-    "--output-element-id", $testcase.OutputElementId,
     "--output-path", $output_path_svg
   )
 
