@@ -156,7 +156,7 @@ export function polish_demo_run(e)
     polish_demo_clear(false);
 
     try {
-      expression = expression.replace(/\s+/g, '');
+      expression = expression.replaceAll(" ", "");
 
       polish_demo_convert_notation(expression);
 
