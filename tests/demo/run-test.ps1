@@ -47,7 +47,7 @@ foreach ($testcase in $testcases) {
   $output_path_diff = [System.IO.Path]::Combine($test_output_dir, $testcase.OutputDiffFileName)
 
   $generator_args = @(
-    "--input-expression", "'$($testcase.InputExpression)'",
+    "--input-expression", $testcase.InputExpression,
     "--visualization-mode", $testcase.VisualizationMode,
     "--output-element-id", $testcase.OutputElementId,
     "--output-path", $output_path_svg
