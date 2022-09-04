@@ -9,30 +9,30 @@ $testcases = (
   [PSCustomObject]@{
     "VisualizationMode" = "traverse-preorder"
     "InputExpression" = $input_expression
-    "OutputSvgFileName" = "expressiontree-traverse-preorder.generated.svg"
-    "ExpectedSvgFileName" = "expressiontree-traverse-preorder.expected.svg"
-    "OutputDiffFileName" = "expressiontree-traverse-preorder.svg.diff"
+    "OutputSvgFileName" = "calculable.traverse-preorder.generated.svg"
+    "ExpectedSvgFileName" = "calculable.traverse-preorder.expected.svg"
+    "OutputDiffFileName" = "calculable.traverse-preorder.svg.diff"
   },
   [PSCustomObject]@{
     "VisualizationMode" = "traverse-inorder"
     "InputExpression" = $input_expression
-    "OutputSvgFileName" = "expressiontree-traverse-inorder.generated.svg"
-    "ExpectedSvgFileName" = "expressiontree-traverse-inorder.expected.svg"
-    "OutputDiffFileName" = "expressiontree-traverse-inorder.svg.diff"
+    "OutputSvgFileName" = "calculable.traverse-inorder.generated.svg"
+    "ExpectedSvgFileName" = "calculable.traverse-inorder.expected.svg"
+    "OutputDiffFileName" = "calculable.traverse-inorder.svg.diff"
   },
   [PSCustomObject]@{
     "VisualizationMode" = "traverse-postorder"
     "InputExpression" = $input_expression
-    "OutputSvgFileName" = "expressiontree-traverse-postorder.generated.svg"
-    "ExpectedSvgFileName" = "expressiontree-traverse-postorder.expected.svg"
-    "OutputDiffFileName" = "expressiontree-traverse-postorder.svg.diff"
+    "OutputSvgFileName" = "calculable.traverse-postorder.generated.svg"
+    "ExpectedSvgFileName" = "calculable.traverse-postorder.expected.svg"
+    "OutputDiffFileName" = "calculable.traverse-postorder.svg.diff"
   },
   [PSCustomObject]@{
     "VisualizationMode" = "calculate"
     "InputExpression" = $input_expression
-    "OutputSvgFileName" = "expressiontree-calculation.generated.svg"
-    "ExpectedSvgFileName" = "expressiontree-calculation.expected.svg"
-    "OutputDiffFileName" = "expressiontree-calculation.svg.diff"
+    "OutputSvgFileName" = "calculable.calculation.generated.svg"
+    "ExpectedSvgFileName" = "calculable.calculation.expected.svg"
+    "OutputDiffFileName" = "calculable.calculation.svg.diff"
   }
 )
 
