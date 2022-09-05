@@ -34,7 +34,7 @@ export class Svg {
     let e = Svg.findElement(element, elementName);
 
     if (e)
-      return e
+      return e;
     else
       return element.appendChild(Svg.createElement(elementName, null, null));
   }
@@ -207,16 +207,16 @@ export class ExpressionTreeNode extends Node {
 
   createVisualTree()
   {
-    return ExpressionTreeNode.#createVisualTree(this);
+    return this.convert(ExpressionTreeNode.#createVisualTree);
   }
 
-  static #createVisualTree(node)
+  static #createVisualTree(node, left, right)
   {
     return new VisualTreeNode(
       node,
-      node.left ? ExpressionTreeNode.#createVisualTree(node.left) : null,
-      node.right ? ExpressionTreeNode.#createVisualTree(node.right) : null
-    );
+      left?.convert(ExpressionTreeNode.#createVisualTree),
+      right?.convert(ExpressionTreeNode.#createVisualTree),
+    )
   }
 }
 
@@ -233,6 +233,11 @@ export class VisualTreeNode {
     this.node.writeInorder(stdout);
 
     return stdout.toString();
+  }
+
+  get inorderNotationWithoutOutermostBracket()
+  {
+    return this.inorderNotation.slice(1, -1);
   }
 
   get description() { return this.inorderNotation; };
@@ -698,9 +703,8 @@ export class VisualTreeNode {
     transitionProcessor.setTreeBeforeTransition(root, subTree);
 
     if (subTree.node.calculateExpressionTree() === undefined) {
-      subTree.node.expression = subTree.inorderNotation;
-      subTree.node.left = null;
-      subTree.node.right = null;
+      // replace to node with calculated expression
+      subTree.node = new Node(subTree.inorderNotation);
     }
 
     subTree.left = null;
@@ -712,19 +716,13 @@ export class VisualTreeNode {
   static #cloneTree(n)
   {
     let clone = new VisualTreeNode(
-      new Node(n.node.expression),
+      n.node,
       n.left ? VisualTreeNode.#cloneTree(n.left) : null,
       n.right ? VisualTreeNode.#cloneTree(n.right) : null
     );
 
     clone.x = n.x;
     clone.y = n.y;
-
-    if (clone.left)
-      clone.node.left = clone.left.node;
-
-    if (clone.right)
-      clone.node.right = clone.right.node;
 
     return clone;
   }
@@ -1335,15 +1333,6 @@ export class CalculationTransitionRenderer extends TreeTransitionProcessor {
       )
     );
 
-    let subexpressionContentText =
-      "= '" +
-      subTreeTransition.left.inorderNotation +
-      " " +
-      subTreeTransition.node.expression +
-      " " +
-      subTreeTransition.right.inorderNotation +
-      "'";
-
     let subexpression = g.appendChild(
       Svg.createElement(
         "text",
@@ -1355,7 +1344,7 @@ export class CalculationTransitionRenderer extends TreeTransitionProcessor {
           "dominant-baseline": "text-before-edge",
           "visibility": "hidden",
         },
-        subexpressionContentText
+        `= '${subTreeTransition.inorderNotationWithoutOutermostBracket}'`
       )
     );
 

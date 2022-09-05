@@ -364,11 +364,11 @@ export class Node {
     return nf.format(number);
   }
 
-  // 以下はデモの実装で必要となるプロパティ(このモジュール内では使用しない)
+  // 以下はデモの実装で必要となるメンバー(このモジュール内では使用しない)
   get expression() { return this.#expression; }
-  set expression(newValue) { this.#expression = newValue; }
-  get left() { return this.#left; }
-  set left(newValue) { this.#left = newValue; }
-  get right() { return this.#right; }
-  set right(newValue) { this.#right = newValue; }
+
+  convert(converter)
+  {
+    return converter(this, this.#left, this.#right);
+  }
 }
