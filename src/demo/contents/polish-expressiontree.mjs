@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 import { Node } from "./Node.mjs";
 
-class PseudoStdOut {
+class BufferWriter {
   #buffer = [];
 
   write(val)
@@ -13,6 +13,15 @@ class PseudoStdOut {
   toString()
   {
     return this.#buffer.join("");
+  }
+
+  static getWritten(writeAction)
+  {
+    let writer = new BufferWriter();
+
+    writeAction(writer);
+
+    return writer.toString();
   }
 }
 
@@ -178,32 +187,9 @@ export class ExpressionTreeNode extends Node {
     super(expression);
   }
 
-  get postorderNotation()
-  {
-    let stdout = new PseudoStdOut();
-
-    this.writePostorder(stdout);
-
-    return stdout.toString().trim();
-  }
-
-  get inorderNotation()
-  {
-    let stdout = new PseudoStdOut();
-
-    this.writeInorder(stdout);
-
-    return stdout.toString().trim();
-  }
-
-  get preorderNotation()
-  {
-    let stdout = new PseudoStdOut();
-
-    this.writePreorder(stdout);
-
-    return stdout.toString().trim();
-  }
+  get postorderNotation() { return BufferWriter.getWritten(this.writePostorder.bind(this)); }
+  get inorderNotation() { return BufferWriter.getWritten(this.writeInorder.bind(this)); }
+  get preorderNotation() { return BufferWriter.getWritten(this.writePreorder.bind(this)); }
 
   createVisualTree()
   {
@@ -226,19 +212,8 @@ export class VisualTreeNode {
   static get BRANCH_WIDTH() { return VisualTreeNode.RADIUS * 1.25; }
   static get BRANCH_HEIGHT() { return VisualTreeNode.RADIUS * 5.0; }
 
-  get inorderNotation()
-  {
-    let stdout = new PseudoStdOut();
-
-    this.node.writeInorder(stdout);
-
-    return stdout.toString();
-  }
-
-  get inorderNotationWithoutOutermostBracket()
-  {
-    return this.inorderNotation.slice(1, -1);
-  }
+  get inorderNotation() { return BufferWriter.getWritten(this.node.writeInorder.bind(this.node)); }
+  get inorderNotationWithoutOutermostBracket() { return this.inorderNotation.slice(1, -1); }
 
   get description() { return this.inorderNotation; };
   get value() { return this.node.expression; }
