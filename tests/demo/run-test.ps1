@@ -76,6 +76,8 @@ New-Item -Path $test_output_dir -ItemType Directory -ErrorAction SilentlyContinu
 $exit_code = 0
 
 foreach ($testcase in $testcases) {
+  Write-Host "Test case: '$($testcase.InputExpression)' ($($testcase.VisualizationMode))"
+
   $output_path_svg = [System.IO.Path]::Join($test_output_dir, $testcase.OutputSvgFileName)
   $output_path_diff = [System.IO.Path]::Join($test_output_dir, $testcase.OutputDiffFileName)
 
@@ -140,6 +142,13 @@ foreach ($testcase in $testcases) {
         Write-Host $line -ForegroundColor Red
       }
     }
+  }
+
+  if ($number_of_differences -eq 0) {
+    Write-Host -ForegroundColor Green "🆗 No differences."
+  }
+  else {
+    Write-Host -ForegroundColor Red "🆖 There are $number_of_differences lines of difference."
   }
 
   $exit_code += $number_of_differences
