@@ -1,9 +1,11 @@
-# requirements
+# How to run tests
+## Install dependencies
 ```sh
-npm install jsdom
+dotnet tool install -g dotnet-script
+npm install
 ```
 
-# run tests
+## Run test script
 ```sh
 ./run-test.ps1
 ```
