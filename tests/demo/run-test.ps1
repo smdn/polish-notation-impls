@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 # SPDX-License-Identifier: MIT
 
-$test_output_dir = "test-output"
+$test_output_dir = $([System.IO.Path]::Join($PSScriptRoot, "test-output"))
 $testcases = @()
 
 $input_expression_calculable = "2 + 5 * 3 - 4"
@@ -76,8 +76,8 @@ New-Item -Path $test_output_dir -ItemType Directory -ErrorAction SilentlyContinu
 $exit_code = 0
 
 foreach ($testcase in $testcases) {
-  $output_path_svg = [System.IO.Path]::Combine($test_output_dir, $testcase.OutputSvgFileName)
-  $output_path_diff = [System.IO.Path]::Combine($test_output_dir, $testcase.OutputDiffFileName)
+  $output_path_svg = [System.IO.Path]::Join($test_output_dir, $testcase.OutputSvgFileName)
+  $output_path_diff = [System.IO.Path]::Join($test_output_dir, $testcase.OutputDiffFileName)
 
   $generator_args = @(
     "--input-expression", $testcase.InputExpression,
@@ -86,8 +86,11 @@ foreach ($testcase in $testcases) {
   )
 
   # generate SVG
-  ./generate-svg.js @generator_args
-  ./tools/format-xml.csx $output_path_svg
+  $cmd_generate_svg = $([System.IO.Path]::Join($PSScriptRoot, "generate-svg.js"))
+  $cmd_format_xml = $([System.IO.Path]::Join($PSScriptRoot, "tools/format-xml.csx"))
+
+  & $cmd_generate_svg @generator_args
+  & $cmd_format_xml $output_path_svg
 
   # get diff between the generated SVG and the expected one
   $diff_args = @(
@@ -97,7 +100,7 @@ foreach ($testcase in $testcases) {
     "--no-color",
     "-U9999",
     "--",
-    [System.IO.Path]::Combine("expected-result", $testcase.ExpectedSvgFileName),
+    [System.IO.Path]::Join($PSScriptRoot, "expected-result", $testcase.ExpectedSvgFileName),
     $output_path_svg
   )
 
