@@ -6,16 +6,17 @@
 `dotnet`コマンドを使用してビルド・実行する場合は、[.NET SDK](https://docs.microsoft.com/ja-jp/dotnet/core/sdk)が必要です。
 
 # ビルドおよび実行
-コマンド`echo '式' | dotnet run`を実行することで、与えられた式に対して逆ポーランド記法化・計算を行うことができます。
+コマンド`dotnet run`を実行し、式を入力することにより、入力された式に対して逆ポーランド記法化・計算を行うことができます。
 
 実行例:
 ```sh
-$ echo 'x=1+2' | dotnet run
-input expression: expression: x=1+2
-reverse polish notation: x 1 2 + =
-infix notation: (x = (1 + 2))
-polish notation: = x + 1 2
-calculated expression: (x = 3)
+$ dotnet run
+input expression: 2 + 5 * 3 - 4
+expression: 2+5*3-4
+reverse polish notation: 2 5 3 * + 4 -
+infix notation: ((2 + (5 * 3)) - 4)
+polish notation: - + 2 * 5 3 4
+calculated result: 13
 ```
 
 その他、`dotnet`コマンドで以下の操作を行うことができます。

@@ -4,17 +4,17 @@
 [Node.js](https://nodejs.org/ja/) v16以降が必要です。　ブラウザで実行する場合はES2022以降に対応している必要があります。
 
 # ビルドおよび実行
-`polish.js`を直接実行するか、コマンド`node polish.js`で実行できます。
+`polish.js`を直接実行するか、コマンド`node polish.js`を実行し、式を入力することにより、入力された式に対して逆ポーランド記法化・計算を行うことができます。
 
 実行例:
 ```sh
 $ ./polish.js
-input expression: x=1+2
-expression: x=1+2
-reverse polish notation: x 1 2 + =
-infix notation: (x = (1 + 2))
-polish notation: = x + 1 2
-calculated expression: (x = 3)
+input expression: 2 + 5 * 3 - 4
+expression: 2+5*3-4
+reverse polish notation: 2 5 3 * + 4 -
+infix notation: ((2 + (5 * 3)) - 4)
+polish notation: - + 2 * 5 3 4
+calculated result: 13
 ```
 
 ## Node.js (v18)のインストール方法

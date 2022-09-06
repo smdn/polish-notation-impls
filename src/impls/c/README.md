@@ -6,16 +6,17 @@ Cコンパイラが必要です。
 `Makefile`を使用してビルド・実行する場合は、GCCが必要です。
 
 # ビルドおよび実行
-コマンド`make run INPUT=(式)`を実行することで、`INPUT`に与えられた式に対して逆ポーランド記法化・計算を行うことができます。
+コマンド`make run`を実行し、式を入力することにより、入力された式に対して逆ポーランド記法化・計算を行うことができます。
 
 実行例:
 ```sh
-$ make run INPUT='x=1+2'
-input expression: expression: x=1+2
-reverse polish notation: x 1 2 + =
-infix notation: (x = (1 + 2))
-polish notation: = x + 1 2
-calculated expression: (x = 3)
+$ make run
+input expression: 2 + 5 * 3 - 4
+expression: 2+5*3-4
+reverse polish notation: 2 5 3 * + 4 -
+infix notation: ((2 + (5 * 3)) - 4)
+polish notation: - + 2 * 5 3 4
+calculated result: 13
 ```
 
 その他、`make`コマンドで以下の操作を行うことができます。
