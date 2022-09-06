@@ -45,6 +45,8 @@ This repository uses mainly Japanese, pull requests in English are also welcome.
   - ただし命名について、pascal-case/camel-case/snake-case/kebab-caseなどのcasingに関しては、その言語での標準・慣習に従うように変更してかまいません。
 - shebang・ディレクティブ・初期化処理や標準入出力等、その言語に特有・必須な部分については、そのまま記述してください。
 
+他言語へ移植する際に追加・変更すべきファイルとその内容については、[PR #9](/../../pull/9)を参照してください。
+
 ## Unacceptable changes / 受け入れられない変更
 [リポジトリの目的](#リポジトリの目的)から逸脱するような変更は受け入れられません。　例として、以下のような変更はお断りします。
 
