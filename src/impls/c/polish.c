@@ -117,7 +117,8 @@ bool parse_number(const char *const expression, double *const number);
 bool read_line(char *const exp, size_t len_max);
 
 // 文字列から空白を取り除く関数
-void remove_space(char *const exp);
+// 空白を取り除いた後の文字列の長さを戻り値として返す
+size_t remove_space(char *const exp);
 
 // 式exp内の括弧の対応を検証する関数
 // 開き括弧と閉じ括弧が同数でない場合はエラーとする
@@ -492,19 +493,25 @@ bool read_line(char *const exp, size_t len_max)
     return true;
 }
 
-void remove_space(char *const exp)
+size_t remove_space(char *const exp)
 {
     char *dst = exp;
     char *src = exp;
+    size_t len = 0;
 
     while (*src) {
-        if (*src == ' ')
+        if (*src == ' ') {
             src++;
-        else
-            *(dst++) = *(src++);
+            continue;
+        }
+
+        *(dst++) = *(src++);
+        len++;
     }
 
     *dst = '\0';
+
+    return len;
 }
 
 bool validate_bracket_balance(const char *const exp)
@@ -558,9 +565,7 @@ int main()
         return 1;
 
     // 入力された式から空白を除去する
-    remove_space(root->exp);
-
-    if (0 == strlen(root->exp))
+    if (0 == remove_space(root->exp))
         // 空白を除去した結果、空の文字列となった場合は、処理を終了する
         return 1;
 
