@@ -10,9 +10,10 @@ SPDX-License-Identifier: MIT
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script type="module">
    //<![CDATA[
-   import { polish_demo_run } from './polish-demo.mjs';
-   // exposes 'polish_demo_run' to the global scope
+   import { polish_demo_run, polish_demo_clear } from './polish-demo.mjs';
+   // exposes functions to the global scope
    window.polish_demo_run = polish_demo_run;
+   window.polish_demo_clear = polish_demo_clear;
    //]]>
   </script>
   <link rel="stylesheet" href="/polish-demo.css" media="all" />

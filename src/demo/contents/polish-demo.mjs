@@ -14,7 +14,7 @@ function polish_demo_remove_children(e)
     e.removeChild(e.firstChild);
 }
 
-function polish_demo_clear(clearInput)
+export function polish_demo_clear(clearInput)
 {
   if (clearInput)
     document.getElementById("polish-demo-input-expression").value = '';
