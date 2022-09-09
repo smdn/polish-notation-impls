@@ -265,7 +265,7 @@ function Invoke-TestCases {
   $result = $true
 
   foreach ($testsuite in $testsuites) {
-    if (($null -ne $testsuite.TargetImplementations) -and !$testsuite.TargetImplementations.Contains($impl.ID)) {
+    if (($null -ne $testsuite.TargetImplementations) -and !$testsuite.TargetImplementations.Contains($impl.ImplementationId)) {
       if ($verbose) {
         Write-Host -ForegroundColor Yellow "ℹ️ Test suite '$($testsuite.Name)' is not performed with implementation '$($impl.DisplayName)'"
       }
@@ -276,7 +276,7 @@ function Invoke-TestCases {
     $number_of_ignored = 0
 
     foreach ($testcase in $testsuite.TestCases) {
-      if (($null -ne $testcase.TargetImplementations) -and !$testcase.TargetImplementations.Contains($impl.ID)) {
+      if (($null -ne $testcase.TargetImplementations) -and !$testcase.TargetImplementations.Contains($impl.ImplementationId)) {
         if ($verbose) {
           Write-Host -ForegroundColor Yellow "ℹ️ Test case '$($testcase.Input)' is not performed with implementation '$($impl.DisplayName)'"
         }
@@ -319,7 +319,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 $implementations = Get-Content -Path $([System.IO.Path]::Combine($PSScriptRoot, "implementations.jsonc")) | ConvertFrom-Json
 
 if ($TargetImplementationId) {
-  $implementations = $implementations | Where-Object ID -eq $TargetImplementationId
+  $implementations = $implementations | Where-Object ImplementationId -eq $TargetImplementationId
 }
 
 $implementations = $implementations | Where-Object {

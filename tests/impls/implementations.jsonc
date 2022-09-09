@@ -1,6 +1,6 @@
 [
   {
-    "ID": "c",
+    "ImplementationId": "c",
     "DisplayName": "C (MSBuild/Windows)",
     "Directory": "src/impls/c/",
     "Condition": "$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool]$(Get-Command MSBuild -errorAction SilentlyContinue))",
@@ -11,7 +11,7 @@
     }
   },
   {
-    "ID": "c",
+    "ImplementationId": "c",
     "DisplayName": "C (make)",
     "Directory": "src/impls/c/",
     "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
@@ -22,7 +22,7 @@
     }
   },
   {
-    "ID": "cpp",
+    "ImplementationId": "cpp",
     "DisplayName": "C++ (CI)",
     "Directory": "src/impls/cpp/",
     "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
@@ -33,7 +33,7 @@
     }
   },
   {
-    "ID": "cpp",
+    "ImplementationId": "cpp",
     "DisplayName": "C++ (MSBuild/Windows)",
     "Directory": "src/impls/cpp/",
     "Condition": "$(![bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool](Get-Command MSBuild -errorAction SilentlyContinue))",
@@ -44,7 +44,7 @@
     }
   },
   {
-    "ID": "cpp",
+    "ImplementationId": "cpp",
     "DisplayName": "C++ (make)",
     "Directory": "src/impls/cpp/",
     "Condition": "$([bool](Get-Command make -errorAction SilentlyContinue) -and !([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)))",
@@ -55,7 +55,7 @@
     }
   },
   {
-    "ID": "csharp",
+    "ImplementationId": "csharp",
     "DisplayName": "C#",
     "Directory": "src/impls/csharp/",
     "Commands": {
@@ -65,7 +65,7 @@
     }
   },
   {
-    "ID": "java",
+    "ImplementationId": "java",
     "DisplayName": "Java",
     "Directory": "src/impls/java/",
     "Commands": {
@@ -75,7 +75,7 @@
     }
   },
   {
-    "ID": "javascript",
+    "ImplementationId": "javascript",
     "DisplayName": "JavaScript (Node.js)",
     "Directory": "src/impls/javascript/",
     "Commands": {
@@ -85,7 +85,7 @@
     }
   },
   {
-    "ID": "python",
+    "ImplementationId": "python",
     "DisplayName": "Python 3",
     "Directory": "src/impls/python/",
     "Commands": {
@@ -95,7 +95,7 @@
     }
   },
   {
-    "ID": "visualbasic",
+    "ImplementationId": "visualbasic",
     "DisplayName": "Visual Basic",
     "Directory": "src/impls/visualbasic/",
     "Commands": {

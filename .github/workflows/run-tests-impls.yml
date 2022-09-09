@@ -88,7 +88,7 @@ jobs:
         shell: pwsh
         run: |
           $verbose = '${{ inputs.verbose }}' -ieq 'true'
-          $target_impls = Get-Content ./tests/impls/implementations.jsonc | ConvertFrom-Json | Select-Object -ExpandProperty ID | Get-Unique
+          $target_impls = Get-Content ./tests/impls/implementations.jsonc | ConvertFrom-Json | Select-Object -ExpandProperty ImplementationId | Get-Unique
 
           if ( ! [string]::IsNullOrEmpty( '${{ inputs.target-impl }}' ) ) {
             $target_impls = @('${{ inputs.target-impl }}')
