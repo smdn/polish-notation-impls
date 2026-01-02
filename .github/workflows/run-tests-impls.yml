@@ -81,7 +81,7 @@ jobs:
             "::notice::test runs on: $($os_list -join ', ')"
           }
 
-          "::set-output name=runs-ons::$($os_list | ConvertTo-Json -Compress)"
+          "runs-ons=$($os_list | ConvertTo-Json -Compress)" >> $GITHUB_OUTPUT
 
       - name: Determine target implementation list which run the tests to
         id: test-target-impls
@@ -98,7 +98,7 @@ jobs:
             "::notice::target implementations: $($target_impls -join ', ')"
           }
 
-          "::set-output name=target-impls::$($target_impls | ConvertTo-Json -Compress)"
+          "target-impls=$($target_impls | ConvertTo-Json -Compress)" >> $GITHUB_OUTPUT
 
   run-tests:
     name: Test '${{ matrix.target-impl }}' on ${{ matrix.os }}
