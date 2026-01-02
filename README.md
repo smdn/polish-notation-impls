@@ -1,6 +1,6 @@
 [![GitHub license](https://img.shields.io/github/license/smdn/polish-notation-impls)](https://github.com/smdn/polish-notation-impls/blob/main/LICENSE.txt)
-[![tests-impls/main](https://img.shields.io/github/workflow/status/smdn/polish-notation-impls/Run%20tests%20for%20implementations/main?label=tests-impls%2Fmain)](https://github.com/smdn/polish-notation-impls/actions/workflows/run-tests-impls.yml)
-[![tests-demo/main](https://img.shields.io/github/workflow/status/smdn/polish-notation-impls/Run%20tests%20for%20demo/main?label=tests-demo%2Fmain)](https://github.com/smdn/polish-notation-impls/actions/workflows/run-tests-demo.yml)
+[![tests-impls/main](https://img.shields.io/github/actions/workflow/status/smdn/polish-notation-impls/run-tests-impls.yml?branch=main&label=tests-impls%2Fmain)](https://github.com/smdn/polish-notation-impls/actions/workflows/run-tests-impls.yml)
+[![tests-demo/main](https://img.shields.io/github/actions/workflow/status/smdn/polish-notation-impls/run-tests-demo.yml?branch=main&label=tests-demo%2Fmain)](https://github.com/smdn/polish-notation-impls/actions/workflows/run-tests-demo.yml)
 
 # polish-notation-impls
 このリポジトリでは、[二分木を使った数式の逆ポーランド記法化と計算](https://smdn.jp/programming/tips/polish/)で掲載している**数式の二分木化・記法変換・計算のアルゴリズム**について、[各種言語で実装したもの](src/impls/)を公開しています。
