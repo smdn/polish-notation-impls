@@ -140,7 +140,7 @@ jobs:
 
       - name: Setup MSBuild
         if: ${{ runner.os == 'Windows' && matrix.target-impl == 'cpp' }}
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v1.3
 
       - name: Run tests with ${{ matrix.target-impl }} on ${{ matrix.os }}
         shell: pwsh
