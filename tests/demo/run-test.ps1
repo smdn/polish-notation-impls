@@ -89,7 +89,7 @@ foreach ($testcase in $testcases) {
 
   # generate SVG
   $cmd_generate_svg = $([System.IO.Path]::Join($PSScriptRoot, "generate-svg.js"))
-  $cmd_format_xml = $([System.IO.Path]::Join($PSScriptRoot, "tools/format-xml.csx"))
+  $cmd_format_xml = $([System.IO.Path]::Join($PSScriptRoot, "tools/format-xml.cs"))
 
   & $cmd_generate_svg @generator_args
   & $cmd_format_xml $output_path_svg

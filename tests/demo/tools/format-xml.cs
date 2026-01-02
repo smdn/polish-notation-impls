@@ -1,16 +1,13 @@
-#!/usr/bin/env dotnet-script
+#!/usr/bin/env dotnet
 //
 // requirements:
-//   .NET Runtime
+//   .NET SDK 10 or over
+//   (see https://learn.microsoft.com/dotnet/core/sdk/file-based-apps)
 //
 // usage:
-//   1. install dotnet-script
-//     dotnet tool install -g dotnet-script
-//   2. run this script
-//     ./format-xml.csx a.xml b.xml
-//     dotnet script ./format-xml.csx a.xml b.xml
+//   ./format-xml.csx a.xml b.xml
+//
 
-using System;
 using System.Xml;
 using System.Xml.Linq;
 using System.Text;
@@ -23,7 +20,7 @@ var settings = new XmlWriterSettings() {
   NewLineOnAttributes = true
 };
 
-foreach (var file in Args) {
+foreach (var file in args) {
   Console.Write($"reformatting {file} ... ");
 
   var doc = XDocument.Load(file);

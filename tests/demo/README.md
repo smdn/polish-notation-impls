@@ -1,7 +1,9 @@
 # How to run tests
+## Prerequisites
+- .NET SDK 10 or over (required by [tools/format-xml.cs](tools/format-xml.cs))
+
 ## Install dependencies
 ```sh
-dotnet tool install -g dotnet-script
 npm install
 ```
 
