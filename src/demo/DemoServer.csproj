@@ -9,7 +9,6 @@ SPDX-License-Identifier: MIT
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>CS2002;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,24 +20,20 @@ SPDX-License-Identifier: MIT
   </ItemGroup>
 
   <Target Name="GeneratePathConstantsFile" BeforeTargets="BeforeBuild">
-    <ItemGroup>
-      <!-- <SourceLines Include="namespace $(RootNamespace)$([MSBuild]::Escape(';'))" /> -->
-      <SourceLines Include="public static class Paths {" />
-      <SourceLines Include="public const string ContentsBasePath = @&quot;$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)contents'))&quot;$([MSBuild]::Escape(';'))" />
-      <SourceLines Include="public const string ImplementationsBasePath = @&quot;$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\impls\'))&quot;$([MSBuild]::Escape(';'))" />
-      <SourceLines Include="}" />
-    </ItemGroup>
     <PropertyGroup>
       <PathConstantsFilePath>$(IntermediateOutputPath)$(AssemblyName).Paths.g.cs</PathConstantsFilePath>
+      <PathConstantsFileContent><![CDATA[
+internal static class Paths {
+  public const string ContentsBasePath = @"$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)contents'))"%3B
+}]]></PathConstantsFileContent>
     </PropertyGroup>
     <WriteLinesToFile
-      File="$(IntermediateOutputPath)$(AssemblyName).Paths.g.cs"
+      File="$(PathConstantsFilePath)"
+      Lines="$(PathConstantsFileContent)"
       Overwrite="true"
-      Lines="@(SourceLines)"
     />
     <ItemGroup>
-      <!-- XXX: This causes compiler warning CS2002. -->
-      <Compile Include="$(PathConstantsFilePath)" />
+      <Compile Include="$(PathConstantsFilePath)" Visible="false" AutoGen="true" />
     </ItemGroup>
   </Target>
 
