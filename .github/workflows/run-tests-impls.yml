@@ -119,26 +119,11 @@ jobs:
           persist-credentials: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check .NET SDK version
-        id: dotnet-sdk-version
+      - name: Prepare .NET SDK ${{ env.DOTNET_SDK_MINIMUM_VERSION }}
+        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.0.0
         if: ${{ matrix.target-impl == 'csharp' || matrix.target-impl == 'visualbasic' }}
-        shell: pwsh
-        run: |
-          $installed_version = [System.Version]::Parse($(dotnet --version))
-          $required_version  = [System.Version]::Parse($Env:DOTNET_SDK_MINIMUM_VERSION)
-
-          if ( $required_version -gt $installed_version ) {
-            # required SDK version is not installed
-            "::notice::.NET SDK version: installed ${installed_version}, required ${required_version}"
-
-            "::set-output name=install::${required_version}"
-          }
-
-      - name: Setup .NET SDK ${{ steps.dotnet-sdk-version.outputs.install }}
-        if: ${{ steps.dotnet-sdk-version.outputs.install != '' }}
-        uses: actions/setup-dotnet@v2.0.0
         with:
-          dotnet-version: "${{ steps.dotnet-sdk-version.outputs.install }}"
+          minimal_dotnet_sdk_version: '${{ env.DOTNET_SDK_MINIMUM_VERSION }}'
 
       - name: Setup Java
         if: ${{ matrix.target-impl == 'java' }}
