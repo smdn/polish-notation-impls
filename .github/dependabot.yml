@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: "2025 smdn <smdn@smdn.jp>"
+#
+# ref: https://docs.github.com/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "03:16"
+      timezone: "Asia/Tokyo"
+    groups:
+      GitHub-Actions-Workflows:
+        patterns:
+          - "actions/*"
+    ignore:
+      - dependency-name: "actions/checkout"
+        update-types:
+          - "version-update:semver-patch"
