@@ -46,6 +46,7 @@
     "streambuf": "cpp",
     "typeinfo": "cpp"
   },
+  "mypy-type-checker.args": ["--config-file=${workspaceFolder}/mypy.ini"],
   "[jsonc]": {
     "editor.formatOnSave": false,
     "editor.formatOnType": false,
