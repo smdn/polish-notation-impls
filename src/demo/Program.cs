@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -46,6 +45,7 @@ for (var index = 0; index < args.Length; index++) {
 builder.WebHost.ConfigureKestrel(
   (context, serverOptions) => {
     serverOptions.AddServerHeader = false;
+    serverOptions.AllowSynchronousIO = true;
 
     serverOptions.ListenLocalhost(localPortNumber);
   }
@@ -62,11 +62,15 @@ using var app = builder.Build();
 
 app.MapGet(
   pattern: "/",
-  handler: async (CancellationToken cancellationToken)
-    => Results.Content(
-      content: await ConstructIndexAsync(cancellationToken).ConfigureAwait(false),
-      contentType: "text/html; charset=utf-8"
-    )
+  handler: async (HttpContext context, CancellationToken cancellationToken) => {
+    context.Response.ContentType = "text/html; charset=utf-8";
+    context.Response.StatusCode = 200;
+
+    await ConstructIndexAsync(
+      context.Response.Body,
+      cancellationToken
+    ).ConfigureAwait(false);
+  }
 );
 
 app.MapGet(
@@ -94,12 +98,19 @@ app.MapGet(
 
 await app.RunAsync().ConfigureAwait(false);
 
-static async Task<string> ConstructIndexAsync(CancellationToken cancellationToken)
+static async Task ConstructIndexAsync(
+  Stream destination,
+  CancellationToken cancellationToken
+)
 {
   XDocument templateIndex;
 
   using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "index.template.xhtml"))) {
-    templateIndex = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken);
+    templateIndex = await XDocument.LoadAsync(
+      stream,
+      LoadOptions.None,
+      cancellationToken
+    ).ConfigureAwait(false);
   }
 
   var nsPlaceholder = (XNamespace)"https://github.com/smdn/polish-notation-impls";
@@ -124,26 +135,31 @@ static async Task<string> ConstructIndexAsync(CancellationToken cancellationToke
 
       var reader = XmlReader.Create(stream, settings, context);
 
-      var replacement = await XDocument.LoadAsync(reader, LoadOptions.None, cancellationToken);
+      var replacement = await XDocument.LoadAsync(
+        reader,
+        LoadOptions.None,
+        cancellationToken
+      ).ConfigureAwait(false);
 
       elementPlaceholder.AddAfterSelf(replacement.Root);
       elementPlaceholder.Remove();
     }
   }
 
-  var sb = new StringBuilder(10 * 1024);
   var writerSettings = new XmlWriterSettings() {
-    Async = false, // async is not implemented
+    Async = true,
     CloseOutput = true,
     Indent = true,
     IndentChars = " ",
     NewLineChars = "\n",
   };
 
-  using (var writer = new PolyglotHtml5Writer(sb, writerSettings)) {
-    // await templateIndex.SaveAsync(writer, cancellationToken); // async is not implemented
-    templateIndex.Save(writer);
-  }
+  var writer = new PolyglotHtml5Writer(destination, writerSettings);
 
-  return sb.ToString();
+  await using (writer.ConfigureAwait(false)) {
+    await templateIndex.SaveAsync(
+      writer,
+      cancellationToken
+    ).ConfigureAwait(false);
+  }
 }
