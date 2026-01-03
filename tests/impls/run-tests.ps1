@@ -66,7 +66,12 @@ function Invoke-Tests {
         Invoke-Expression "$($cmd.Command) $($cmd.Arguments -join ' ')"
       }
       else {
-        [void]$(& $cmd.Command $cmd.Arguments)
+        & $cmd.Command $cmd.Arguments 2>&1 | ForEach-Object { Write-Host $_ }
+
+        if ($LASTEXITCODE -ne 0) {
+          $done_build = $false
+          break
+        }
       }
     }
     catch {
