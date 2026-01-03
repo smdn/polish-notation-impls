@@ -2,14 +2,15 @@
 SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>CS2002;$(NoWarn)</NoWarn>
+    <AnalysisMode>All</AnalysisMode>
+    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,28 +18,25 @@ SPDX-License-Identifier: MIT
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Smdn.Fundamental.Xml.Xhtml" Version="3.*" />
+    <PackageReference Include="System.CommandLine" Version="2.0.1" />
+    <PackageReference Include="Smdn.Fundamental.Xml.Xhtml" Version="[3.1.0,4.0.0)" />
   </ItemGroup>
 
   <Target Name="GeneratePathConstantsFile" BeforeTargets="BeforeBuild">
-    <ItemGroup>
-      <!-- <SourceLines Include="namespace $(RootNamespace)$([MSBuild]::Escape(';'))" /> -->
-      <SourceLines Include="public static class Paths {" />
-      <SourceLines Include="public const string ContentsBasePath = @&quot;$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)contents'))&quot;$([MSBuild]::Escape(';'))" />
-      <SourceLines Include="public const string ImplementationsBasePath = @&quot;$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\impls\'))&quot;$([MSBuild]::Escape(';'))" />
-      <SourceLines Include="}" />
-    </ItemGroup>
     <PropertyGroup>
       <PathConstantsFilePath>$(IntermediateOutputPath)$(AssemblyName).Paths.g.cs</PathConstantsFilePath>
+      <PathConstantsFileContent><![CDATA[
+internal static class Paths {
+  public const string ContentsBasePath = @"$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)contents'))"%3B
+}]]></PathConstantsFileContent>
     </PropertyGroup>
     <WriteLinesToFile
-      File="$(IntermediateOutputPath)$(AssemblyName).Paths.g.cs"
+      File="$(PathConstantsFilePath)"
+      Lines="$(PathConstantsFileContent)"
       Overwrite="true"
-      Lines="@(SourceLines)"
     />
     <ItemGroup>
-      <!-- XXX: This causes compiler warning CS2002. -->
-      <Compile Include="$(PathConstantsFilePath)" />
+      <Compile Include="$(PathConstantsFilePath)" Visible="false" AutoGen="true" />
     </ItemGroup>
   </Target>
 

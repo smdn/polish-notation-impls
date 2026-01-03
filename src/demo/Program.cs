@@ -1,286 +1,177 @@
 ﻿// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
-using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+
 using Smdn.Xml.Xhtml;
 
-class DemoServer {
-  private const string ServerName = "PolishNotationDemoServer/1.0";
-  private const int DefaultLocalPortNumber = 48080;
-  private static readonly Encoding utf8nobom = new UTF8Encoding(false);
+const int DefaultLocalPortNumber = 48080;
 
-  static async Task<int> Main(string[] args)
-  {
-    if (!HttpListener.IsSupported) {
-      Console.Error.WriteLine($"{nameof(HttpListener)} is not supported on this platform");
-      return 1;
-    }
+const string ContentTypeCascadingStyleSheets = "text/css; charset=UTF-8";
+const string ContentTypeJavaScript = "text/javascript; charset=UTF-8";
 
-    var localPortNumber = DefaultLocalPortNumber;
+var applicationName = Assembly.GetEntryAssembly()?.FullName ?? "DemoServer";
 
-    for (var index = 0; index < args.Length; index++) {
-      switch (args[index]) {
-        case "--port":
-          localPortNumber = int.Parse(args[++index]);
-          break;
+var builder = WebApplication.CreateBuilder(
+  options: new() {
+    Args = args,
+    ApplicationName = applicationName,
+  }
+);
+
+builder.Logging.AddSimpleConsole(static options => {
+  options.SingleLine = true;
+  options.TimestampFormat = "MM-ddTHH:mm:ss ";
+  options.UseUtcTimestamp = false;
+  options.ColorBehavior = LoggerColorBehavior.Enabled;
+});
+
+var localPortNumberOption = new Option<int>("--port") {
+  Description = "Port number the demo server listens on.",
+  DefaultValueFactory = static _ => DefaultLocalPortNumber,
+};
+
+var rootCommand = new RootCommand(applicationName);
+
+rootCommand.Options.Add(localPortNumberOption);
+
+rootCommand.SetAction(
+  action: async (parseResult, cancellationToken) => {
+    var localPortNumber = parseResult.GetValue(localPortNumberOption);
+
+    builder.WebHost.ConfigureKestrel(
+      (context, serverOptions) => {
+        serverOptions.AddServerHeader = false;
+        serverOptions.AllowSynchronousIO = true;
+
+        serverOptions.ListenLocalhost(localPortNumber);
       }
-    }
+    );
 
-    using var listener = new HttpListener();
+    using var app = builder.Build();
 
-    listener.Prefixes.Add($"http://localhost:{localPortNumber}/");
+    app.MapGet(
+      pattern: "/",
+      handler: async (HttpContext context, CancellationToken cancellationToken) => {
+        context.Response.ContentType = "text/html; charset=utf-8";
+        context.Response.StatusCode = 200;
 
-    Console.WriteLine($"server {ServerName} starting (prefix: {string.Join(", ", listener.Prefixes)}) ...");
-
-    listener.Start();
-
-    if (listener.IsListening) {
-      Console.WriteLine($"server {ServerName} running");
-    }
-    else {
-      Console.Error.WriteLine("server not listening (something wrong?)");
-      return 1;
-    }
-
-    try {
-      for (; ; ) {
-        await ProcessRequestAsync(await listener.GetContextAsync());
+        await ConstructIndexAsync(
+          context.Response.Body,
+          cancellationToken
+        ).ConfigureAwait(false);
       }
-    }
-    finally {
-      listener.Stop();
+    );
+
+    app.MapGet(
+      pattern: "/{name}.css",
+      handler: (string name) => name switch {
+        "polish-demo" or
+        "polish-expressiontree"
+          => Results.File(Path.Join(Paths.ContentsBasePath, $"{name}.css"), ContentTypeCascadingStyleSheets),
+
+        _ => Results.NotFound(),
+      }
+    );
+
+    app.MapGet(
+      pattern: "/{name}.mjs",
+      handler: (string name) => name switch {
+        "Node" or
+        "polish-demo" or
+        "polish-expressiontree"
+          => Results.File(Path.Join(Paths.ContentsBasePath, $"{name}.mjs"), ContentTypeJavaScript),
+
+        _ => Results.NotFound(),
+      }
+    );
+
+    await app.RunAsync().ConfigureAwait(false);
+
+    return 0;
+  }
+);
+
+return await rootCommand.Parse(args).InvokeAsync().ConfigureAwait(false);
+
+static async Task ConstructIndexAsync(
+  Stream destination,
+  CancellationToken cancellationToken
+)
+{
+  XDocument templateIndex;
+
+  using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "index.template.xhtml"))) {
+    templateIndex = await XDocument.LoadAsync(
+      stream,
+      LoadOptions.None,
+      cancellationToken
+    ).ConfigureAwait(false);
+  }
+
+  var nsPlaceholder = (XNamespace)"https://github.com/smdn/polish-notation-impls";
+
+  foreach (var elementPlaceholder in templateIndex.Descendants(nsPlaceholder + "placeholder").ToList()) {
+    var file = elementPlaceholder.Attribute("file")?.Value;
+
+    using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, file))) {
+      var nsmgr = new XmlNamespaceManager(new NameTable());
+
+      nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
+
+      var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
+      var settings = new XmlReaderSettings() {
+        Async = true,
+        DtdProcessing = DtdProcessing.Ignore,
+        CloseInput = true,
+        ConformanceLevel = ConformanceLevel.Fragment,
+        IgnoreComments = true,
+        IgnoreWhitespace = true,
+      };
+
+      var reader = XmlReader.Create(stream, settings, context);
+
+      var replacement = await XDocument.LoadAsync(
+        reader,
+        LoadOptions.None,
+        cancellationToken
+      ).ConfigureAwait(false);
+
+      elementPlaceholder.AddAfterSelf(replacement.Root);
+      elementPlaceholder.Remove();
     }
   }
 
-  private static async Task ProcessRequestAsync(HttpListenerContext context)
-  {
-    try {
-      try {
-        var request = context.Request;
+  var writerSettings = new XmlWriterSettings() {
+    Async = true,
+    CloseOutput = true,
+    Indent = true,
+    IndentChars = " ",
+    NewLineChars = "\n",
+  };
 
-        Console.Write(
-          "{0} - {1} [{2:r}] \"{3} {4} HTTP/{5}\" {6} ",
-          request.RemoteEndPoint,
-          request.UserHostName,
-          DateTimeOffset.Now,
-          request.HttpMethod,
-          request.RawUrl,
-          request.ProtocolVersion,
-          request.ContentLength64
-        );
+  var writer = new PolyglotHtml5Writer(destination, writerSettings);
 
-        var (statusCode, responseContent) = await ProcessRequestAsyncCore(context);
-
-        context.Response.StatusCode = (int)statusCode;
-
-        var response = context.Response;
-
-        response.Headers[HttpResponseHeader.Server] = ServerName;
-        response.ContentEncoding = utf8nobom;
-        response.KeepAlive = false;
-
-        using var s = new MemoryStream();
-        using (var writer = new StreamWriter(s, response.ContentEncoding, 1024, true)) {
-          if (responseContent is null || responseContent.Content is null) {
-            // set default content body
-            response.ContentType = "text/plain";
-
-            writer.WriteLine($"{response.StatusCode:D3} {(HttpStatusCode)response.StatusCode}");
-          }
-          else {
-            response.ContentType = responseContent.ContentType;
-
-            writer.WriteLine(responseContent.Content);
-          }
-
-          writer.Flush();
-        }
-
-        response.ContentLength64 = s.Length;
-
-        s.Position = 0L;
-
-        Console.WriteLine(
-          "{0:D3} {1} \"{2}\" \"{3}\"",
-          response.StatusCode,
-          s.Length,
-          request.UrlReferrer,
-          request.UserAgent
-        );
-
-        s.CopyTo(response.OutputStream);
-      }
-      catch {
-        throw;
-      }
-    }
-    finally {
-      if (context != null)
-        context.Response.OutputStream.Close();
-    }
-  }
-
-  private class ResponseContent {
-    public string? Content { get; }
-    public string ContentType { get; }
-
-    public ResponseContent(string content, string contentType)
-    {
-      Content = content;
-      ContentType = contentType;
-    }
-  }
-
-  private const string ContentTypeCascadingStyleSheets = "text/css; charset=UTF-8";
-  private const string ContentTypeJavaScript = "text/javascript; charset=UTF-8";
-
-  private static readonly IReadOnlyDictionary<string, Func<Task<ResponseContent>>> contentLoader =
-    new Dictionary<string, Func<Task<ResponseContent>>>(StringComparer.Ordinal) {
-      {
-        "/",
-        static async () => new(
-          content: await ConstructIndexAsync(),
-          contentType: "text/html; charset=UTF-8"
-        )
-      },
-      {
-        "/Node.mjs",
-        static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "Node.mjs")),
-          contentType: ContentTypeJavaScript
-        )
-      },
-      {
-        "/polish-demo.css",
-        static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.css")),
-          contentType: ContentTypeCascadingStyleSheets
-        )
-      },
-      {
-        "/polish-demo.mjs",
-        static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-demo.mjs")),
-          contentType: ContentTypeJavaScript
-        )
-      },
-      {
-        "/polish-expressiontree.css",
-        static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.css")),
-          contentType: ContentTypeCascadingStyleSheets
-        )
-      },
-      {
-        "/polish-expressiontree.mjs",
-        static async () => new(
-          content: await File.ReadAllTextAsync(Path.Join(Paths.ContentsBasePath, "polish-expressiontree.mjs")),
-          contentType: ContentTypeJavaScript
-        )
-      },
-    };
-
-  private static async Task<(HttpStatusCode, ResponseContent?)> ProcessRequestAsyncCore(
-    HttpListenerContext context
-  )
-  {
-    // can be accessed from local address
-    if (!IPAddress.IsLoopback(context.Request.RemoteEndPoint.Address))
-      return (HttpStatusCode.Forbidden, null);
-
-    try {
-      if (context.Request.RawUrl is null) {
-        return (
-          HttpStatusCode.BadRequest,
-          null
-        );
-      }
-
-      if (contentLoader.TryGetValue(context.Request.RawUrl, out var loadAsync)) {
-        return (
-          HttpStatusCode.OK,
-          await loadAsync()
-        );
-      }
-
-      return (
-        HttpStatusCode.NotFound,
-        null
-      );
-    }
-    catch (Exception ex) {
-      Console.Error.WriteLine(ex);
-
-      return (
-        HttpStatusCode.InternalServerError,
-        new ResponseContent(
-          content: ex.ToString(),
-          contentType: "text/plain; charset=UTF-8"
-        )
-      );
-    }
-  }
-
-  private static async Task<string> ConstructIndexAsync()
-  {
-    XDocument templateIndex;
-
-    using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, "index.template.xhtml"))) {
-      templateIndex = await XDocument.LoadAsync(stream, LoadOptions.None, cancellationToken: default);
-    }
-
-    var nsPlaceholder = (XNamespace)"https://github.com/smdn/polish-notation-impls";
-
-    foreach (var elementPlaceholder in templateIndex.Descendants(nsPlaceholder + "placeholder").ToList()) {
-      var file = elementPlaceholder.Attribute("file")?.Value;
-
-      using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, file))) {
-        var nsmgr = new XmlNamespaceManager(new NameTable());
-
-        nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
-
-        var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
-        var settings = new XmlReaderSettings() {
-          Async = true,
-          DtdProcessing = DtdProcessing.Ignore,
-          CloseInput = true,
-          ConformanceLevel = ConformanceLevel.Fragment,
-          IgnoreComments = true,
-          IgnoreWhitespace = true,
-        };
-
-        var reader = XmlReader.Create(stream, settings, context);
-
-        var replacement = await XDocument.LoadAsync(reader, LoadOptions.None, cancellationToken: default);
-
-        elementPlaceholder.AddAfterSelf(replacement.Root);
-        elementPlaceholder.Remove();
-      }
-    }
-
-
-    var sb = new StringBuilder(10 * 1024);
-    var writerSettings = new XmlWriterSettings() {
-      Async = false, // async is not implemented
-      CloseOutput = true,
-      Indent = true,
-      IndentChars = " ",
-      NewLineChars = "\n",
-    };
-
-    using (var writer = new PolyglotHtml5Writer(sb, writerSettings)) {
-      // await templateIndex.SaveAsync(writer, cancellationToken: default); // async is not implemented
-      templateIndex.Save(writer);
-    }
-
-    return sb.ToString();
+  await using (writer.ConfigureAwait(false)) {
+    await templateIndex.SaveAsync(
+      writer,
+      cancellationToken
+    ).ConfigureAwait(false);
   }
 }
