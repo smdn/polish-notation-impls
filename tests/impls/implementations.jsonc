@@ -95,6 +95,17 @@
     }
   },
   {
+    "ImplementationId": "python",
+    "DisplayName": "Python 3 with type annotations",
+    "Directory": "src/impls/python/",
+    "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
+    "Commands": {
+      "Build":  [ { "Command": "make", "Arguments": [ "type-check" ] } ],
+      "Clean":  [ ],
+      "Run":    { "Command": "python3", "Arguments": [ "polish.py" ] },
+    }
+  },
+  {
     "ImplementationId": "visualbasic",
     "DisplayName": "Visual Basic",
     "Directory": "src/impls/visualbasic/",

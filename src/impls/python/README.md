@@ -16,3 +16,6 @@ infix notation: ((2 + (5 * 3)) - 4)
 polish notation: - + 2 * 5 3 4
 calculated result: 13
 ```
+
+# 型チェック
+型ヒントの検証を行う場合は、`make type-check`を実行してください。　なお、`mypy`がインストールされている必要があります。

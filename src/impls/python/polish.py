@@ -2,31 +2,38 @@
 # SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 # SPDX-License-Identifier: MIT
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+from typing import Callable
+from typing import IO
 import sys
 
 # 与えられた式が不正な形式であることを報告するための例外クラス
 class MalformedExpressionException(Exception):
-  def __init__(self, message):
+  def __init__(self, message: str):
     super().__init__(message)
 
 # ノードを構成するデータ構造
 class Node:
+  __expression: str # このノードが表す式(二分木への分割後は演算子または項となる)
+  __left: Node | None  # 左の子ノード
+  __right: Node | None # 右の子ノード
+
   # コンストラクタ(与えられた式expressionを持つノードを構成する)
-  def __init__(self, expression):
+  def __init__(self, expression: str):
     # 式expressionにおける括弧の対応数をチェックする
     Node.__validate_bracket_balance(expression)
 
     # チェックした式expressionをこのノードが表す式として設定する
-    self.__expression = expression # このノードが表す式(二分木への分割後は演算子または項となる)
+    self.__expression = expression
 
-    self.__left = None  # 左の子ノード
-    self.__right = None # 右の子ノード
+    self.__left = None
+    self.__right = None
 
   # 式expression内の括弧の対応を検証するメソッド
   # 開き括弧と閉じ括弧が同数でない場合はエラーとする
   @staticmethod
-  def __validate_bracket_balance(expression):
-    nest_depth = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
+  def __validate_bracket_balance(expression: str) -> None:
+    nest_depth: int = 0 # 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
     # 1文字ずつ検証する
     for ch in expression:
@@ -51,12 +58,12 @@ class Node:
       raise MalformedExpressionException("unbalanced bracket: {}".format(expression))
 
   # 式expressionを二分木へと分割するメソッド
-  def parse_expression(self):
+  def parse_expression(self) -> None:
     # 式expressionから最も外側にある丸括弧を取り除く
     self.__expression = Node.__remove_outermost_bracket(self.__expression)
 
     # 式expressionから演算子を探して位置を取得する
-    pos_operator = Node.__get_operator_position(self.__expression)
+    pos_operator: int = Node.__get_operator_position(self.__expression)
 
     if pos_operator < 0:
       # 式expressionに演算子が含まれない場合、expressionは項であるとみなす
@@ -86,9 +93,9 @@ class Node:
 
   # 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
   @staticmethod
-  def __remove_outermost_bracket(expression):
-    has_outermost_bracket = False # 最も外側に括弧を持つかどうか
-    nest_depth = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
+  def __remove_outermost_bracket(expression: str) -> str:
+    has_outermost_bracket: bool = False # 最も外側に括弧を持つかどうか
+    nest_depth: int = 0 # 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
 
     if expression[0] == "(":
       # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
@@ -138,12 +145,14 @@ class Node:
   # 式expressionから最も右側にあり、かつ優先順位が低い演算子を探して位置を返すメソッド
   # (演算子がない場合は-1を返す)
   @staticmethod
-  def __get_operator_position(expression):
-    pos_operator = -1 # 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
-    current_priority = sys.maxsize # 現在見つかっている演算子の優先順位(初期値としてsys.maxsizeを設定)
-    nest_depth = 0 # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
+  def __get_operator_position(expression: str) -> int:
+    pos_operator: int = -1 # 現在見つかっている演算子の位置(初期値として-1=演算子なしを設定)
+    current_priority: int = sys.maxsize # 現在見つかっている演算子の優先順位(初期値としてsys.maxsizeを設定)
+    nest_depth: int = 0 # 丸括弧の深度(括弧でくくられていない部分の演算子を「最も優先順位が低い」と判断するために用いる)
 
     # 与えられた文字列を先頭から1文字ずつ検証する
+    i: int
+
     for i in range(len(expression)):
       priority = 0 # 演算子の優先順位(値が低いほど優先順位が低いものとする)
 
@@ -183,10 +192,10 @@ class Node:
   # 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定された関数オブジェクトをコールバックするメソッド
   def traverse(
     self,
-    on_visit,   # ノードの行きがけにコールバックする関数オブジェクト
-    on_transit, # ノードの通りがけにコールバックする関数オブジェクト
-    on_leave    # ノードの帰りがけにコールバックする関数オブジェクト
-  ):
+    on_visit:   Callable[[Node], int | None] | None, # ノードの行きがけにコールバックする関数オブジェクト
+    on_transit: Callable[[Node], int | None] | None, # ノードの通りがけにコールバックする関数オブジェクト
+    on_leave:   Callable[[Node], int | None] | None  # ノードの帰りがけにコールバックする関数オブジェクト
+  ) -> None:
     # このノードの行きがけに行う動作をコールバックする
     if on_visit:
       on_visit(self)
@@ -209,7 +218,7 @@ class Node:
 
   # 後行順序訪問(帰りがけ順)で二分木を巡回して
   # すべてのノードの演算子または項をoutに出力するメソッド
-  def write_postorder(self, out):
+  def write_postorder(self, out: IO[str]) -> None:
     # 巡回を開始する
     self.traverse(
       None, # ノードへの行きがけには何もしない
@@ -221,14 +230,14 @@ class Node:
 
   # 通りがけ順で巡回する際に、行きがけにコールバックさせる関数
   @staticmethod
-  def __write_inorder_on_visit(out, node):
+  def __write_inorder_on_visit(out: IO[str], node: Node) -> None:
     # 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
     if node.__left and node.__right:
       out.write('(')
 
   # 通りがけ順で巡回する際に、通りがけにコールバックさせる関数
   @staticmethod
-  def __write_inorder_on_transit(out, node):
+  def __write_inorder_on_transit(out: IO[str], node: Node) -> None:
     # 左に子ノードを持つ場合は、読みやすさのために空白を補う
     if node.__left:
       out.write(' ')
@@ -242,13 +251,13 @@ class Node:
 
   # 通りがけ順で巡回する際に、帰りがけにコールバックさせる関数
   @staticmethod
-  def __write_inorder_on_leave(out, node):
+  def __write_inorder_on_leave(out: IO[str], node: Node) -> None:
     if node.__left and node.__right:
       out.write(')')
 
   # 中間順序訪問(通りがけ順)で二分木を巡回して
   # すべてのノードの演算子または項をoutに出力するメソッド
-  def write_inorder(self, out):
+  def write_inorder(self, out: IO[str]) -> None:
     # 巡回を開始する
     self.traverse(
       # ノードへの行きがけに、必要なら開き括弧を補う
@@ -261,7 +270,7 @@ class Node:
 
   # 先行順序訪問(行きがけ順)で二分木を巡回して
   # すべてのノードの演算子または項をwriterに出力するメソッド
-  def write_preorder(self, out):
+  def write_preorder(self, out: IO[str]) -> None:
     # 巡回を開始する
     self.traverse(
       # ノードへの行きがけに、ノードの演算子または項を出力する
@@ -273,7 +282,7 @@ class Node:
 
   # 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算するメソッド
   # すべてのノードの値が計算できた場合はその値、そうでない場合(記号を含む場合など)はNoneを返す
-  def calculate_expression_tree(self):
+  def calculate_expression_tree(self) -> (float | None):
     # 巡回を開始する
     # ノードからの帰りがけに、ノードが表す部分式から、その値を計算する
     # 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
@@ -286,11 +295,10 @@ class Node:
     # ノードの値を数値に変換し、計算結果を返す
     return Node.__parse_number(self.__expression)
 
-
   # 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
   # 計算できた場合、計算結果の値はnode.__expressionに文字列として代入し、左右のノードは削除する
   @staticmethod
-  def calculate_node(node):
+  def calculate_node(node: Node) -> None:
     # 左右に子ノードを持たない場合、現在のノードは部分式ではなく項であり、
     # それ以上計算できないので処理を終える
     if not node.__left or not node.__right:
@@ -301,14 +309,14 @@ class Node:
     # ノードの値が計算できないものとして、処理を終える
 
     # 左ノードの値を数値に変換して演算子の左項left_operandの値とする
-    left_operand = Node.__parse_number(node.__left.__expression)
+    left_operand: (float | None) = Node.__parse_number(node.__left.__expression)
 
     if left_operand is None:
       # floatで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
       return
 
     # 右ノードの値を数値に変換して演算子の右項right_operandの値とする
-    right_operand = Node.__parse_number(node.__right.__expression)
+    right_operand: (float | None) = Node.__parse_number(node.__right.__expression)
 
     if right_operand is None:
       # floatで扱える範囲外の値か、途中に変換できない文字があるため、計算できないものとして扱い、処理を終える
@@ -337,7 +345,7 @@ class Node:
   # 正常に変換できた場合は変換した数値を返す
   # 変換できなかった場合はNoneを返す
   @staticmethod
-  def __parse_number(expression):
+  def __parse_number(expression: str) -> float | None:
     try:
       # 与えられた文字列を数値に変換する
       return float(expression)
@@ -349,9 +357,9 @@ class Node:
 #   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
 #   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
 #   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
-def main():
+def main() -> int:
   # 標準入力から二分木に分割したい式を入力する
-  expression = input("input expression: ")
+  expression: str = input("input expression: ")
 
   if not expression or expression.isspace():
       # 入力が得られなかった場合、または入力が空白のみの場合は、処理を終了する
@@ -360,7 +368,7 @@ def main():
   # 入力された式から空白を除去する(空白を空の文字列に置き換える)
   expression = expression.replace(" ", "")
 
-  root = None
+  root: Node
 
   try:
     # 二分木の根(root)ノードを作成し、式全体を格納する
@@ -391,9 +399,9 @@ def main():
   print()
 
   # 分割した二分木から式全体の値を計算する
-  result_value = root.calculate_expression_tree()
+  result_value: float | None = root.calculate_expression_tree()
 
-  if result_value is not None:
+  if type(result_value) is float:
     # 計算できた場合はその値を表示する
     print("calculated result: {:.17g}".format(result_value))
     return 0

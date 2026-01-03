@@ -142,6 +142,10 @@ jobs:
         if: ${{ runner.os == 'Windows' && matrix.target-impl == 'cpp' }}
         uses: microsoft/setup-msbuild@v1.3
 
+      - name: Setup mypy
+        if: ${{ matrix.target-impl == 'python' }}
+        run: pip install mypy
+
       - name: Run tests with ${{ matrix.target-impl }} on ${{ matrix.os }}
         shell: pwsh
         run: |
