@@ -1,6 +1,7 @@
 ﻿// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -25,29 +26,12 @@ const int DefaultLocalPortNumber = 48080;
 const string ContentTypeCascadingStyleSheets = "text/css; charset=UTF-8";
 const string ContentTypeJavaScript = "text/javascript; charset=UTF-8";
 
+var applicationName = Assembly.GetEntryAssembly()?.FullName ?? "DemoServer";
+
 var builder = WebApplication.CreateBuilder(
   options: new() {
     Args = args,
-    ApplicationName = Assembly.GetEntryAssembly()?.FullName ?? "DemoServer",
-  }
-);
-
-var localPortNumber = DefaultLocalPortNumber;
-
-for (var index = 0; index < args.Length; index++) {
-  switch (args[index]) {
-    case "--port":
-      localPortNumber = int.Parse(args[++index]);
-      break;
-  }
-}
-
-builder.WebHost.ConfigureKestrel(
-  (context, serverOptions) => {
-    serverOptions.AddServerHeader = false;
-    serverOptions.AllowSynchronousIO = true;
-
-    serverOptions.ListenLocalhost(localPortNumber);
+    ApplicationName = applicationName,
   }
 );
 
@@ -58,45 +42,73 @@ builder.Logging.AddSimpleConsole(static options => {
   options.ColorBehavior = LoggerColorBehavior.Enabled;
 });
 
-using var app = builder.Build();
+var localPortNumberOption = new Option<int>("--port") {
+  Description = "Port number the demo server listens on.",
+  DefaultValueFactory = static _ => DefaultLocalPortNumber,
+};
 
-app.MapGet(
-  pattern: "/",
-  handler: async (HttpContext context, CancellationToken cancellationToken) => {
-    context.Response.ContentType = "text/html; charset=utf-8";
-    context.Response.StatusCode = 200;
+var rootCommand = new RootCommand(applicationName);
 
-    await ConstructIndexAsync(
-      context.Response.Body,
-      cancellationToken
-    ).ConfigureAwait(false);
+rootCommand.Options.Add(localPortNumberOption);
+
+rootCommand.SetAction(
+  action: async (parseResult, cancellationToken) => {
+    var localPortNumber = parseResult.GetValue(localPortNumberOption);
+
+    builder.WebHost.ConfigureKestrel(
+      (context, serverOptions) => {
+        serverOptions.AddServerHeader = false;
+        serverOptions.AllowSynchronousIO = true;
+
+        serverOptions.ListenLocalhost(localPortNumber);
+      }
+    );
+
+    using var app = builder.Build();
+
+    app.MapGet(
+      pattern: "/",
+      handler: async (HttpContext context, CancellationToken cancellationToken) => {
+        context.Response.ContentType = "text/html; charset=utf-8";
+        context.Response.StatusCode = 200;
+
+        await ConstructIndexAsync(
+          context.Response.Body,
+          cancellationToken
+        ).ConfigureAwait(false);
+      }
+    );
+
+    app.MapGet(
+      pattern: "/{name}.css",
+      handler: (string name) => name switch {
+        "polish-demo" or
+        "polish-expressiontree"
+          => Results.File(Path.Join(Paths.ContentsBasePath, $"{name}.css"), ContentTypeCascadingStyleSheets),
+
+        _ => Results.NotFound(),
+      }
+    );
+
+    app.MapGet(
+      pattern: "/{name}.mjs",
+      handler: (string name) => name switch {
+        "Node" or
+        "polish-demo" or
+        "polish-expressiontree"
+          => Results.File(Path.Join(Paths.ContentsBasePath, $"{name}.mjs"), ContentTypeJavaScript),
+
+        _ => Results.NotFound(),
+      }
+    );
+
+    await app.RunAsync().ConfigureAwait(false);
+
+    return 0;
   }
 );
 
-app.MapGet(
-  pattern: "/{name}.css",
-  handler: (string name) => name switch {
-    "polish-demo" or
-    "polish-expressiontree"
-      => Results.File(Path.Join(Paths.ContentsBasePath, $"{name}.css"), ContentTypeCascadingStyleSheets),
-
-    _ => Results.NotFound(),
-  }
-);
-
-app.MapGet(
-  pattern: "/{name}.mjs",
-  handler: (string name) => name switch {
-    "Node" or
-    "polish-demo" or
-    "polish-expressiontree"
-      => Results.File(Path.Join(Paths.ContentsBasePath, $"{name}.mjs"), ContentTypeJavaScript),
-
-    _ => Results.NotFound(),
-  }
-);
-
-await app.RunAsync().ConfigureAwait(false);
+return await rootCommand.Parse(args).InvokeAsync().ConfigureAwait(false);
 
 static async Task ConstructIndexAsync(
   Stream destination,
