@@ -3,6 +3,7 @@
     "editorconfig.editorconfig",
     "ms-dotnettools.csharp",
     "ms-python.mypy-type-checker",
-    "ms-vscode.cpptools"
+    "ms-vscode.cpptools",
+    "streetsidesoftware.code-spell-checker"
   ]
 }

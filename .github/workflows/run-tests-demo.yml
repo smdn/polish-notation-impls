@@ -36,10 +36,12 @@ on:
         default: false
 
 env:
+  # cSpell:disable
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
   DOTNET_SDK_MINIMUM_VERSION: "10.0.100"
   NODEJS_MINIMUM_VERSION: 18
+  # cSpell:enable
 
 jobs:
   run-tests:

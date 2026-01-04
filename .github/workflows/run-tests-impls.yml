@@ -42,11 +42,13 @@ on:
         default: false
 
 env:
+  # cSpell:disable
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
   DOTNET_SDK_MINIMUM_VERSION: "10.0.100"
   NODEJS_MINIMUM_VERSION: 18
   JAVA_MINIMUM_VERSION: 11
+  # cSpell:enable
 
 jobs:
   setup:
@@ -128,6 +130,7 @@ jobs:
         if: ${{ matrix.target-impl == 'java' }}
         uses: actions/setup-java@v5
         with:
+          # cSpell:disable-next-line
           distribution: 'temurin'
           java-version: ${{ env.JAVA_MINIMUM_VERSION }}
 

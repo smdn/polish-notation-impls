@@ -18,6 +18,7 @@ SPDX-License-Identifier: MIT
   <ItemDefinitionGroup>
     <ClCompile>
       <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version -->
+      <!-- cspell:ignore stdc -->
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/utf-8-set-source-and-executable-character-sets-to-utf-8 -->
       <AdditionalOptions>/utf-8</AdditionalOptions>

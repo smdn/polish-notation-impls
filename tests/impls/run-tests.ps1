@@ -68,6 +68,7 @@ function Invoke-Tests {
       else {
         & $cmd.Command $cmd.Arguments 2>&1 | ForEach-Object { Write-Host $_ }
 
+        # cSpell: disable-next-line
         if ($LASTEXITCODE -ne 0) {
           $done_build = $false
           break

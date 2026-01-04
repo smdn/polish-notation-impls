@@ -68,6 +68,7 @@ export class Svg {
         let delimAt = attr.indexOf(":");
         let nsPrefix = attr.substring(0, delimAt);
         let attrName = attr.substring(delimAt + 1);
+        // cSpell:disable-next-line
         let nsUri = val.nsuri;
         let attrVal = val.val;
 
@@ -782,7 +783,7 @@ export class TraversalOrderRenderer extends TreeTraverser {
   static get DURATION_IN_SECS() { return 1.0; }
   static get WAIT_IN_SECS() { return 2.5; }
   static get T_OFFSET() { return 0.0; }
-  static get T_OFFSET_STATUSREAD() { return TraversalOrderRenderer.DURATION_IN_SECS * 0.6; }
+  static get T_OFFSET_STATUS_READ() { return TraversalOrderRenderer.DURATION_IN_SECS * 0.6; }
 
   static get #ID_PATH_MARKER() { return "expressiontree-traversalorder-path-marker-arrow"; }
 
@@ -1118,7 +1119,7 @@ export class TraversalOrderRenderer extends TreeTraverser {
 
     // append <animate>
     const startAt = TraversalOrderRenderer.T_OFFSET;
-    let tt = t + TraversalOrderRenderer.T_OFFSET_STATUSREAD - startAt;
+    let tt = t + TraversalOrderRenderer.T_OFFSET_STATUS_READ - startAt;
 
     g.appendChild(
       Svg.createElement(
@@ -1196,7 +1197,7 @@ export class TraversalOrderRenderer extends TreeTraverser {
 
     values.push(colorReached);
 
-    keyTimes.push((status.readAt + TraversalOrderRenderer.T_OFFSET_STATUSREAD - startAt) / dur);
+    keyTimes.push((status.readAt + TraversalOrderRenderer.T_OFFSET_STATUS_READ - startAt) / dur);
     values.push(colorRead);
 
     keyTimes.push((dur - TraversalOrderRenderer.WAIT_IN_SECS) / dur);

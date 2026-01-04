@@ -1,5 +1,7 @@
 # SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 # SPDX-License-Identifier: MIT
+# cSpell:ignore BUILDTOOLS
+# cSpell:ignore MSBuilsSearch_impl
 #
 # This script is based on 'MSBuilsSearch_impl.ps1' from https://github.com/rot-z/MSBuildSearch, published under the MIT License.
 #
@@ -25,7 +27,7 @@ $MSBUILD_15_PROFESSIONAL_PATH   = "Microsoft Visual Studio`\2017`\Professional`\
     $MSBUILD_15_PROFESSIONAL_PATH
 )
 
-# get full path of "Program Files" folder from OS archtechture
+# get full path of "Program Files" folder from OS architecture
 $programFilesDir = ""
 if ($([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture) -eq 'X64')
 {
