@@ -1,5 +1,4 @@
 {
-  "omnisharp.enableRoslynAnalyzers": true,
   "files.associations": {
     "sstream": "cpp",
     "cmath": "cpp",
