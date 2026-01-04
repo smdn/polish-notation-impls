@@ -88,6 +88,7 @@
     "ImplementationId": "python",
     "DisplayName": "Python 3",
     "Directory": "src/impls/python/",
+    "Condition": "!$([bool](Get-Command make -errorAction SilentlyContinue) -and [bool](Get-Command mypy -errorAction SilentlyContinue))",
     "Commands": {
       "Build":  [ ],
       "Clean":  [ ],
@@ -96,9 +97,9 @@
   },
   {
     "ImplementationId": "python",
-    "DisplayName": "Python 3 with type annotations",
+    "DisplayName": "Python 3 (with type checking)",
     "Directory": "src/impls/python/",
-    "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
+    "Condition": "$([bool](Get-Command make -errorAction SilentlyContinue) -and [bool](Get-Command mypy -errorAction SilentlyContinue))",
     "Commands": {
       "Build":  [ { "Command": "make", "Arguments": [ "type-check" ] } ],
       "Clean":  [ ],
