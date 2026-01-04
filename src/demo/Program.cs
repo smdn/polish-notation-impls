@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 // cSpell:ignore nsmgr
 using System;
@@ -131,32 +131,30 @@ static async Task ConstructIndexAsync(
   foreach (var elementPlaceholder in templateIndex.Descendants(nsPlaceholder + "placeholder").ToList()) {
     var file = elementPlaceholder.Attribute("file")?.Value;
 
-    using (var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, file))) {
-      var nsmgr = new XmlNamespaceManager(new NameTable());
+    using var stream = File.OpenRead(Path.Join(Paths.ContentsBasePath, file));
+    var nsmgr = new XmlNamespaceManager(new NameTable());
 
-      nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
+    nsmgr.AddNamespace(string.Empty, "http://www.w3.org/1999/xhtml"); // set default xml namespace to XHTML's one
 
-      var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
-      var settings = new XmlReaderSettings() {
-        Async = true,
-        DtdProcessing = DtdProcessing.Ignore,
-        CloseInput = true,
-        ConformanceLevel = ConformanceLevel.Fragment,
-        IgnoreComments = true,
-        IgnoreWhitespace = true,
-      };
+    var context = new XmlParserContext(null, nsmgr, null, XmlSpace.Default);
+    var settings = new XmlReaderSettings() {
+      Async = true,
+      DtdProcessing = DtdProcessing.Ignore,
+      CloseInput = true,
+      ConformanceLevel = ConformanceLevel.Fragment,
+      IgnoreComments = true,
+      IgnoreWhitespace = true,
+    };
 
-      var reader = XmlReader.Create(stream, settings, context);
+    using var reader = XmlReader.Create(stream, settings, context);
+    var replacement = await XDocument.LoadAsync(
+      reader,
+      LoadOptions.None,
+      cancellationToken
+    ).ConfigureAwait(false);
 
-      var replacement = await XDocument.LoadAsync(
-        reader,
-        LoadOptions.None,
-        cancellationToken
-      ).ConfigureAwait(false);
-
-      elementPlaceholder.AddAfterSelf(replacement.Root);
-      elementPlaceholder.Remove();
-    }
+    elementPlaceholder.AddAfterSelf(replacement.Root);
+    elementPlaceholder.Remove();
   }
 
   var writerSettings = new XmlWriterSettings() {
