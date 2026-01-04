@@ -7,6 +7,7 @@ TestResult.xml
 TestResults/
 mono_crash.mem.*.blob
 mono_crash.*.json
+.mypy_cache/
 .vscode/*
 !.vscode/cspell.json
 !.vscode/extensions.json
