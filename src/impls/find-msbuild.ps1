@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 # SPDX-License-Identifier: MIT
 #
-# This script is based on 'MSBuilsSearch_impl.ps1' from https://github.com/rot-z/MSBuildSearch, published under the MIT Lisence.
+# This script is based on 'MSBuilsSearch_impl.ps1' from https://github.com/rot-z/MSBuildSearch, published under the MIT License.
 #
 
 # folder paths of Visual Studio

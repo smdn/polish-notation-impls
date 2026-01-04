@@ -1248,7 +1248,7 @@ export class CalculationTransitionRenderer extends TreeTransitionProcessor {
       Svg.createElement(
         "g",
         {
-          "class": "polosh-calculation",
+          "class": "polish-calculation",
         }
       )
     );
