@@ -15,8 +15,9 @@ if (rl) {
   process.exitCode = 1; // 入力がなかった場合は終了コード1で終了させる
 
   // 標準入力から二分木に分割したい式を入力する
-  rl.on("line", expression => {
-    process.exitCode = 0
+  rl.on("line", expression =>
+  {
+    process.exitCode = 0;
     main(expression);
     rl.close();
   });
@@ -26,7 +27,8 @@ if (rl) {
 //   0: 正常終了 (二分木への分割、および式全体の値の計算に成功した場合)
 //   1: 入力のエラーによる終了 (二分木への分割に失敗した場合)
 //   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
-function main(_expression) {
+function main(_expression)
+{
   if (!_expression)
     // 入力が得られなかった場合は、処理を終了する
     process.exit(1);
@@ -38,7 +40,7 @@ function main(_expression) {
     // 空白を除去した結果、空の文字列となった場合は、処理を終了する
     process.exit(1);
 
-  let root = null
+  let root = null;
 
   try {
     // 二分木の根(root)ノードを作成し、式全体を格納する
@@ -75,7 +77,7 @@ function main(_expression) {
   process.stdout.write("\n");
 
   // 分割した二分木から式全体の値を計算する
-  let resultValue = root.calculateExpressionTree()
+  let resultValue = root.calculateExpressionTree();
 
   if (resultValue !== undefined) {
     // 計算できた場合はその値を表示する

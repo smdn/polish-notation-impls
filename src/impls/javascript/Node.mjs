@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 // 与えられた式が不正な形式であることを報告するためのエラークラス
-export class MalformedExpressionError extends Error {
+export class MalformedExpressionError extends Error
+{
   constructor(message)
   {
     super(message);
@@ -11,7 +12,8 @@ export class MalformedExpressionError extends Error {
 }
 
 // ノードを構成するデータ構造
-export class Node {
+export class Node
+{
   #expression;    // このノードが表す式(二分木への分割後は演算子または項となる)
   #left = null;   // 左の子ノード
   #right = null;  // 右の子ノード
@@ -20,7 +22,7 @@ export class Node {
   constructor(expression)
   {
     // 式expressionにおける括弧の対応数をチェックする
-    Node.#validateBracketBalance(expression)
+    Node.#validateBracketBalance(expression);
 
     // チェックした式expressionをこのノードが表す式として設定する
     this.#expression = expression;
@@ -234,13 +236,15 @@ export class Node {
     // 巡回を開始する
     this.traverse(
       // ノードへの行きがけに、必要なら開き括弧を補う
-      node => {
+      node =>
+      {
         // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
         if (node.#left && node.#right)
           out.write('(');
       },
       // ノードの通りがけに、ノードの演算子または項を出力する
-      node => {
+      node =>
+      {
         // 左に子ノードを持つ場合は、読みやすさのために空白を補う
         if (node.#left)
           out.write(' ');
@@ -253,7 +257,8 @@ export class Node {
           out.write(' ');
       },
       // ノードからの帰りがけに、必要なら閉じ括弧を補う
-      node => {
+      node =>
+      {
         // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
         if (node.#left && node.#right)
           out.write(')');

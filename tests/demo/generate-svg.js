@@ -2,19 +2,21 @@
 
 import * as fs from "fs";
 import { JSDOM } from 'jsdom';
-import {
+import
+{
   Svg,
   ExpressionTreeNode,
   VisualTreeNode,
   TraversalOrderRenderer,
   CalculationTransitionRenderer
-} from '../../src/demo/contents/polish-expressiontree.mjs'
+} from '../../src/demo/contents/polish-expressiontree.mjs';
 
 function generate(
   expression,
   visualizationMode,
   outputPath
-) {
+)
+{
   if (!expression || expression.replaceAll(" ", "").length == 0) {
     process.stderr.write("invalid expression\n");
     process.exit(1);
@@ -24,34 +26,39 @@ function generate(
 
   root.parseExpression();
 
-  let visualizationAction = function(mode) {
+  let visualizationAction = function (mode)
+  {
     switch (mode) {
       case "traverse-preorder":
-        return (tree, target) => {
+        return (tree, target) =>
+        {
           tree.render(target, true);
           tree.traversePathPreorder(new TraversalOrderRenderer(target, null));
         };
       case "traverse-postorder":
-        return (tree, target) => {
+        return (tree, target) =>
+        {
           tree.render(target, true);
           tree.traversePathPostorder(new TraversalOrderRenderer(target, null));
         };
       case "traverse-inorder":
-        return (tree, target) => {
+        return (tree, target) =>
+        {
           tree.render(target, true);
           tree.traversePathInorder(new TraversalOrderRenderer(target, null));
         };
       case "calculate":
-        return (tree, target) => {
+        return (tree, target) =>
+        {
           tree.calculate_expression_tree(new CalculationTransitionRenderer(target));
         };
 
       default:
-        throw `undefined visualization mode: ${mode}`
+        throw `undefined visualization mode: ${mode}`;
     }
   }(visualizationMode);
 
-  const elementId = "visualized-expression-tree"
+  const elementId = "visualized-expression-tree";
 
   let target = VisualTreeNode.initializeSvgElement(
     VisualTreeNode.createSvgElement(elementId)
@@ -85,7 +92,7 @@ function main()
   // expose `window` and `document` to the global scope
   global.window = pseudoDOM.window;
   global.document = pseudoDOM.window.document;
-  
+
   // define SVGElement.getBBox
   // ref: https://github.com/jsdom/jsdom/issues/3159
   Object.defineProperty(window.SVGElement.prototype, 'getBBox', {

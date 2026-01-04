@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 import { Node } from "./Node.mjs";
 
-class BufferWriter {
+class BufferWriter
+{
   #buffer = [];
 
   write(val)
@@ -25,12 +26,13 @@ class BufferWriter {
   }
 }
 
-export class Svg {
+export class Svg
+{
   static get NS() { return "http://www.w3.org/2000/svg"; }
 
   static findElement(element, elementName)
   {
-    let elements = element.getElementsByTagNameNS(Svg.NS, elementName)
+    let elements = element.getElementsByTagNameNS(Svg.NS, elementName);
 
     if (0 < elements.length)
       return elements[0];
@@ -182,7 +184,8 @@ export class Svg {
   }
 }
 
-export class ExpressionTreeNode extends Node {
+export class ExpressionTreeNode extends Node
+{
   constructor(expression)
   {
     super(expression);
@@ -203,11 +206,12 @@ export class ExpressionTreeNode extends Node {
       node,
       left?.convert(ExpressionTreeNode.#createVisualTree),
       right?.convert(ExpressionTreeNode.#createVisualTree),
-    )
+    );
   }
 }
 
-export class VisualTreeNode {
+export class VisualTreeNode
+{
   static get RADIUS() { return 12.5; }
   static get SIBLING_DISTANCE() { return /*1.0*/ 0.95; }
   static get BRANCH_WIDTH() { return VisualTreeNode.RADIUS * 1.25; }
@@ -314,7 +318,8 @@ export class VisualTreeNode {
       { tree: this.left, className: "expressiontree-subtree expressiontree-subtree-left" },
       { tree: this.right, className: "expressiontree-subtree expressiontree-subtree-right" },
     ]
-      .forEach((subtree) => {
+      .forEach((subtree) =>
+      {
         if (!subtree.tree)
           return;
 
@@ -704,12 +709,14 @@ export class VisualTreeNode {
   }
 }
 
-export class TreeTraverser {
+export class TreeTraverser
+{
   appendPath(nodeFrom, nodeTo, d) { }
   closePath() { }
 }
 
-export class TraversalPathRenderer extends TreeTraverser {
+export class TraversalPathRenderer extends TreeTraverser
+{
   constructor(target, targetDefs)
   {
     super();
@@ -758,7 +765,8 @@ export class TraversalPathRenderer extends TreeTraverser {
     return m;
   }
 
-  appendPath(nodeFrom, nodeTo, d) {
+  appendPath(nodeFrom, nodeTo, d)
+  {
     let p = Svg.createElement(
       "path",
       {
@@ -779,7 +787,8 @@ export class TraversalPathRenderer extends TreeTraverser {
   }
 }
 
-export class TraversalOrderRenderer extends TreeTraverser {
+export class TraversalOrderRenderer extends TreeTraverser
+{
   static get DURATION_IN_SECS() { return 1.0; }
   static get WAIT_IN_SECS() { return 2.5; }
   static get T_OFFSET() { return 0.0; }
@@ -878,7 +887,8 @@ export class TraversalOrderRenderer extends TreeTraverser {
 
     let right = 0;
 
-    this.orderedNodes.forEach((orderedNode) => {
+    this.orderedNodes.forEach((orderedNode) =>
+    {
       let pointOrder = orderedNode.node.getNodeAnchorPoint(2.5, Math.PI / 2);
 
       TraversalOrderRenderer.renderOrder(
@@ -1222,8 +1232,9 @@ export class TraversalOrderRenderer extends TreeTraverser {
   }
 }
 
-export class TreeTransitionProcessor {
-  constructor() {}
+export class TreeTransitionProcessor
+{
+  constructor() { }
 
   startTransition(tree) { }
   setTreeBeforeTransition(tree, subTreeTransition) { }
@@ -1231,7 +1242,8 @@ export class TreeTransitionProcessor {
   endTransition(tree) { }
 }
 
-export class CalculationTransitionRenderer extends TreeTransitionProcessor {
+export class CalculationTransitionRenderer extends TreeTransitionProcessor
+{
   constructor(target, stepsToRender)
   {
     super();
@@ -1345,7 +1357,8 @@ export class CalculationTransitionRenderer extends TreeTransitionProcessor {
     if (this.stepsToRender) {
       frames = [];
 
-      this.frames.forEach((f, step) => {
+      this.frames.forEach((f, step) =>
+      {
         if (this.stepsToRender.includes(step))
           frames.push(f);
         else
@@ -1365,8 +1378,9 @@ export class CalculationTransitionRenderer extends TreeTransitionProcessor {
     const dur = totalDurationInSeconds + "s";
     let t = waitStartInSeconds;
 
-    frames.forEach((frame, step) => {
-      let tn = t + durationPerStep
+    frames.forEach((frame, step) =>
+    {
+      let tn = t + durationPerStep;
 
       if (step === 0) {
         if (frame.bound) {
@@ -1434,7 +1448,7 @@ export class CalculationTransitionRenderer extends TreeTransitionProcessor {
 
         // set animation for visibility of subtree
         const visibilityInitial = (step === 0) ? "visible" : "hidden";
-        const visibilityTransit = (step === stepCount - 1) ? "visible" : "hidden"
+        const visibilityTransit = (step === stepCount - 1) ? "visible" : "hidden";
 
         frame.tree.appendChild(
           Svg.createElement(

@@ -3,7 +3,8 @@
 
 "use strict";
 
-let getComputedCSSText = node => {
+let getComputedCSSText = node =>
+{
   let style = window.getComputedStyle(node, "");
 
   if (!style.cssText || style.cssText === '') {
@@ -25,7 +26,8 @@ function setSvgElementBeginTime(svg, beginOffset)
   // alternate SVGSVGElement.setCurrentTime
   Array.prototype.forEach.call(
     svg.querySelectorAll("animate, animateMotion"),
-    (e) => {
+    (e) =>
+    {
       let begin = e.getAttribute("begin");
 
       begin = Number.parseInt(begin.replace(/s$/g, ''));
@@ -42,7 +44,8 @@ function getSvgElementDuration(svg)
 
   Array.prototype.forEach.call(
     svg.querySelectorAll("animate, animateMotion"),
-    (e) => {
+    (e) =>
+    {
       let begin = 0; // Number.parseInt(e.getAttribute("begin"));
       let dur = Number.parseInt(e.getAttribute("dur"));
 
@@ -94,7 +97,8 @@ function emitCanvasFramesFromSvg(svg, svgDefs, autoDownload)
     let ctx = canvas.getContext("2d");
     let image = new Image;
 
-    image.onload = () => {
+    image.onload = () =>
+    {
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, w, h);
       ctx.drawImage(image, 0, 0);
@@ -107,7 +111,7 @@ function emitCanvasFramesFromSvg(svg, svgDefs, autoDownload)
         a.click();
         //a.dispatchEvent(new Event("click"));
       }
-    }
+    };
 
     let s = svg.cloneNode(true);
 
@@ -116,7 +120,8 @@ function emitCanvasFramesFromSvg(svg, svgDefs, autoDownload)
     //s.style.cssText = getComputedCSSText(svg); // not works
     Array.prototype.forEach.call(
       document.querySelectorAll("style"),
-      (style) => {
+      (style) =>
+      {
         s.appendChild(style.cloneNode(true));
       }
     );

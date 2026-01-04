@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-import {
+import
+{
   Svg,
   ExpressionTreeNode,
   VisualTreeNode,
   TraversalOrderRenderer,
   CalculationTransitionRenderer
-} from './polish-expressiontree.mjs'
+} from './polish-expressiontree.mjs';
 
 function polish_demo_remove_children(e)
 {
@@ -73,34 +74,39 @@ function polish_demo_visualize(expression)
   let visualizations = [
     {
       targetId: "polish-demo-expressiontree-traverse-preorder",
-      action: (tree, target) => {
+      action: (tree, target) =>
+      {
         tree.render(target, true);
         tree.traversePathPreorder(new TraversalOrderRenderer(target, null));
       },
     },
     {
       targetId: "polish-demo-expressiontree-traverse-postorder",
-      action: (tree, target) => {
+      action: (tree, target) =>
+      {
         tree.render(target, true);
         tree.traversePathPostorder(new TraversalOrderRenderer(target, null));
       },
     },
     {
       targetId: "polish-demo-expressiontree-traverse-inorder",
-      action: (tree, target) => {
+      action: (tree, target) =>
+      {
         tree.render(target, true);
         tree.traversePathInorder(new TraversalOrderRenderer(target, null));
       },
     },
     {
       targetId: "polish-demo-expressiontree-calculation",
-      action: (tree, target) => {
+      action: (tree, target) =>
+      {
         tree.calculate_expression_tree(new CalculationTransitionRenderer(target));
       },
     },
   ];
 
-  visualizations.forEach(v => {
+  visualizations.forEach(v =>
+  {
     let target = VisualTreeNode.initializeSvgElement(document.getElementById(v.targetId));
 
     if (typeof smdn !== 'undefined')
@@ -117,7 +123,7 @@ function polish_demo_visualize(expression)
     target.unpauseAnimations();
   });
 
-/*
+  /*
   let i = 0;
 
   setTimeout(function timeout() {
@@ -143,7 +149,7 @@ function polish_demo_visualize(expression)
       console.log(e);
     }
   }, 0);
-*/
+  */
 }
 
 export function polish_demo_run(e)
