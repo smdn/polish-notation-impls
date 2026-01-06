@@ -116,10 +116,6 @@ class Node {
             if (expression.charAt(i) == '(') {
                 // 開き丸括弧なので深度を1増やす
                 nestDepth++;
-
-                // 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-                if (i == 0)
-                    hasOutermostBracket = true;
             }
             else if (expression.charAt(i) == ')') {
                 // 閉じ丸括弧なので深度を1減らす

@@ -107,9 +107,6 @@ Class Node
       If expression(i) = "("c Then
         ' 開き丸括弧なので深度を1増やす
         nestDepth += 1
-
-        ' 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        If i = 0 Then hasOutermostBracket = True
       Else If expression(i) = ")"c Then
         ' 閉じ丸括弧なので深度を1減らす
         nestDepth -= 1

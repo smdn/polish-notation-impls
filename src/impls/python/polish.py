@@ -108,10 +108,6 @@ class Node:
         # 開き丸括弧なので深度を1増やす
         nest_depth += 1
 
-        # 0文字目が開き丸括弧の場合、最も外側に丸括弧があると仮定する
-        if i == 0:
-          has_outermost_bracket = True
-
       elif expression[i] == ")":
         # 閉じ丸括弧なので深度を1減らす
         nest_depth -= 1
