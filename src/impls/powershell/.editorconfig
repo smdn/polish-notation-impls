@@ -1,0 +1,5 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+[*.ps1]
+indent_style = space
+indent_size = 2
