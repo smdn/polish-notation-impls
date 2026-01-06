@@ -126,7 +126,7 @@ class Node:
     if not has_outermost_bracket:
       return expression
 
-    # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
+    # 文字列の長さが2以下の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if len(expression) <= 2:
       raise MalformedExpressionException("empty bracket: {}".format(expression))
 

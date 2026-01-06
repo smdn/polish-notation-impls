@@ -125,7 +125,7 @@ class Node {
       return $expression
     }
 
-    # 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
+    # 文字列の長さが2以下の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if ($expression.Length -le 2) {
       throw [MalformedExpressionException]::new("empty bracket: $expression")
     }

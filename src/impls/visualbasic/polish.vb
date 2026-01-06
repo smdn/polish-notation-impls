@@ -126,7 +126,7 @@ Class Node
     ' 最も外側に丸括弧がない場合は、与えられた文字列をそのまま返す
     If Not hasOutermostBracket Then Return expression
 
-    ' 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
+    ' 文字列の長さが2以下の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     If expression.Length <= 2 Then Throw New MalformedExpressionException("empty bracket: " + expression)
 
     ' 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)

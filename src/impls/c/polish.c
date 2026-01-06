@@ -228,7 +228,7 @@ bool remove_outermost_bracket(char *const exp)
     if (!has_outermost_bracket)
         return true;
 
-    // 文字列の長さが2未満の場合は、つまり空の丸括弧"()"なので不正な式と判断する
+    // 文字列の長さが2以下の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if (len <= 2) {
         fprintf(stderr, "empty bracket: %s\n", exp);
         return false;
