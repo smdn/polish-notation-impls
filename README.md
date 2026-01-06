@@ -13,6 +13,7 @@
 - [C#](src/impls/csharp/)
 - [Java](src/impls/java/)
 - [JavaScript](src/impls/javascript/)
+- [PowerShell](src/impls/powershell/)
 - [Python 3](src/impls/python/)
 - [Visual Basic](src/impls/visualbasic/)
 <!-- [Ruby](src/impls/ruby/) -->

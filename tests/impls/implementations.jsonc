@@ -85,6 +85,16 @@
     }
   },
   {
+    "ImplementationId": "powershell",
+    "DisplayName": "PowerShell",
+    "Directory": "src/impls/powershell/",
+    "Commands": {
+      "Build":  [ ],
+      "Clean":  [ ],
+      "Run":    { "Command": "pwsh", "Arguments": [ "-NoLogo", "-NoProfile", "-File", "polish.ps1" ] },
+    }
+  },
+  {
     "ImplementationId": "python",
     "DisplayName": "Python 3",
     "Directory": "src/impls/python/",
