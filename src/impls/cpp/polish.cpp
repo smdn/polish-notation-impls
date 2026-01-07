@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 #include <algorithm>
+#include <format>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -54,14 +55,14 @@ public:
 private:
     // 式expression内の括弧の対応を検証するメソッド
     // 開き括弧と閉じ括弧が同数でない場合はエラーとする
-    static void validate_bracket_balance(const std::string& expression);
+    static void validate_bracket_balance(const std::string_view& expression);
 
     // 式expressionから最も外側にある丸括弧を取り除いて返すメソッド
-    static std::string remove_outermost_bracket(const std::string& expression);
+    static std::string remove_outermost_bracket(const std::string_view& expression);
 
     // 式expressionから最も右側にあり、かつ優先順位が低い演算子を探して位置を返す関数
     // (演算子がない場合はstring::nposを返す)
-    static std::string::size_type get_operator_position(std::string_view expression) noexcept;
+    static std::string::size_type get_operator_position(const std::string_view& expression) noexcept;
 
     // 与えられたノードの演算子と左右の子ノードの値から、ノードの値を計算する関数
     // 計算できた場合、計算結果の値はnode.expressionに文字列として代入し、左右のノードは削除する
@@ -70,7 +71,7 @@ private:
     // 与えられた文字列を数値化するメソッド
     // 正常に変換できた場合はnumberに変換した数値を代入し、trueを返す
     // 変換できなかった場合はfalseを返す
-    static bool parse_number(const std::string& expression, double& number);
+    static bool parse_number(const std::string_view& expression, double& number);
 };
 
 // 与えられた式が不正な形式であることを報告するための例外クラス
@@ -96,7 +97,7 @@ Node::Node(const std::string& expression) noexcept(false)
     this->expression = expression;
 }
 
-void Node::validate_bracket_balance(const std::string& expression) noexcept(false)
+void Node::validate_bracket_balance(const std::string_view& expression) noexcept(false)
 {
     auto nest_depth = 0; // 丸括弧の深度(くくられる括弧の数を計上するために用いる)
 
@@ -122,7 +123,7 @@ void Node::validate_bracket_balance(const std::string& expression) noexcept(fals
     if (0 != nest_depth)
         // 式中に開かれていない/閉じられていない括弧があるので、不正な式と判断する
         // 例:"((1+2)"などの場合
-        throw MalformedExpressionException("unbalanced bracket: " + expression);
+        throw MalformedExpressionException(std::format("unbalanced bracket: {}", expression));
 }
 
 void Node::parse_expression() noexcept(false)
@@ -161,7 +162,7 @@ void Node::parse_expression() noexcept(false)
     expression = expression.substr(pos_operator, 1);
 }
 
-std::string Node::remove_outermost_bracket(const std::string& expression) noexcept(false)
+std::string Node::remove_outermost_bracket(const std::string_view& expression) noexcept(false)
 {
     auto has_outermost_bracket = false; // 最も外側に括弧を持つかどうか
     auto nest_depth = 0; // 丸括弧の深度(式中で開かれた括弧が閉じられたかどうか調べるために用いる)
@@ -197,7 +198,7 @@ std::string Node::remove_outermost_bracket(const std::string& expression) noexce
 
     // 文字列の長さが2以下の場合は、つまり空の丸括弧"()"なので不正な式と判断する
     if (expression.length() <= 2)
-        throw MalformedExpressionException("empty bracket: " + expression);
+        throw MalformedExpressionException(std::format("empty bracket: {}", expression));
 
     // 最初と最後の文字を取り除く(最も外側の丸括弧を取り除く)
     auto expr = expression.substr(1, expression.length() - 2);
@@ -209,10 +210,10 @@ std::string Node::remove_outermost_bracket(const std::string& expression) noexce
         expr = remove_outermost_bracket(expr);
 
     // 取り除いた結果を返す
-    return expr;
+    return std::string(expr);
 }
 
-std::string::size_type Node::get_operator_position(std::string_view expression) noexcept
+std::string::size_type Node::get_operator_position(const std::string_view& expression) noexcept
 {
     // 現在見つかっている演算子の位置(初期値としてstring::npos=演算子なしを設定)
     auto pos_operator = std::string::npos;
@@ -390,25 +391,14 @@ void Node::calculate_node(Node& node)
     node.right = nullptr;
 }
 
-bool Node::parse_number(const std::string& expression, double& number)
+bool Node::parse_number(const std::string_view& expression, double& number)
 {
-    try {
-        size_t pos_invalid; // std::stodで変換できない文字の位置を検出するための変数
+    // 与えられた文字列を数値に変換する
+    [[maybe_unused]] auto [ptr, ec] = std::from_chars(std::begin(expression), std::end(expression), number);
 
-        // 与えられた文字列を数値に変換する
-        number = std::stod(expression, &pos_invalid);
-
-        if (pos_invalid < expression.length())
-            return false; // 途中に変換できない文字があるため、正常に変換できなかった
-
-        return true;
-    }
-    catch (std::out_of_range&) {
-        return false;// doubleで扱える範囲外のため、正常に変換できなかった
-    }
-    catch (std::invalid_argument&) {
-        return false; // doubleに変換できないため、正常に変換できなかった
-    }
+    // 最後の文字まで変換できた場合は、正常に変換できたと判断する
+    // そうでなければ、正常に変換できなかったと判断する
+    return ptr == std::end(expression);
 }
 
 std::string Node::format_number(const double& number) noexcept
