@@ -7,7 +7,7 @@
     "Commands": {
       "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
-      "Run":    { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+      "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
     }
   },
   {
@@ -29,7 +29,7 @@
     "Commands": {
       "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
-      "Run":    { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+      "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
     }
   },
   {
@@ -40,7 +40,7 @@
     "Commands": {
       "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
-      "Run":    { "Command": "Release\\polish.exe", "ResolveCommandPath": true },
+      "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
     }
   },
   {
