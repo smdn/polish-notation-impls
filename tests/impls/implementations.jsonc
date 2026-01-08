@@ -1,9 +1,20 @@
 [
   {
     "ImplementationId": "c",
+    "DisplayName": "C (GitHub Actions Windows runner)",
+    "Directory": "src/impls/c/",
+    "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
+    "Commands": {
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
+      "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ImplementationId": "c",
     "DisplayName": "C (MSBuild/Windows)",
     "Directory": "src/impls/c/",
-    "Condition": "$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool]$(Get-Command MSBuild -errorAction SilentlyContinue))",
+    "Condition": "$(![bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool](Get-Command MSBuild -errorAction SilentlyContinue))",
     "Commands": {
       "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
@@ -23,7 +34,7 @@
   },
   {
     "ImplementationId": "cpp",
-    "DisplayName": "C++ (CI)",
+    "DisplayName": "C++ (GitHub Actions Windows runner)",
     "Directory": "src/impls/cpp/",
     "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
     "Commands": {
@@ -47,7 +58,7 @@
     "ImplementationId": "cpp",
     "DisplayName": "C++ (make)",
     "Directory": "src/impls/cpp/",
-    "Condition": "$([bool](Get-Command make -errorAction SilentlyContinue) -and !([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)))",
+    "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
     "Commands": {
       "Build":  [ { "Command": "make" } ],
       "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
