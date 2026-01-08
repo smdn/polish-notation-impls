@@ -72,7 +72,7 @@ private:
     // 与えられた文字列を数値化するメソッド
     // 正常に変換できた場合はnumberに変換した数値を代入し、trueを返す
     // 変換できなかった場合はfalseを返す
-    static bool parse_number(const std::string_view& expression, double& number);
+    static bool parse_number(const std::string& expression, double& number);
 };
 
 // 与えられた式が不正な形式であることを報告するための例外クラス
@@ -392,14 +392,25 @@ void Node::calculate_node(Node& node)
     node.right = nullptr;
 }
 
-bool Node::parse_number(const std::string_view& expression, double& number)
+bool Node::parse_number(const std::string& expression, double& number)
 {
-    // 与えられた文字列を数値に変換する
-    [[maybe_unused]] auto [ptr, ec] = std::from_chars(std::begin(expression), std::end(expression), number);
+    try {
+        size_t pos_invalid; // std::stodで変換できない文字の位置を検出するための変数
 
-    // 最後の文字まで変換できた場合は、正常に変換できたと判断する
-    // そうでなければ、正常に変換できなかったと判断する
-    return ptr == std::end(expression);
+        // 与えられた文字列を数値に変換する
+        number = std::stod(expression, &pos_invalid);
+
+        if (pos_invalid < expression.length())
+            return false; // 途中に変換できない文字があるため、正常に変換できなかった
+
+        return true;
+    }
+    catch (std::out_of_range&) {
+        return false;// doubleで扱える範囲外のため、正常に変換できなかった
+    }
+    catch (std::invalid_argument&) {
+        return false; // doubleに変換できないため、正常に変換できなかった
+    }
 }
 
 std::string Node::format_number(const double& number) noexcept
