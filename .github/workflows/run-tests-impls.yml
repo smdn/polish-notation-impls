@@ -142,7 +142,7 @@ jobs:
 
       - name: Setup MSBuild
         if: ${{ runner.os == 'Windows' && (matrix.target-impl == 'c' || matrix.target-impl == 'cpp') }}
-        uses: microsoft/setup-msbuild@v1.3
+        uses: microsoft/setup-msbuild@v2
 
       - name: Setup mypy
         if: ${{ matrix.target-impl == 'python' }}
