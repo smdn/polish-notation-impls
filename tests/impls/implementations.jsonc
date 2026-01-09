@@ -70,9 +70,9 @@
     "DisplayName": "C#",
     "Directory": "src/impls/csharp/",
     "Commands": {
-      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net8.0", "--nologo", "-v:quiet" ] } ],
+      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net10.0", "--nologo", "-v:quiet" ] } ],
       "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net8.0/polish", "ResolveCommandPath": true },
+      "Run":    { "Command": "bin/Release/net10.0/polish", "ResolveCommandPath": true },
     }
   },
   {
@@ -132,9 +132,9 @@
     "DisplayName": "Visual Basic",
     "Directory": "src/impls/visualbasic/",
     "Commands": {
-      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net8.0", "--nologo", "-v:quiet" ] } ],
+      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net10.0", "--nologo", "-v:quiet" ] } ],
       "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net8.0/polish", "ResolveCommandPath": true },
+      "Run":    { "Command": "bin/Release/net10.0/polish", "ResolveCommandPath": true },
     }
   },
 ]

@@ -14,6 +14,6 @@ dotnet run -- --port 8080 # ポート番号8080でデモサーバーを起動す
 デモサーバーが起動したら、ブラウザで[http://localhost:48080/](http://localhost:48080/)を開いてください。
 
 ## 制限事項
-デモサーバーの実行には、バージョン8.0以上の[.NET SDK](https://docs.microsoft.com/ja-jp/dotnet/core/sdk)、および[ASP.NET Core ランタイム](https://dotnet.microsoft.com/ja-jp/apps/aspnet)を使用できるプラットフォームが必要です。
+デモサーバーの実行には、バージョン10.0以上の[.NET SDK](https://docs.microsoft.com/ja-jp/dotnet/core/sdk)、および[ASP.NET Core ランタイム](https://dotnet.microsoft.com/ja-jp/apps/aspnet)を使用できるプラットフォームが必要です。
 
 このデモの実行には、**SVG**(Scalable Vector Graphics)および**SVG SMIL**(Synchronized Multimedia Integration Language)に対応したブラウザが必要です。
