@@ -23,6 +23,8 @@ SPDX-License-Identifier: MIT
       <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/utf-8-set-source-and-executable-character-sets-to-utf-8 -->
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
+      <!-- ref: https://learn.microsoft.com/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996#unsafe-crt-library-functions -->
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
