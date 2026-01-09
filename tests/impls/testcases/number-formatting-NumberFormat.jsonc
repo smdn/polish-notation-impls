@@ -11,5 +11,12 @@
     { "Input": "99999999999999999/1",           "ExpectedCalculationResult": "100000000000000000" },
     { "Input": "(3/2)*(10000000000000000/1)",   "ExpectedCalculationResult": "15000000000000000" },
     { "Input": "(3/2)/(10000000000000000/1)",   "ExpectedCalculationResult": "0.00000000000000015" },
+
+    // test cases for floating point formatting against the expression of left and right node
+    // tests that no formatting is performed on expressions in non-calculated nodes
+    { "Input": "L+(1/7)", "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(L + 0.14285714285714285)" },
+    { "Input": "(1/7)+R", "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(0.14285714285714285 + R)" },
+    { "Input": "L+0.142857142857142857142857142857", "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(L + 0.142857142857142857142857142857)" },
+    { "Input": "0.142857142857142857142857142857+R", "ExpectedExitCode": 2, "ExpectAsCalculatedExpression": "(0.142857142857142857142857142857 + R)" },
   ]
 }
