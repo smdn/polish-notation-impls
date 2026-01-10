@@ -1,17 +1,6 @@
 [
   {
     "ImplementationId": "c",
-    "DisplayName": "C (GitHub Actions Windows runner)",
-    "Directory": "src/impls/c/",
-    "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
-    "Commands": {
-      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
-      "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
-      "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
-    }
-  },
-  {
-    "ImplementationId": "c",
     "DisplayName": "C (MSBuild/Windows)",
     "Directory": "src/impls/c/",
     "Condition": "$(![bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) -and [bool](Get-Command MSBuild -errorAction SilentlyContinue))",
@@ -25,7 +14,7 @@
     "ImplementationId": "c",
     "DisplayName": "C (make)",
     "Directory": "src/impls/c/",
-    "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
+    "Condition": "$(![bool]$env:GITHUB_ACTIONS -and [bool](Get-Command make -errorAction SilentlyContinue))",
     "Commands": {
       "Build":  [ { "Command": "make" } ],
       "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
@@ -33,14 +22,42 @@
     }
   },
   {
-    "ImplementationId": "cpp",
-    "DisplayName": "C++ (GitHub Actions Windows runner)",
-    "Directory": "src/impls/cpp/",
+    "ImplementationId": "c",
+    "DisplayName": "C (GitHub Actions Windows runner, MSBuild + Microsoft Visual C++)",
+    "Directory": "src/impls/c/",
     "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
     "Commands": {
       "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
       "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ImplementationId": "c",
+    "DisplayName": "C (GitHub Actions, make + GCC)",
+    "Directory": "src/impls/c/",
+    "Condition": "[bool]$env:GITHUB_ACTIONS",
+    "Commands": {
+      "Build":  [
+        { "Command": "gcc", "Arguments": [ "--version" ] },
+        { "Command": "make", "Arguments": [ "CC=gcc" ] }
+      ],
+      "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
+      "Run":    { "Command": "polish", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ImplementationId": "c",
+    "DisplayName": "C (GitHub Actions, make + Clang)",
+    "Directory": "src/impls/c/",
+    "Condition": "[bool]$env:GITHUB_ACTIONS",
+    "Commands": {
+      "Build":  [
+        { "Command": "clang", "Arguments": [ "--version" ] },
+        { "Command": "make", "Arguments": [ "CC=clang" ] }
+      ],
+      "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
+      "Run":    { "Command": "polish", "ResolveCommandPath": true },
     }
   },
   {
@@ -58,9 +75,48 @@
     "ImplementationId": "cpp",
     "DisplayName": "C++ (make)",
     "Directory": "src/impls/cpp/",
-    "Condition": "[bool](Get-Command make -errorAction SilentlyContinue)",
+    "Condition": "$(![bool]$env:GITHUB_ACTIONS -and [bool](Get-Command make -errorAction SilentlyContinue))",
     "Commands": {
       "Build":  [ { "Command": "make" } ],
+      "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
+      "Run":    { "Command": "polish", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ImplementationId": "cpp",
+    "DisplayName": "C++ (GitHub Actions Windows runner, MSBuild + Microsoft Visual C++)",
+    "Directory": "src/impls/cpp/",
+    "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
+    "Commands": {
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
+      "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ImplementationId": "cpp",
+    "DisplayName": "C++ (GitHub Actions, make + G++)",
+    "Directory": "src/impls/cpp/",
+    "Condition": "[bool]$env:GITHUB_ACTIONS",
+    "Commands": {
+      "Build":  [
+        { "Command": "g++", "Arguments": [ "--version" ] },
+        { "Command": "make", "Arguments": [ "CXX=g++" ] }
+      ],
+      "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
+      "Run":    { "Command": "polish", "ResolveCommandPath": true },
+    }
+  },
+  {
+    "ImplementationId": "cpp",
+    "DisplayName": "C++ (GitHub Actions, make + Clang)",
+    "Directory": "src/impls/cpp/",
+    "Condition": "[bool]$env:GITHUB_ACTIONS",
+    "Commands": {
+      "Build":  [
+        { "Command": "clang++", "Arguments": [ "--version" ] },
+        { "Command": "make", "Arguments": [ "CXX=clang++" ] }
+      ],
       "Clean":  [ { "Command": "make", "Arguments": [ "clean" ] } ],
       "Run":    { "Command": "polish", "ResolveCommandPath": true },
     }
