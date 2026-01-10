@@ -1,6 +1,6 @@
 CC = gcc
 #CC = clang
-CFLAGS = -std=c17 -O2 -Wall
+CFLAGS = -std=c17 -O2 -Wall -Wno-deprecated-declarations
 
 all: polish
 
