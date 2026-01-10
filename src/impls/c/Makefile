@@ -21,3 +21,6 @@ run: polish
 	@if [ -n "${INPUT}" ]; then \
 		echo ${INPUT} | ./polish; \
 	fi
+
+test:
+	../../../tests/impls/run-tests.ps1 --target-impl c

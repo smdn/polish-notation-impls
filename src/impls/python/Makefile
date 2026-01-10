@@ -13,3 +13,6 @@ run:
 	@if [ -n "${INPUT}" ]; then \
 		echo ${INPUT} | ./polish.py; \
 	fi
+
+test:
+	../../../tests/impls/run-tests.ps1 --target-impl python
