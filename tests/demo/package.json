@@ -2,7 +2,7 @@
   "type": "module",
   "main": "test.js",
   "dependencies": {
-    "jsdom": "^20.0.0"
+    "jsdom": "^28.1.0"
   },
   "scripts": {
     "start": "node test.js"
