@@ -56,7 +56,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare .NET SDK ${{ env.DOTNET_SDK_MINIMUM_VERSION }}
-        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.0.0
+        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.1.0
         with:
           minimal_dotnet_sdk_version: '${{ env.DOTNET_SDK_MINIMUM_VERSION }}'
 
