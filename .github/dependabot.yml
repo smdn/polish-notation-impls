@@ -12,11 +12,26 @@ updates:
       day: "thursday"
       time: "03:16"
       timezone: "Asia/Tokyo"
+    assignees:
+      - smdn
     groups:
       GitHub-Actions-Workflows:
         patterns:
           - "actions/*"
+      smdn-workflows-dotnet:
+        patterns:
+          - "smdn/workflows-dotnet/*"
     ignore:
+      # smdn/workflows-dotnet/*: report major and minor updates only
+      - dependency-name: "smdn/workflows-dotnet/*"
+        update-types:
+          - "version-update:semver-patch"
+      # actions/checkout: report major updates only
       - dependency-name: "actions/checkout"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # actions/setup-node: report major and minor updates only
+      - dependency-name: "actions/setup-node"
         update-types:
           - "version-update:semver-patch"
