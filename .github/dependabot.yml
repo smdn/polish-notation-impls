@@ -18,6 +18,9 @@ updates:
       GitHub-Actions-Workflows:
         patterns:
           - "actions/*"
+      GitHub-CodeQL-Actions:
+        patterns:
+          - "github/codeql-action/*"
       smdn-workflows-dotnet:
         patterns:
           - "smdn/workflows-dotnet/*"
@@ -33,5 +36,7 @@ updates:
           - "version-update:semver-patch"
       # actions/setup-node: report major and minor updates only
       - dependency-name: "actions/setup-node"
+      # github/codeql-action: report major and minor updates only
+      - dependency-name: "github/codeql-action/*"
         update-types:
           - "version-update:semver-patch"
