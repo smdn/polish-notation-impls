@@ -208,10 +208,10 @@ std::string Node::remove_outermost_bracket(const std::string_view& expression) n
     // 例:"((1+2))"などの場合
     if ('(' == expr.front() && ')' == expr.back())
         // 再帰的に呼び出して取り除く
-        expr = remove_outermost_bracket(expr);
-
-    // 取り除いた結果を返す
-    return std::string(expr);
+        return remove_outermost_bracket(expr);
+    else
+        // そうでない場合は処理を終える
+        return std::string(expr);
 }
 
 std::string::size_type Node::get_operator_position(const std::string_view& expression) noexcept
