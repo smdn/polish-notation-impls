@@ -3,6 +3,8 @@
 
 name: Run tests for implementations
 
+permissions: {}
+
 on:
   push:
     branches: [main]
@@ -54,6 +56,8 @@ jobs:
   setup:
     name: Set up
     runs-on: ubuntu-slim
+    permissions:
+      contents: read
     outputs:
       runs-ons: ${{ steps.runs-on-os-list.outputs.runs-ons }}
       target-impls: ${{ steps.test-target-impls.outputs.target-impls }}
@@ -105,6 +109,8 @@ jobs:
     name: Test '${{ matrix.target-impl }}' on ${{ matrix.os }}
     needs: [setup]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:

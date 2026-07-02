@@ -3,6 +3,8 @@
 
 name: Run tests for demo
 
+permissions: {}
+
 on:
   push:
     branches: [main]
@@ -47,6 +49,8 @@ jobs:
   run-tests:
     name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
