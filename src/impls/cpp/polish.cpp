@@ -7,8 +7,8 @@
 #include <iostream>
 #include <limits>
 #include <memory>
-#include <ostream>
 #include <sstream>
+#include <print>
 #include <string>
 #include <string_view>
 
@@ -35,15 +35,15 @@ public:
 
     // 後行順序訪問(帰りがけ順)で二分木を巡回して
     // すべてのノードの演算子または項をstreamに出力するメソッド
-    void write_postorder(std::ostream& stream);
+    void write_postorder(std::FILE* stream);
 
     // 中間順序訪問(通りがけ順)で二分木を巡回して
     // すべてのノードの演算子または項をstreamに出力するメソッド
-    void write_inorder(std::ostream& stream);
+    void write_inorder(std::FILE* stream);
 
     // 先行順序訪問(行きがけ順)で二分木を巡回して
     // すべてのノードの演算子または項をstreamに出力するメソッド
-    void write_preorder(std::ostream& stream);
+    void write_preorder(std::FILE* stream);
 
     // 後行順序訪問(帰りがけ順)で二分木を巡回して、二分木全体の値を計算するメソッド
     // すべてのノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
@@ -282,7 +282,7 @@ void Node::traverse(
         on_leave(*this);
 }
 
-void Node::write_postorder(std::ostream& stream)
+void Node::write_postorder(std::FILE* const stream)
 {
     // 巡回を開始する
     traverse(
@@ -290,11 +290,11 @@ void Node::write_postorder(std::ostream& stream)
         nullptr, // ノードの通りがけには何もしない
         // ノードからの帰りがけに、ノードの演算子または項を出力する
         // (読みやすさのために項の後に空白を補って出力する)
-        [&stream](Node& node) { stream << node.expression << ' '; }
+        [&stream](Node& node) { std::print(stream, "{} ", node.expression); }
     );
 }
 
-void Node::write_inorder(std::ostream& stream)
+void Node::write_inorder(std::FILE* const stream)
 {
     // 巡回を開始する
     traverse(
@@ -302,37 +302,37 @@ void Node::write_inorder(std::ostream& stream)
         [&stream](Node& node) {
             // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
             if (node.left && node.right)
-                stream << '(';
+                std::print(stream, "(");
         },
         // ノードの通りがけに、ノードの演算子または項を出力する
         [&stream](Node& node) {
             // 左に子ノードを持つ場合は、読みやすさのために空白を補う
             if (node.left)
-                stream << ' ';
+                std::print(stream, " ");
 
             // 左の子ノードから右の子ノードへ巡回する際に、ノードの演算子または項を出力する
-            stream << node.expression;
+            std::print(stream, "{}", node.expression);
 
             // 右に子ノードを持つ場合は、読みやすさのために空白を補う
             if (node.right)
-                stream << ' ';
+                std::print(stream, " ");
         },
         // ノードからの帰りがけに、必要なら閉じ括弧を補う
         [&stream](Node& node) {
             // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
             if (node.left && node.right)
-                stream << ')';
+                std::print(stream, ")");
         }
     );
 }
 
-void Node::write_preorder(std::ostream& stream)
+void Node::write_preorder(std::FILE* const stream)
 {
     // 巡回を開始する
     traverse(
         // ノードへの行きがけに、ノードの演算子または項を出力する
         // (読みやすさのために項の後に空白を補って出力する)
-        [&stream](Node& node) { stream << node.expression << ' '; },
+        [&stream](Node& node) { std::print(stream, "{} ", node.expression); },
         nullptr, // ノードの通りがけ時には何もしない
         nullptr // ノードからの帰りがけ時には何もしない
     );
@@ -432,7 +432,7 @@ std::string Node::format_number(const double& number) noexcept
 //   2: 計算のエラーによる終了 (式全体の値の計算に失敗した場合)
 int main()
 {
-    std::cout << "input expression: ";
+    std::print("input expression: ");
 
     // 標準入力から二分木に分割したい式を入力する
     std::string expression;
@@ -457,44 +457,44 @@ int main()
         // 二分木の根(root)ノードを作成し、式全体を格納する
         root = std::make_unique<Node>(expression);
 
-        std::cout << "expression: " << expression << std::endl;
+        std::println("expression: {}", expression);
 
         // 根ノードに格納した式を二分木へと分割する
         root->parse_expression();
     }
     catch (const MalformedExpressionException& err) {
-        std::cerr << err.what() << std::endl;
+        std::println(stderr, "{}", err.what());
         return 1;
     }
 
     // 分割した二分木を帰りがけ順で巡回して表示する(前置記法/逆ポーランド記法で表示される)
-    std::cout << "reverse polish notation: ";
-    root->write_postorder(std::cout);
-    std::cout << std::endl;
+    std::print("reverse polish notation: ");
+    root->write_postorder(stdout);
+    std::println();
 
     // 分割した二分木を通りがけ順で巡回して表示する(中置記法で表示される)
-    std::cout << "infix notation: ";
-    root->write_inorder(std::cout);
-    std::cout << std::endl;
+    std::print("infix notation: ");
+    root->write_inorder(stdout);
+    std::println();
 
     // 分割した二分木を行きがけ順で巡回して表示する(後置記法/ポーランド記法で表示される)
-    std::cout << "polish notation: ";
-    root->write_preorder(std::cout);
-    std::cout << std::endl;
+    std::print("polish notation: ");
+    root->write_preorder(stdout);
+    std::println();
 
     // 分割した二分木から式全体の値を計算する
     double result_value;
 
     if (root->calculate_expression_tree(result_value)) {
         // 計算できた場合はその値を表示する
-        std::cout << "calculated result: " << Node::format_number(result_value) << std::endl;
+        std::println("calculated result: {}", Node::format_number(result_value));
         return 0;
     }
     else {
         // (式の一部あるいは全部が)計算できなかった場合は、計算結果の式を中置記法で表示する
-        std::cout << "calculated expression: ";
-        root->write_inorder(std::cout);
-        std::cout << std::endl;
+        std::print("calculated expression: ");
+        root->write_inorder(stdout);
+        std::println();
         return 2;
     }
 }

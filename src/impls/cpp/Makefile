@@ -1,6 +1,6 @@
 CXX = g++
 #CXX = clang++
-CXXFLAGS = -std=c++2a -O2 -Wall
+CXXFLAGS = -std=c++23 -O2 -Wall
 
 all: polish
 
