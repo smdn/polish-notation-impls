@@ -7,7 +7,6 @@
 #include <iostream>
 #include <limits>
 #include <memory>
-#include <sstream>
 #include <print>
 #include <string>
 #include <string_view>
@@ -49,9 +48,6 @@ public:
     // すべてのノードの値が計算できた場合はtrue、そうでない場合(記号を含む場合など)はfalseを返す
     // 計算結果はresult_valueに代入する
     bool calculate_expression_tree(double& result_value);
-
-    // 演算結果の数値を文字列化するためのメソッド
-    static std::string format_number(const double& number) noexcept;
 
 private:
     // 式expression内の括弧の対応を検証するメソッド
@@ -378,10 +374,10 @@ void Node::calculate_node(Node& node)
     // 現在のノードの演算子に応じて左右の子ノードの値を演算し、
     // 演算した結果を文字列に変換して再度expressionに代入することで現在のノードの値とする
     switch (node.expression.front()) {
-        case '+': node.expression = format_number(left_operand + right_operand); break;
-        case '-': node.expression = format_number(left_operand - right_operand); break;
-        case '*': node.expression = format_number(left_operand * right_operand); break;
-        case '/': node.expression = format_number(left_operand / right_operand); break;
+        case '+': node.expression = std::format("{:.17g}", left_operand + right_operand); break;
+        case '-': node.expression = std::format("{:.17g}", left_operand - right_operand); break;
+        case '*': node.expression = std::format("{:.17g}", left_operand * right_operand); break;
+        case '/': node.expression = std::format("{:.17g}", left_operand / right_operand); break;
         // 上記以外の演算子の場合は計算できないものとして扱い、処理を終える
         default: return;
     }
@@ -411,19 +407,6 @@ bool Node::parse_number(const std::string& expression, double& number)
     catch (std::invalid_argument&) {
         return false; // doubleに変換できないため、正常に変換できなかった
     }
-}
-
-std::string Node::format_number(const double& number) noexcept
-{
-    std::ostringstream stream;
-
-    // %.17g
-    stream.precision(17); // %.17
-    stream
-        << std::defaultfloat // %g
-        << number;
-
-    return stream.str();
 }
 
 // main関数。　結果によって次の値を返す。
@@ -487,7 +470,7 @@ int main()
 
     if (root->calculate_expression_tree(result_value)) {
         // 計算できた場合はその値を表示する
-        std::println("calculated result: {}", Node::format_number(result_value));
+        std::println("calculated result: {:.17g}", result_value);
         return 0;
     }
     else {
