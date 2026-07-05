@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 #include <algorithm>
+#include <concepts>
 #include <charconv>
 #include <format>
-#include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -27,9 +27,9 @@ public:
 
     // 二分木を巡回し、ノードの行きがけ・通りがけ・帰りがけに指定された関数をコールバックするメソッド
     void traverse(
-        std::function<void(Node&)> on_visit,      // ノードの行きがけにコールバックする関数
-        std::function<void(Node&)> on_transit,    // ノードの通りがけにコールバックする関数
-        std::function<void(Node&)> on_leave       // ノードの帰りがけにコールバックする関数
+        std::invocable<Node&> auto on_visit,      // ノードの行きがけにコールバックする関数
+        std::invocable<Node&> auto on_transit,    // ノードの通りがけにコールバックする関数
+        std::invocable<Node&> auto on_leave       // ノードの帰りがけにコールバックする関数
     );
 
     // 後行順序訪問(帰りがけ順)で二分木を巡回して
@@ -252,41 +252,38 @@ std::string::size_type Node::get_operator_position(const std::string_view& expre
 }
 
 void Node::traverse(
-    std::function<void(Node&)> on_visit,
-    std::function<void(Node&)> on_transit,
-    std::function<void(Node&)> on_leave
+    std::invocable<Node&> auto on_visit,
+    std::invocable<Node&> auto on_transit,
+    std::invocable<Node&> auto on_leave
 )
 {
     // このノードの行きがけに行う動作をコールバックする
-    if (on_visit)
-        on_visit(*this);
+    on_visit(*this);
 
     // 左に子ノードをもつ場合は、再帰的に巡回する
     if (left)
         left->traverse(on_visit, on_transit, on_leave);
 
     // このノードの通りがけに行う動作をコールバックする
-    if (on_transit)
-        on_transit(*this);
+    on_transit(*this);
 
     // 右に子ノードをもつ場合は、再帰的に巡回する
     if (right)
         right->traverse(on_visit, on_transit, on_leave);
 
     // このノードの帰りがけに行う動作をコールバックする
-    if (on_leave)
-        on_leave(*this);
+    on_leave(*this);
 }
 
 void Node::write_postorder(std::FILE* const stream)
 {
     // 巡回を開始する
     traverse(
-        nullptr, // ノードへの行きがけには何もしない
-        nullptr, // ノードの通りがけには何もしない
+        [](const Node&) {}, // ノードへの行きがけには何もしない
+        [](const Node&) {}, // ノードの通りがけには何もしない
         // ノードからの帰りがけに、ノードの演算子または項を出力する
         // (読みやすさのために項の後に空白を補って出力する)
-        [&stream](Node& node) { std::print(stream, "{} ", node.expression); }
+        [&stream](const Node& node) { std::print(stream, "{} ", node.expression); }
     );
 }
 
@@ -295,13 +292,13 @@ void Node::write_inorder(std::FILE* const stream)
     // 巡回を開始する
     traverse(
         // ノードへの行きがけに、必要なら開き括弧を補う
-        [&stream](Node& node) {
+        [&stream](const Node& node) {
             // 左右に項を持つ場合、読みやすさのために項の前(行きがけ)に開き括弧を補う
             if (node.left && node.right)
                 std::print(stream, "(");
         },
         // ノードの通りがけに、ノードの演算子または項を出力する
-        [&stream](Node& node) {
+        [&stream](const Node& node) {
             // 左に子ノードを持つ場合は、読みやすさのために空白を補う
             if (node.left)
                 std::print(stream, " ");
@@ -314,7 +311,7 @@ void Node::write_inorder(std::FILE* const stream)
                 std::print(stream, " ");
         },
         // ノードからの帰りがけに、必要なら閉じ括弧を補う
-        [&stream](Node& node) {
+        [&stream](const Node& node) {
             // 左右に項を持つ場合、読みやすさのために項の後(帰りがけ)に閉じ括弧を補う
             if (node.left && node.right)
                 std::print(stream, ")");
@@ -328,9 +325,9 @@ void Node::write_preorder(std::FILE* const stream)
     traverse(
         // ノードへの行きがけに、ノードの演算子または項を出力する
         // (読みやすさのために項の後に空白を補って出力する)
-        [&stream](Node& node) { std::print(stream, "{} ", node.expression); },
-        nullptr, // ノードの通りがけ時には何もしない
-        nullptr // ノードからの帰りがけ時には何もしない
+        [&stream](const Node& node) { std::print(stream, "{} ", node.expression); },
+        [](const Node&) {}, // ノードの通りがけ時には何もしない
+        [](const Node&) {} // ノードからの帰りがけ時には何もしない
     );
 }
 
@@ -340,8 +337,8 @@ bool Node::calculate_expression_tree(double& result_value)
     // ノードからの帰りがけに、ノードが表す部分式から、その値を計算する
     // 帰りがけに計算することによって、末端の部分木から順次計算し、再帰的に木全体の値を計算する
     traverse(
-        nullptr, // ノードへの行きがけには何もしない
-        nullptr, // ノードの通りがけには何もしない
+        [](const Node&) {}, // ノードへの行きがけには何もしない
+        [](const Node&) {}, // ノードの通りがけには何もしない
         Node::calculate_node // ノードからの帰りがけに、ノードの値を計算する
     );
 
