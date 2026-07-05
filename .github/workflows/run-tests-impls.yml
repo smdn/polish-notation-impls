@@ -62,7 +62,7 @@ jobs:
       runs-ons: ${{ steps.runs-on-os-list.outputs.runs-ons }}
       target-impls: ${{ steps.test-target-impls.outputs.target-impls }}
     env:
-      RUNS_ON_OS_LIST_DEFAULT: "['ubuntu-latest', 'windows-latest', 'macos-latest']"
+      RUNS_ON_OS_LIST_DEFAULT: "['ubuntu-latest', 'windows-latest', 'macos-latest', 'ubuntu-24.04-arm', 'windows-11-arm' ]"
 
     steps:
       - name: Checkout repository
