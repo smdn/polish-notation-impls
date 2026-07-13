@@ -3,6 +3,8 @@
 
 name: Run tests for demo
 
+permissions: {}
+
 on:
   push:
     branches: [main]
@@ -47,35 +49,44 @@ jobs:
   run-tests:
     name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.1
+        background: true
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare .NET SDK ${{ env.DOTNET_SDK_MINIMUM_VERSION }}
-        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.0.0
+        background: true
+        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.2.0
         with:
           minimal_dotnet_sdk_version: '${{ env.DOTNET_SDK_MINIMUM_VERSION }}'
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ env.NODEJS_MINIMUM_VERSION }}
           # cache: npm
 
       - name: Setup node modules cache
-        uses: actions/cache@v5
+        background: true
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-cache-node-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install script dependencies
+        background: true
         run: |
           cd tests/demo/
           npm install
+
+      - name: Wait for prerequisite steps
+        wait-all:
 
       - name: Run tests
         shell: pwsh

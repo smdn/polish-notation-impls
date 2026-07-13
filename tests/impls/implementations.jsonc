@@ -128,7 +128,7 @@
     "Commands": {
       "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net10.0", "--nologo", "-v:quiet" ] } ],
       "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net10.0/polish", "ResolveCommandPath": true },
+      "Run":    [ { "Command": "dotnet", "Arguments": [ "run",   "--configuration", "Release", "--framework", "net10.0", "--no-build" ] } ],
     }
   },
   {
@@ -190,7 +190,7 @@
     "Commands": {
       "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net10.0", "--nologo", "-v:quiet" ] } ],
       "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    { "Command": "bin/Release/net10.0/polish", "ResolveCommandPath": true },
+      "Run":    [ { "Command": "dotnet", "Arguments": [ "run",   "--configuration", "Release", "--framework", "net10.0", "--no-build" ] } ],
     }
   },
 ]

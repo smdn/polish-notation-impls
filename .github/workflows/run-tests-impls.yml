@@ -3,6 +3,8 @@
 
 name: Run tests for implementations
 
+permissions: {}
+
 on:
   push:
     branches: [main]
@@ -46,23 +48,25 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
   DOTNET_SDK_MINIMUM_VERSION: "10.0.100"
-  NODEJS_MINIMUM_VERSION: 18
-  JAVA_MINIMUM_VERSION: 11
+  NODEJS_MINIMUM_VERSION: 20
+  JAVA_MINIMUM_VERSION: 21
   # cSpell:enable
 
 jobs:
   setup:
     name: Set up
     runs-on: ubuntu-slim
+    permissions:
+      contents: read
     outputs:
       runs-ons: ${{ steps.runs-on-os-list.outputs.runs-ons }}
       target-impls: ${{ steps.test-target-impls.outputs.target-impls }}
     env:
-      RUNS_ON_OS_LIST_DEFAULT: "['ubuntu-latest', 'windows-latest', 'macos-latest']"
+      RUNS_ON_OS_LIST_DEFAULT: "['ubuntu-latest', 'windows-latest', 'macos-latest', 'ubuntu-24.04-arm', 'windows-11-arm' ]"
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -105,6 +109,8 @@ jobs:
     name: Test '${{ matrix.target-impl }}' on ${{ matrix.os }}
     needs: [setup]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -115,38 +121,47 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.1
+        background: true
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare .NET SDK ${{ env.DOTNET_SDK_MINIMUM_VERSION }}
-        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.0.0
+        background: true
+        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@e294de483afffc1d3a366fbba853efe23c7b7d4c # actions/prepare-dotnet-sdk/v1.2.0
         if: ${{ matrix.target-impl == 'csharp' || matrix.target-impl == 'visualbasic' }}
         with:
           minimal_dotnet_sdk_version: '${{ env.DOTNET_SDK_MINIMUM_VERSION }}'
 
       - name: Setup Java
+        background: true
         if: ${{ matrix.target-impl == 'java' }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
         with:
           # cSpell:disable-next-line
           distribution: 'temurin'
           java-version: ${{ env.JAVA_MINIMUM_VERSION }}
 
       - name: Setup Node.js
+        background: true
         if: ${{ matrix.target-impl == 'javascript' }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ env.NODEJS_MINIMUM_VERSION }}
 
       - name: Setup MSBuild
+        background: true
         if: ${{ runner.os == 'Windows' && (matrix.target-impl == 'c' || matrix.target-impl == 'cpp') }}
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
       - name: Setup mypy
+        background: true
         if: ${{ matrix.target-impl == 'python' }}
         run: pip install mypy
+
+      - name: Wait for prerequisite steps
+        wait-all:
 
       - name: Run tests with ${{ matrix.target-impl }} on ${{ matrix.os }}
         shell: pwsh
