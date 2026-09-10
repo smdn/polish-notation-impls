@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -19,7 +19,7 @@ SPDX-License-Identifier: MIT
     <ClCompile>
       <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version -->
       <!-- cspell:ignore stdcpp -->
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <!-- ref: https://docs.microsoft.com/en-us/cpp/build/reference/utf-8-set-source-and-executable-character-sets-to-utf-8 -->
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>

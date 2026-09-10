@@ -50,6 +50,7 @@ env:
   DOTNET_SDK_MINIMUM_VERSION: "10.0.100"
   NODEJS_MINIMUM_VERSION: 20
   JAVA_MINIMUM_VERSION: 21
+  GPP_MINIMUM_VERSION: 14
   # cSpell:enable
 
 jobs:
@@ -159,6 +160,32 @@ jobs:
         background: true
         if: ${{ matrix.target-impl == 'python' }}
         run: pip install mypy
+
+      - name: Setup g++
+        background: true
+        if: ${{ runner.os == 'Linux' && matrix.target-impl == 'cpp' }}
+        # Check if the current g++ version is lower than GPP_MINIMUM_VERSION.
+        # Automatically fall back to the compliant pre-installed g++ binary via GITHUB_PATH.
+        # This is achieved by creating a symlink under the $HOME directory and prioritizing it.
+        run: |
+          GPP_CURRENT_VERSION=$(g++ -dumpversion | cut -d. -f1)
+
+          if [ "$GPP_CURRENT_VERSION" -lt "$GPP_MINIMUM_VERSION" ]; then
+            TARGET_GPP="g++-${GPP_MINIMUM_VERSION}"
+
+            if command -v "$TARGET_GPP" >/dev/null 2>&1; then
+              echo "Current g++ version ($GPP_CURRENT_VERSION) is less than $GPP_MINIMUM_VERSION. Switching to $TARGET_GPP."
+
+              mkdir -p $HOME/.local/bin
+              ln -sf $(which "$TARGET_GPP") $HOME/.local/bin/g++
+
+              echo "$HOME/.local/bin" >> $GITHUB_PATH
+            else
+              echo "Warning: Current g++ ($GPP_CURRENT_VERSION) is less than $GPP_MINIMUM_VERSION, but $TARGET_GPP was not found in the system."
+            fi
+          else
+            echo "Current g++ version ($GPP_CURRENT_VERSION) is already $GPP_MINIMUM_VERSION or higher. Keeping default."
+          fi
 
       - name: Wait for prerequisite steps
         wait-all:
