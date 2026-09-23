@@ -130,7 +130,7 @@ jobs:
 
       - name: Prepare .NET SDK ${{ env.DOTNET_SDK_MINIMUM_VERSION }}
         background: true
-        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@e294de483afffc1d3a366fbba853efe23c7b7d4c # actions/prepare-dotnet-sdk/v1.2.0
+        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@ca77c33b60b27d8734f7e7cc02f97a9b274c6779 # actions/prepare-dotnet-sdk/v1.3.0
         if: ${{ matrix.target-impl == 'csharp' || matrix.target-impl == 'visualbasic' }}
         with:
           minimal_dotnet_sdk_version: '${{ env.DOTNET_SDK_MINIMUM_VERSION }}'

@@ -62,7 +62,7 @@ jobs:
 
       - name: Prepare .NET SDK ${{ env.DOTNET_SDK_MINIMUM_VERSION }}
         background: true
-        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.2.0
+        uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.3.0
         with:
           minimal_dotnet_sdk_version: '${{ env.DOTNET_SDK_MINIMUM_VERSION }}'
 
