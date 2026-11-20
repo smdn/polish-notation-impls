@@ -144,11 +144,16 @@ foreach ($testcase in $testcases) {
     }
   }
 
-  if ($number_of_differences -eq 0) {
-    Write-Host -ForegroundColor Green "🆗 No differences."
+  if (Test-Path -Path $output_path_svg) {
+    if ($number_of_differences -eq 0) {
+      Write-Host -ForegroundColor Green "🆗 No differences."
+    }
+    else {
+      Write-Host -ForegroundColor Red "🆖 There are $number_of_differences lines of difference."
+    }
   }
   else {
-    Write-Host -ForegroundColor Red "🆖 There are $number_of_differences lines of difference."
+    Write-Host -ForegroundColor Red "❌ The SVG file '$output_path_svg' was not generated unexpectedly."
   }
 
   $exit_code += $number_of_differences
