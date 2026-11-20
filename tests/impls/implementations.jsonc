@@ -126,9 +126,12 @@
     "DisplayName": "C#",
     "Directory": "src/impls/csharp/",
     "Commands": {
-      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net10.0", "--nologo", "-v:quiet" ] } ],
-      "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    [ { "Command": "dotnet", "Arguments": [ "run",   "--configuration", "Release", "--framework", "net10.0", "--no-build" ] } ],
+      "Build": [ { "Command": "dotnet", "Arguments": [ "publish", "--configuration", "Release", "--framework", "net10.0", "--output", ".", "--nologo", "-v:quiet" ] } ],
+      "Clean": [
+        { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] },
+        { "Command": "Remove-Item", "Arguments": [ "-Path", "polish, ", "polish.dbg", "-Force", "-ErrorAction", "Ignore" ], "UseInvokeExpression": true },
+      ],
+      "Run": { "Command": "polish", "ResolveCommandPath": true },
     }
   },
   {
@@ -188,9 +191,12 @@
     "DisplayName": "Visual Basic",
     "Directory": "src/impls/visualbasic/",
     "Commands": {
-      "Build":  [ { "Command": "dotnet", "Arguments": [ "build", "--configuration", "Release", "--framework", "net10.0", "--nologo", "-v:quiet" ] } ],
-      "Clean":  [ { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] } ],
-      "Run":    [ { "Command": "dotnet", "Arguments": [ "run",   "--configuration", "Release", "--framework", "net10.0", "--no-build" ] } ],
+      "Build": [ { "Command": "dotnet", "Arguments": [ "publish", "--configuration", "Release", "--framework", "net10.0", "--output", ".", "--nologo", "-v:quiet" ] } ],
+      "Clean": [
+        { "Command": "dotnet", "Arguments": [ "clean", "--configuration", "Release", "--nologo", "-v:quiet" ] },
+        { "Command": "Remove-Item", "Arguments": [ "-Path", "polish, ", "polish.dbg", "-Force", "-ErrorAction", "Ignore" ], "UseInvokeExpression": true },
+      ],
+      "Run": { "Command": "polish", "ResolveCommandPath": true },
     }
   },
 ]
