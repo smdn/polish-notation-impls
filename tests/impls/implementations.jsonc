@@ -23,11 +23,11 @@
   },
   {
     "ImplementationId": "c",
-    "DisplayName": "C (GitHub Actions Windows runner, MSBuild + Microsoft Visual C++)",
+    "DisplayName": "C (GitHub Actions Windows runner, MSBuild + Microsoft Visual C++/Visual Studio 2026)",
     "Directory": "src/impls/c/",
     "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
     "Commands": {
-      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release", "/p:PlatformToolset=v145" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
       "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
     }
@@ -84,11 +84,11 @@
   },
   {
     "ImplementationId": "cpp",
-    "DisplayName": "C++ (GitHub Actions Windows runner, MSBuild + Microsoft Visual C++)",
+    "DisplayName": "C++ (GitHub Actions Windows runner, MSBuild + Microsoft Visual C++/Visual Studio 2026)",
     "Directory": "src/impls/cpp/",
     "Condition": "$([bool]$env:GITHUB_ACTIONS -and [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))",
     "Commands": {
-      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release" ] } ],
+      "Build":  [ { "Command": "MSBuild", "Arguments": [ "/t:Build", "/p:Configuration=Release", "/p:PlatformToolset=v145" ] } ],
       "Clean":  [ { "Command": "MSBuild", "Arguments": [ "/t:Clean", "/p:Configuration=Release" ] } ],
       "Run":    { "Command": "bin\\Release\\polish.exe", "ResolveCommandPath": true },
     }
