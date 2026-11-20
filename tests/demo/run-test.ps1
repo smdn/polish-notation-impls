@@ -42,37 +42,38 @@ $input_expression_incalculable = "1 + 2 + X = Y + 3 + 4"
 
 $testcases += (
   [PSCustomObject]@{
-    "VisualizationMode" = "traverse-preorder"
-    "InputExpression" = $input_expression_incalculable
-    "OutputSvgFileName" = "incalculable.traverse-preorder.generated.svg"
+    "VisualizationMode"   = "traverse-preorder"
+    "InputExpression"     = $input_expression_incalculable
+    "OutputSvgFileName"   = "incalculable.traverse-preorder.generated.svg"
     "ExpectedSvgFileName" = "incalculable.traverse-preorder.expected.svg"
-    "OutputDiffFileName" = "incalculable.traverse-preorder.svg.diff"
+    "OutputDiffFileName"  = "incalculable.traverse-preorder.svg.diff"
   },
   [PSCustomObject]@{
-    "VisualizationMode" = "traverse-inorder"
-    "InputExpression" = $input_expression_incalculable
-    "OutputSvgFileName" = "incalculable.traverse-inorder.generated.svg"
+    "VisualizationMode"   = "traverse-inorder"
+    "InputExpression"     = $input_expression_incalculable
+    "OutputSvgFileName"   = "incalculable.traverse-inorder.generated.svg"
     "ExpectedSvgFileName" = "incalculable.traverse-inorder.expected.svg"
-    "OutputDiffFileName" = "incalculable.traverse-inorder.svg.diff"
+    "OutputDiffFileName"  = "incalculable.traverse-inorder.svg.diff"
   },
   [PSCustomObject]@{
-    "VisualizationMode" = "traverse-postorder"
-    "InputExpression" = $input_expression_incalculable
-    "OutputSvgFileName" = "incalculable.traverse-postorder.generated.svg"
+    "VisualizationMode"   = "traverse-postorder"
+    "InputExpression"     = $input_expression_incalculable
+    "OutputSvgFileName"   = "incalculable.traverse-postorder.generated.svg"
     "ExpectedSvgFileName" = "incalculable.traverse-postorder.expected.svg"
-    "OutputDiffFileName" = "incalculable.traverse-postorder.svg.diff"
+    "OutputDiffFileName"  = "incalculable.traverse-postorder.svg.diff"
   },
   [PSCustomObject]@{
-    "VisualizationMode" = "calculate"
-    "InputExpression" = $input_expression_incalculable
-    "OutputSvgFileName" = "incalculable.calculation.generated.svg"
+    "VisualizationMode"   = "calculate"
+    "InputExpression"     = $input_expression_incalculable
+    "OutputSvgFileName"   = "incalculable.calculation.generated.svg"
     "ExpectedSvgFileName" = "incalculable.calculation.expected.svg"
-    "OutputDiffFileName" = "incalculable.calculation.svg.diff"
+    "OutputDiffFileName"  = "incalculable.calculation.svg.diff"
   }
 )
 
 New-Item -Path $test_output_dir -ItemType Directory -ErrorAction SilentlyContinue > $null
 
+$has_error_occurred = $false
 $exit_code = 0
 
 foreach ($testcase in $testcases) {
@@ -154,9 +155,14 @@ foreach ($testcase in $testcases) {
   }
   else {
     Write-Host -ForegroundColor Red "❌ The SVG file '$output_path_svg' was not generated unexpectedly."
+    $has_error_occurred = $true
   }
 
   $exit_code += $number_of_differences
+}
+
+if ($has_error_occurred -and $exit_code -eq 0) {
+  $exit_code = 1
 }
 
 exit $exit_code
